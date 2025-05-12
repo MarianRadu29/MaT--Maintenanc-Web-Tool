@@ -1,87 +1,151 @@
-- de implementat tokenii (JWT) pentru autentificare și autorizare
-- de implementat `/user` endpoint pentru a obține datele utilizatorului
-****
+# Web Project
 
+[//]: # (- de implementat tokenii &#40;JWT&#41; pentru autentificare și autorizare)
 
-## Service Scheduler README
+[//]: # (- de implementat `/user` endpoint pentru a obține datele utilizatorului)
 
-Acest document prezintă lista paginilor HTML necesare pentru aplicația online de management al programărilor și gestiune a service-ului de motociclete, biciclete și trotinete.
+[//]: # ()
+[//]: # (****)
 
-## 1. Pagini Publice (Client)
+[//]: # ()
+[//]: # (## Service Scheduler README)
 
-* **index.html**
-  Pagina principală, prezintă descrierea serviciului și link către autentificare/înregistrare.
+[//]: # ()
+[//]: # (Acest document prezintă lista paginilor HTML necesare pentru aplicația online de management al programărilor și gestiune)
 
-* **register.html**
-  Formular de înregistrare pentru clienți (nume, email, parolă, date de contact).
+[//]: # (a service-ului de motociclete, biciclete și trotinete.)
 
-* **login.html**
-  Formular de autentificare pentru clienți și administratori.
+[//]: # ()
+[//]: # (## 1. Pagini Publice &#40;Client&#41;)
 
-* **calendar.html**
-  Vizualizare calendar cu zilele și orele disponibile pentru programări.
+[//]: # ()
+[//]: # (* **index.html**)
 
-* **appointment\_form.html**
-  Formular pentru solicitarea unei programări (selectare dată/oră, descriere problemă, atașare imagini/video).
+[//]: # (  Pagina principală, prezintă descrierea serviciului și link către autentificare/înregistrare.)
 
-* **appointment\_success.html**
-  Mesaj de confirmare că programarea a fost înregistrată cu succes.
+[//]: # ()
+[//]: # (* **register.html**)
 
-* **appointment\_error.html**
-  Afișează erori în cazul în care solicitarea de programare nu a fost validă.
+[//]: # (  Formular de înregistrare pentru clienți &#40;nume, email, parolă, date de contact&#41;.)
 
-## 2. Pagini Admin (Administrator)
+[//]: # ()
+[//]: # (* **login.html**)
 
-* **admin\_dashboard.html**
-  Panou de administrare cu statistici sumare (număr programări, stocuri, comenzi în curs).
+[//]: # (  Formular de autentificare pentru clienți și administratori.)
 
-* **admin\_appointments.html**
-  Listă cu toate programările primite (filtrare după stare: pending, approved, rejected).
+[//]: # ()
+[//]: # (* **calendar.html**)
 
-* **admin\_appointment\_detail.html**
-  Detalii complete ale unei programări: date client, multimedia atașată, butoane Approve/Reject și câmpuri pentru răspuns administrativ (preț, garanție, mesaj respingere).
+[//]: # (  Vizualizare calendar cu zilele și orele disponibile pentru programări.)
 
-* **admin\_inventory.html**
-  Listă și gestionare a pieselor în stoc: adăugare, actualizare cantități, ștergere.
+[//]: # ()
+[//]: # (* **appointment\_form.html**)
 
-* **admin\_suppliers.html**
-  Listă furnizori și detalii de contact.
+[//]: # (  Formular pentru solicitarea unei programări &#40;selectare dată/oră, descriere problemă, atașare imagini/video&#41;.)
 
-* **admin\_order\_form.html**
-  Formular pentru plasare de comenzi către furnizori (selectare furnizor, articole, cantități).
+[//]: # ()
+[//]: # (* **appointment\_success.html**)
 
-* **admin\_orders.html**
-  Istoric comenzi către furnizori și stare (pending, delivered, canceled).
+[//]: # (  Mesaj de confirmare că programarea a fost înregistrată cu succes.)
 
-## 3. Pagini Import/Export
+[//]: # ()
+[//]: # (* **appointment\_error.html**)
 
-* **import.html**
-  Upload CSV sau JSON pentru importul de date în sistem (programări, stocuri, comenzi).
+[//]: # (  Afișează erori în cazul în care solicitarea de programare nu a fost validă.)
 
-* **export.html**
-  Alegerea formatului de export (CSV, JSON, PDF) și generarea fișierului pentru descărcare.
+[//]: # ()
+[//]: # (## 2. Pagini Admin &#40;Administrator&#41;)
 
-## 4. Pagină de Simulare
+[//]: # ()
+[//]: # (* **admin\_dashboard.html**)
 
-* **simulation.html**
-  Interfață pentru configurarea și rularea simulării activității service-ului pe perioade de timp (lunar, anual): număr programări generate, variație stocuri, comenzi automate.
+[//]: # (  Panou de administrare cu statistici sumare &#40;număr programări, stocuri, comenzi în curs&#41;.)
 
-## 5. Pagini Comune
+[//]: # ()
+[//]: # (* **admin\_appointments.html**)
 
-* **header.html**
-  Fragment cu meniul de navigare (inclus în toate paginile).
+[//]: # (  Listă cu toate programările primite &#40;filtrare după stare: pending, approved, rejected&#41;.)
 
-* **footer.html**
-  Fragment cu informații de copyright și link-uri utile.
+[//]: # ()
+[//]: # (* **admin\_appointment\_detail.html**)
 
-* **styles.css**
-  Fișier global de stiluri.
+[//]: # (  Detalii complete ale unei programări: date client, multimedia atașată, butoane Approve/Reject și câmpuri pentru)
 
-* **scripts.js**
-  Fișier global de scripturi JavaScript (funcționalități comune, AJAX, validări).
+[//]: # (  răspuns administrativ &#40;preț, garanție, mesaj respingere&#41;.)
 
----
+[//]: # ()
+[//]: # (* **admin\_inventory.html**)
 
-Această structură asigură o separare clară între rolul clientului și cel al administratorului, precum și o modularitate ridicată pentru gestionarea importului/exportului și simulării.
+[//]: # (  Listă și gestionare a pieselor în stoc: adăugare, actualizare cantități, ștergere.)
 
-Te pot ajuta cu un exemplu de structură de directoare și link-uri între pagini?
+[//]: # ()
+[//]: # (* **admin\_suppliers.html**)
+
+[//]: # (  Listă furnizori și detalii de contact.)
+
+[//]: # ()
+[//]: # (* **admin\_order\_form.html**)
+
+[//]: # (  Formular pentru plasare de comenzi către furnizori &#40;selectare furnizor, articole, cantități&#41;.)
+
+[//]: # ()
+[//]: # (* **admin\_orders.html**)
+
+[//]: # (  Istoric comenzi către furnizori și stare &#40;pending, delivered, canceled&#41;.)
+
+[//]: # ()
+[//]: # (## 3. Pagini Import/Export)
+
+[//]: # ()
+[//]: # (* **import.html**)
+
+[//]: # (  Upload CSV sau JSON pentru importul de date în sistem &#40;programări, stocuri, comenzi&#41;.)
+
+[//]: # ()
+[//]: # (* **export.html**)
+
+[//]: # (  Alegerea formatului de export &#40;CSV, JSON, PDF&#41; și generarea fișierului pentru descărcare.)
+
+[//]: # ()
+[//]: # (## 4. Pagină de Simulare)
+
+[//]: # ()
+[//]: # (* **simulation.html**)
+
+[//]: # (  Interfață pentru configurarea și rularea simulării activității service-ului pe perioade de timp &#40;lunar, anual&#41;: număr)
+
+[//]: # (  programări generate, variație stocuri, comenzi automate.)
+
+[//]: # ()
+[//]: # (## 5. Pagini Comune)
+
+[//]: # ()
+[//]: # (* **header.html**)
+
+[//]: # (  Fragment cu meniul de navigare &#40;inclus în toate paginile&#41;.)
+
+[//]: # ()
+[//]: # (* **footer.html**)
+
+[//]: # (  Fragment cu informații de copyright și link-uri utile.)
+
+[//]: # ()
+[//]: # (* **styles.css**)
+
+[//]: # (  Fișier global de stiluri.)
+
+[//]: # ()
+[//]: # (* **scripts.js**)
+
+[//]: # (  Fișier global de scripturi JavaScript &#40;funcționalități comune, AJAX, validări&#41;.)
+
+[//]: # ()
+[//]: # (---)
+
+[//]: # ()
+[//]: # (Această structură asigură o separare clară între rolul clientului și cel al administratorului, precum și o modularitate)
+
+[//]: # (ridicată pentru gestionarea importului/exportului și simulării.)
+
+[//]: # ()
+[//]: # (Te pot ajuta cu un exemplu de structură de directoare și link-uri între pagini?)
