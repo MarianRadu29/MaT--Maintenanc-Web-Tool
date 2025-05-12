@@ -9,8 +9,7 @@ import java.io.IOException;
 import java.util.Map;
 
 
-public class RefreshController
-{
+public class RefreshController {
     public static class RefreshToken implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {

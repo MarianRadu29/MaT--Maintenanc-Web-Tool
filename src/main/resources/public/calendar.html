@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>Service Motociclete - Programări</title>
+    <title>Calendar Programări - ServicePro</title>
     <link href="styles.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
@@ -12,13 +12,13 @@
     <div class="container">
         <div class="header-content">
             <div class="logo">
-                <h1>ServicePro</h1>
+                <h1><a href="index.html">ServicePro</a></h1>
             </div>
             <nav class="main-nav">
                 <ul>
-                    <li><a class="active" href="/">Acasă</a></li>
+                    <li><a href="/">Acasă</a></li>
                     <li><a href="programari.html">Programări</a></li>
-                    <li><a href="calendar.html">Calendar</a></li>
+                    <li><a class="active" href="calendar.html">Calendar</a></li>
                     <li><a href="#servicii">Servicii</a></li>
                     <li><a href="#contact">Contact</a></li>
                     <li id="admin-link"><a href="admin.html">Admin</a></li>
@@ -33,47 +33,47 @@
     </div>
 </header>
 
-<section class="hero modern-hero">
-    <div class="container">
-        <div class="hero-split">
-            <div class="hero-content">
-                <h1>Sistem de Gestionare a Programărilor pentru Motociclete, Biciclete și Trotinete</h1>
-                <p>Un sistem modern online pentru programarea serviciilor de întreținere și reparații pentru vehiculele
-                    pe două roți.</p>
-                <div class="hero-buttons">
-                    <a class="btn btn-primary" href="programari.html">Programează o vizită</a>
-                    <a class="btn btn-secondary" href="calendar.html">Vezi calendarul programărilor</a>
+<section class="calendar-section container">
+    <div class="page-header">
+        <h1>Calendar Programări</h1>
+        <p>Verificați disponibilitatea pentru programări la service</p>
+    </div>
+
+    <div class="card">
+        <div class="calendar-container">
+            <div class="calendar-header">
+                <button class="btn btn-secondary" id="prevMonth">⟨</button>
+                <h2 id="currentMonthYear">Mai 2025</h2>
+                <button class="btn btn-secondary" id="nextMonth">⟩</button>
+            </div>
+
+            <div class="calendar-view">
+                <div class="calendar-weekdays">
+                    <div>Luni</div>
+                    <div>Marți</div>
+                    <div>Miercuri</div>
+                    <div>Joi</div>
+                    <div>Vineri</div>
+                    <div>Sâmbătă</div>
+                    <div>Duminică</div>
+                </div>
+                <div class="calendar-days" id="calendarDays">
+                    <!-- Zilele calendarului vor fi generate din JavaScript -->
                 </div>
             </div>
-            <!--            <div class="hero-image">-->
-            <img alt="Motocicletă" src="motor.png">
-            <!--            </div>-->
         </div>
-    </div>
-</section>
 
-<section class="features">
-    <div class="container">
-        <h2 class="section-title text-center">Serviciile noastre</h2>
-        <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon">🏍️</div>
-                <h3>Service Motociclete</h3>
-                <p>Întreținere, reparații și optimizare pentru toate mărcile și modelele de motociclete.</p>
+        <div class="day-schedule" id="daySchedule">
+            <h3 id="selectedDate">Nicio dată selectată</h3>
+            <div class="schedule-slots">
+                <p class="text-center" id="noAppointments">Selectați o dată pentru a vedea programările disponibile.</p>
+                <div class="appointments-list" id="appointmentsList" style="display:none;">
+                    <!-- Programările pentru ziua selectată vor fi generate din JavaScript -->
+                </div>
             </div>
-            <div class="feature-card">
-                <div class="feature-icon">🚲</div>
-                <h3>Service Biciclete</h3>
-                <p>Reparații și întreținere pentru biciclete de oraș, montane sau electrice.</p>
+            <div class="text-center mt-4">
+                <a class="btn btn-primary" href="programari.html">Creează o programare nouă</a>
             </div>
-            <div class="feature-card">
-                <div class="feature-icon">🛴</div>
-                <h3>Service Trotinete</h3>
-                <p>Soluții complete pentru întreținerea și repararea trotinetelor clasice și electrice.</p>
-            </div>
-        </div>
-        <div class="text-center mt-4">
-            <a class="btn btn-primary" href="programari.html">Programează-te acum</a>
         </div>
     </div>
 </section>
@@ -104,6 +104,7 @@
     </div>
 </footer>
 
+<script src="calendar.js"></script>
 <script src="scripts.js"></script>
 </body>
 </html>

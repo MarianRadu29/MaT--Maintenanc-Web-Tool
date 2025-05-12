@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Contul Meu - ServicePro</title>
+    <link href="styles.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<header class="header">
+    <div class="container">
+        <div class="header-content">
+            <div class="logo">
+                <h1>ServicePro</h1>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="/">Acasă</a></li>
+                    <li><a href="programari.html">Programări</a></li>
+                    <li><a href="calendar.html">Calendar</a></li>
+                    <li><a href="#">Servicii</a></li>
+                    <li><a href="#">Contact</a></li>
+                    <li id="admin-link"><a href="admin.html">Admin</a></li>
+                    <li id="user-account"><a class="active" href="profile.html">Profil</a></li>
+                    <li class="auth-links">
+                        <a class="btn btn-primary" href="login.html">Conectare</a>
+                        <a class="btn btn-secondary" href="register.html">Înregistrare</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</header>
+
+<section class="auth-section">
+    <div class="container">
+        <div class="card auth-card">
+            <h2 class="section-title">Contul Meu</h2>
+            <div class="form-group">
+                <label>Nume complet:</label>
+                <p id="user-fullname">-</p>
+            </div>
+            <div class="form-group">
+                <label>Email:</label>
+                <p id="user-email">-</p>
+            </div>
+            <div class="form-group">
+                <label>Telefon:</label>
+                <p id="user-phone">-</p>
+            </div>
+            <div class="form-group">
+                <label>Rol:</label>
+                <p id="user-role">-</p>
+            </div>
+            <div class="form-group text-center">
+                <a class="btn btn-primary" href="programari.html">Vezi Programările Mele</a>
+            </div>
+        </div>
+    </div>
+</section>
+<footer class="footer">
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-column" id="servicii">
+                <h3>ServicePro</h3>
+                <p>Servicii profesionale pentru motociclete, biciclete și trotinete.</p>
+            </div>
+            <div class="footer-column">
+                <h3>Program</h3>
+                <p>Luni - Vineri: 9:00 - 18:00</p>
+                <p>Sâmbătă: 9:00 - 14:00</p>
+                <p>Duminică: Închis</p>
+            </div>
+            <div class="footer-column" id="contact">
+                <h3>Contact</h3>
+                <p>Adresa: Str. Exemplu nr. 123, București</p>
+                <p>Telefon: 0700 123 456</p>
+                <p>Email: contact@servicepro.ro</p>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; <span id="currentYear"></span> ServicePro. Toate drepturile rezervate.</p>
+        </div>
+    </div>
+</footer>
+
+<script src="scripts.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const userData = JSON.parse(localStorage.getItem('userData') || sessionStorage.getItem('userData') || null);
+
+        if (!userData) {
+            window.location.href = 'login.html';
+            return;
+        }
+
+        document.getElementById('user-fullname').textContent = userData.firstName + ' ' + (userData.lastName || '');
+        document.getElementById('user-email').textContent = userData.email || '-';
+        document.getElementById('user-phone').textContent = userData.phoneNumber || '-';
+        document.getElementById('user-role').textContent = userData.roleID == 2 ? 'Administrator' : 'Client';
+
+        document.getElementById('logoutButton').addEventListener('click', function (e) {
+            e.preventDefault();
+            localStorage.removeItem('userData');
+            sessionStorage.removeItem('userData');
+            window.location.href = '/';
+        });
+    });
+
+    function checkLoggedInUser() {
+        const userData = JSON.parse(localStorage.getItem('userData') || sessionStorage.getItem('userData') || null);
+        console.log(userData);
+        if (userData) {
+            // Update UI for logged in user
+            const authLinks = document.querySelector('.auth-links');
+            if (authLinks) {
+                document.getElementById('user-account').style.display = "block";
+                authLinks.innerHTML = `
+          <a href="#" id="logoutButton" class="btn btn-secondary">Deconectare</a>
+        `;
+
+                // Add logout functionality
+                document.getElementById('logoutButton').addEventListener('click', function (e) {
+                    e.preventDefault();
+                    localStorage.removeItem('userData');
+                    sessionStorage.removeItem('userData');
+                    window.location.reload();
+                    authLinks.innerHTML = `
+                        <a href="login.html" class="btn btn-primary">Conectare</a>
+                        <a href="register.html" class="btn btn-secondary">Înregistrare</a>
+                    `;
+                });
+            }
+        }
+    }
+
+    // Call this on page load
+    checkLoggedInUser();
+    const userData = JSON.parse(localStorage.getItem("userData"));
+    const adminLink = document.getElementById('admin-link');
+    if (adminLink && userData["roleID"] == 1) {
+        adminLink.style.display = 'none';
+    }
+</script>
+
+</body>
+</html>

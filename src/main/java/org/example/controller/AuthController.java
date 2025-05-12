@@ -17,6 +17,27 @@ import java.util.Map;
 
 public class AuthController {
 
+    private static Map<String, String> parseForm(InputStream is) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        byte[] buffer = new byte[1024];
+        int bytesRead;
+        while ((bytesRead = is.read(buffer)) != -1) {
+            sb.append(new String(buffer, 0, bytesRead, StandardCharsets.UTF_8));
+        }
+
+        Map<String, String> result = new HashMap<>();
+        String[] pairs = sb.toString().split("&");
+        for (String pair : pairs) {
+            String[] kv = pair.split("=");
+            if (kv.length == 2) {
+                String key = URLDecoder.decode(kv[0], StandardCharsets.UTF_8);
+                String value = URLDecoder.decode(kv[1], StandardCharsets.UTF_8);
+                result.put(key, value);
+            }
+        }
+        return result;
+    }
+
     public static class Register implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
@@ -26,6 +47,7 @@ public class AuthController {
             }
 
             Map<String, String> form = parseForm(exchange.getRequestBody());
+
             String firstName = form.get("first_name");
             String lastName = form.get("last_name");
             String password = form.get("password");
@@ -39,8 +61,7 @@ public class AuthController {
 
             var user = UserModel.getUserByEmail(email);
             if (user == null) {
-                String hashedPassword = BCrypt.hashPassword(password);
-                User newUser = new User(firstName, lastName, hashedPassword, email, 0, phoneNumber, 1);
+                User newUser = new User(firstName, lastName, password, email, 0, phoneNumber, 1);
                 UserModel.createUser(newUser);
 
                 user = UserModel.getUserByEmail(email);
@@ -64,46 +85,24 @@ public class AuthController {
             }
 
             Map<String, String> form = parseForm(exchange.getRequestBody());
+
             String email = form.get("email");
             String password = form.get("password");
-
             if (email == null || password == null) {
                 JsonView.send(exchange, 400, "{\"message\":\"Missing fields\"}");
                 return;
             }
 
             User user = UserModel.getUserByEmail(email);
-
+            System.out.println(BCrypt.checkPassword(password, user.getPassword()));
             if (user != null && BCrypt.checkPassword(password, user.getPassword())) {
                 String accessToken = JwtUtil.generateToken(user.getId(), email, 15);
                 String refreshToken = JwtUtil.generateToken(user.getId(), email, 60 * 24 * 7);
-
                 String json = String.format("{\"message\":\"Login successful\", \"accessToken\":\"%s\", \"refreshToken\":\"%s\"}", accessToken, refreshToken);
                 JsonView.send(exchange, 200, json);
             } else {
-                JsonView.send(exchange, 400, "{\"message\":\"Invalid credentials\"}");
+                JsonView.send(exchange, 404, "{\"message\":\"email or password is wrong\"}");
             }
         }
-    }
-
-    private static Map<String, String> parseForm(InputStream is) throws IOException {
-        StringBuilder sb = new StringBuilder();
-        byte[] buffer = new byte[1024];
-        int bytesRead;
-        while ((bytesRead = is.read(buffer)) != -1) {
-            sb.append(new String(buffer, 0, bytesRead, StandardCharsets.UTF_8));
-        }
-
-        Map<String, String> result = new HashMap<>();
-        String[] pairs = sb.toString().split("&");
-        for (String pair : pairs) {
-            String[] kv = pair.split("=");
-            if (kv.length == 2) {
-                String key = URLDecoder.decode(kv[0], StandardCharsets.UTF_8);
-                String value = URLDecoder.decode(kv[1], StandardCharsets.UTF_8);
-                result.put(key, value);
-            }
-        }
-        return result;
     }
 }

@@ -1,7 +1,6 @@
 package org.example.objects;
 
 import lombok.Getter;
-import lombok.AllArgsConstructor;
 
 @Getter
 public class RegisterData extends LoginData {
@@ -9,7 +8,7 @@ public class RegisterData extends LoginData {
     private String lastName;
     private String phoneNumber;
 
-    public RegisterData(String firstName,String lastName, String password, String email,String phoneNumber) {
+    public RegisterData(String firstName, String lastName, String password, String email, String phoneNumber) {
         super(email, password);
         this.phoneNumber = phoneNumber;
         this.firstName = firstName;

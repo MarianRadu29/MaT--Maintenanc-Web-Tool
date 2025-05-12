@@ -5,11 +5,12 @@ import org.example.controller.AuthController;
 import org.example.controller.RefreshController;
 import org.example.controller.UserController;
 import org.example.utils.StaticFileHandler;
+
 import java.net.InetSocketAddress;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        DatabaseInitializer.initialize();
+//        DatabaseInitializer.initialize();
         HttpServer server = HttpServer.create(new InetSocketAddress(8001), 0);
 
         server.createContext("/api/register", new AuthController.Register());
@@ -24,4 +25,4 @@ public class Main {
     }
 }
 
-//https://www.autocenteriasi.ro/ MODEL de front pt proiect
+// www.autocenteriasi.ro/ MODEL de front pt proiect

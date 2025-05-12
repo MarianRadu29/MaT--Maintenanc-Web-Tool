@@ -1,6 +1,5 @@
 package org.example.model;
 
-import org.example.objects.RegisterData;
 import org.example.objects.User;
 import org.example.utils.BCrypt;
 
@@ -10,7 +9,7 @@ public class UserModel {
     private static final String DB_URL = "jdbc:sqlite:service_booking.db";
 
     public static boolean createUser(User data) {
-        String sql = "INSERT INTO clients(first_name,last_name, password, email,role_id,phone_number) VALUES (?,?, ?, ?,?,?)";
+        String sql = "INSERT INTO users(first_name,last_name, password, email,role_id,phone_number) VALUES (?,?, ?, ?,?,?)";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, data.getFirstName());
@@ -29,7 +28,7 @@ public class UserModel {
     }
 
     public static User getUserByEmail(String email) {
-        String sql = "SELECT * FROM clients WHERE email = ?";
+        String sql = "SELECT * FROM users WHERE email = ?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, email);
@@ -41,7 +40,7 @@ public class UserModel {
                 String firstName = rs.getString("first_name");
                 String lastName = rs.getString("last_name");
                 String password = rs.getString("password");
-                return new User(firstName,lastName, password, email,id,phoneNumber,roleId);
+                return new User(firstName, lastName, password, email, id, phoneNumber, roleId);
             }
         } catch (SQLException e) {
             System.out.println("[GET USER BY EMAIL ERROR] " + e.getMessage());

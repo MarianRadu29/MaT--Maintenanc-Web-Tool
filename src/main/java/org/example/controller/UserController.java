@@ -39,8 +39,8 @@ public class UserController {
                 return;
             }
 
-            String json = String.format("{\"id\":%d,\"firstName\":\"%s\",\"lastName\":\"%s\",\"email\":\"%s\",\"phoneNumber\":\"%s\"}",
-                    user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getPhoneNumber());
+            String json = String.format("{\"id\":%d,\"roleID\":%d,\"firstName\":\"%s\",\"lastName\":\"%s\",\"email\":\"%s\",\"phoneNumber\":\"%s\"}",
+                    user.getId(), user.getRoleId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getPhoneNumber());
             JsonView.send(exchange, 200, json);
         }
     }
