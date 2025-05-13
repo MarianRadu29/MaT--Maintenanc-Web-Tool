@@ -30,6 +30,7 @@ body {
     line-height: 1.6;
     color: var(--dark-text);
     background-color: var(--light-bg);
+    padding: 1rem;
 }
 
 html {
@@ -80,7 +81,7 @@ ul {
 
 .btn-primary {
     background-color: var(--primary-color);
-    color: white;
+    color: white !important; /* pentru a forta culoarea alba la text */
 }
 
 .btn-primary:hover {
@@ -144,6 +145,7 @@ ul {
     gap: 1.5rem;
     align-items: center;
 }
+
 
 .main-nav a {
     color: var(--medium-text);
@@ -647,6 +649,7 @@ textarea {
 
 .auth-card {
     max-width: 500px;
+    width: 600px;
     margin: 0 auto;
 }
 
@@ -665,6 +668,11 @@ textarea {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+}
+
+.remember-me label {
+    display: inline;
+    margin: 0;
 }
 
 .remember-me input[type="checkbox"] {
@@ -755,3 +763,82 @@ textarea {
 .appointment-section, .auth-section, .calendar-section {
     animation: fadeIn 0.5s ease-out;
 }
+
+
+/* Responsive Navbar */
+.menu-toggle {
+    display: none;
+    font-size: 1.75rem;
+    cursor: pointer;
+    color: var(--primary-color);
+}
+
+/* Apare doar pe ecrane mici */
+@media (max-width: 1000px) {
+    .main-nav {
+        overflow: hidden;
+        max-height: 0;
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: max-height 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+        position: absolute;
+        top: 100%;
+        right: 1rem;
+        background-color: white;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border-radius: var(--radius);
+        width: 200px;
+        z-index: 999;
+        right: 0rem;
+    }
+
+    .main-nav.open {
+        max-height: 500px; /* suficient pentru conținut */
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .main-nav ul {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .main-nav ul li {
+        border-bottom: none;
+    }
+
+    .main-nav ul li:last-child {
+        border-bottom: none;
+    }
+
+    .main-nav a {
+        display: block;
+        padding: 1rem;
+        color: var(--dark-text);
+    }
+
+    .menu-toggle {
+        display: block;
+        background-color: transparent;
+        border: none;
+        font-size: 1.5rem;
+    }
+
+    .header-content {
+        position: relative;
+    }
+
+    .auth-links {
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .main-nav a.active:after {
+        display: none;
+        content: none;
+    }
+
+}
+

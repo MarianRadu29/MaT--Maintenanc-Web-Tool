@@ -244,3 +244,10 @@ document.addEventListener('DOMContentLoaded', function () {
     // Call this on page load
     checkLoggedInUser();
 });
+
+const menuToggle = document.getElementById('menuToggle');
+const mainNav = document.querySelector('.main-nav');
+
+menuToggle.addEventListener('click', () => {
+    mainNav.classList.toggle('open');
+});
