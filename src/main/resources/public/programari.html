@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
 </head>
+<script src="scripts.js"></script>
 <body>
 <header class="header">
     <div class="container">
@@ -87,7 +88,7 @@
                         <span class="icon">📁</span>
                         <p>Click pentru încărcare sau drag & drop</p>
                         <p class="file-type">JPG, PNG sau MP4 (max. 10MB)</p>
-                        <input accept="image/*,video/*" id="fileUpload" multiple type="file">
+                        <input name="fileUpload"  aria-label="fileUpload" accept="image/*,video/*" id="fileUpload" multiple type="file">
                     </div>
                     <div class="files-list" id="filesList"></div>
                 </div>
@@ -105,26 +106,37 @@
                         <div class="time-slot-header">Intervale disponibile:</div>
                         <div class="time-slots-container">
                             <!-- Intervale orare generate din JavaScript -->
+                            <div class="time-slot">
+                                09:00
+                            </div>
+                            <div class="time-slot">
+                                10:00
+                            </div>
+                            <div class="time-slot">
+                                11:00
+                            </div>
+                            <div class="time-slot">
+                                12:00
+                            </div>
+                            <div class="time-slot">
+                                13:00
+                            </div>
+                            <div class="time-slot">
+                                14:00
+                            </div>
+                            <div class="time-slot">
+                                15:00
+                            </div>
+                            <div class="time-slot">
+                                16:00
+                            </div>
+                            <div class="time-slot">
+                                17:00
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <!--    AR TREBUI SA LE PREIAU DIN DATELE USERULUI-->
-            <!--            <div class="form-group">-->
-            <!--                <label for="clientName">Numele dvs.</label>-->
-            <!--                <input type="text" id="clientName" name="clientName" placeholder="Introduceți numele complet" required>-->
-            <!--            </div>-->
-
-            <!--            <div class="form-group">-->
-            <!--                <label for="clientPhone">Număr de telefon</label>-->
-            <!--                <input type="tel" id="clientPhone" name="clientPhone" placeholder="0700 123 456" required>-->
-            <!--            </div>-->
-
-            <!--            <div class="form-group">-->
-            <!--                <label for="clientEmail">Email</label>-->
-            <!--                <input type="email" id="clientEmail" name="clientEmail" placeholder="exemplu@email.com" required>-->
-            <!--            </div>-->
-
             <button class="btn btn-primary btn-block" type="submit">Trimite programare</button>
         </form>
     </div>
@@ -156,6 +168,27 @@
     </div>
 </footer>
 
-<script src="scripts.js"></script>
+
+<!-- <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const appointmentDate = localStorage.getItem('selectedAppointmentDate');
+        const appointmentTime = localStorage.getItem('selectedAppointmentTime');
+        console.log(appointmentDate + " " +  appointmentTime);
+        if (appointmentDate && appointmentTime) {
+            document.getElementById('appointmentDate').value = appointmentDate;
+            const timeSlotElements = document.querySelectorAll('.time-slot');
+
+            timeSlotElements.forEach(slot => {
+                console.log(slot.textContent);
+                if (slot.textContent.trim() === appointmentTime) {
+                    slot.classList.add('selected');
+                }
+            });
+
+            localStorage.removeItem('selectedAppointmentDate');
+            localStorage.removeItem('selectedAppointmentTime');
+        }
+    });
+</script> -->
 </body>
 </html>

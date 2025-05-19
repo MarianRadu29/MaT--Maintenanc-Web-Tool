@@ -547,6 +547,19 @@ textarea {
 .calendar-day.outside-month {
     opacity: 0.3;
 }
+.calendar-day.past-day {
+    color: #ccc;
+    background-color: #f0f0f0;
+    pointer-events: none;
+}
+
+#noAppointments {
+    color: green;
+    font-weight: bold;
+    font-size: 16px;
+    margin-top: 20px;
+}
+
 
 .calendar-day.unavailable {
     background-color: var(--border-color);

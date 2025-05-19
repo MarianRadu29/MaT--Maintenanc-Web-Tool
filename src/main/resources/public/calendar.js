@@ -56,7 +56,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const firstDay = new Date(year, month, 1);
 
         // Get day of the week for the first day (0: Sunday, 1: Monday, ..., 6: Saturday)
-        // Adjust for Monday as first day of the week
         let firstDayOfWeek = firstDay.getDay() - 1;
         if (firstDayOfWeek < 0) firstDayOfWeek = 6; // Sunday becomes last day
 
@@ -71,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Previous month days
         for (let i = firstDayOfWeek - 1; i >= 0; i--) {
             const day = daysInPrevMonth - i;
-            const dayElement = createDayElement(day, true);
+            const dayElement = createDayElement(day, true, year, month);
             calendarDays.appendChild(dayElement);
         }
 
@@ -84,14 +83,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 year === currentDate.getFullYear()
             );
 
-            // Check if the day has appointments (mock data)
-            const hasAppointments = Math.random() > 0.7;
+            // Check if it's a past day
+            const isPastDay = new Date(year, month, day) < currentDate && !isToday;
 
             // Create day element
-            const dayElement = createDayElement(day, false, isToday, hasAppointments);
+            const dayElement = createDayElement(day, false, year, month, isToday, isPastDay);
 
             // Add click event to show appointments
             dayElement.addEventListener('click', function () {
+                if (isPastDay) return; // Don't allow selection of past days
+
                 // Remove selected class from all days
                 document.querySelectorAll('.calendar-day').forEach(el => {
                     el.classList.remove('selected');
@@ -102,11 +103,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 // Update selected date display
                 const dateObj = new Date(year, month, day);
-                const options = {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'};
+                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
                 selectedDateElement.textContent = dateObj.toLocaleDateString('ro-RO', options);
 
-                // Show appointments for the selected day
-                showAppointmentsForDay(dateObj, hasAppointments);
+                // Fetch appointments for the selected day from the server
+                fetchAppointmentsForDay(year, month, day);
             });
 
             calendarDays.appendChild(dayElement);
@@ -117,13 +118,13 @@ document.addEventListener('DOMContentLoaded', function () {
         const remainingCells = totalCells - (firstDayOfWeek + daysInMonth);
 
         for (let day = 1; day <= remainingCells; day++) {
-            const dayElement = createDayElement(day, true);
+            const dayElement = createDayElement(day, true, year, month);
             calendarDays.appendChild(dayElement);
         }
     }
 
     // Create a day element for the calendar
-    function createDayElement(day, isOutsideMonth, isToday = false, hasAppointments = false) {
+    function createDayElement(day, isOutsideMonth, year, month, isToday = false, isPastDay = false) {
         const dayElement = document.createElement('div');
         dayElement.className = 'calendar-day';
         dayElement.textContent = day;
@@ -136,75 +137,108 @@ document.addEventListener('DOMContentLoaded', function () {
             dayElement.classList.add('today');
         }
 
-        if (hasAppointments && !isOutsideMonth) {
-            dayElement.classList.add('has-appointments');
-        }
-
-        // Check if it's Sunday (unavailable)
-        if (new Date(currentYear, currentMonth, day).getDay() === 0 && !isOutsideMonth) {
-            dayElement.classList.add('unavailable');
+        if (isPastDay) {
+            dayElement.classList.add('past-day'); // Add a class to mark past days
+            dayElement.style.pointerEvents = 'none'; // Disable click for past days
         }
 
         return dayElement;
     }
 
-    // Show appointments for a specific day
-    function showAppointmentsForDay(date, hasAppointments) {
-        appointmentsList.innerHTML = '';
+    // Fetch appointments for a specific day
+    function fetchAppointmentsForDay(year, month, day) {
+        const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        console.log(dateString);
+        const apiUrl = `/api/appointments/day/${dateString}`; // Modify with your API endpoint
 
-        if (!hasAppointments) {
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                // Process the response and display appointments
+                console.log(JSON.stringify(data,null,4));
+                showAppointmentsForDay(dateString, data);
+            })
+            .catch(error => {
+                console.error('Error fetching appointments:', error);
+            });
+    }
+
+    // Show appointments for a specific day
+    function showAppointmentsForDay(dateString, appointments) {
+        appointmentsList.innerHTML = '';
+    
+        // Extragem anul, luna și ziua din datele primite
+        const dateObj = new Date(dateString);
+        const year = dateObj.getFullYear();
+        const month = dateObj.getMonth();  // Luna este 0-indexed (0 pentru Ianuarie, 1 pentru Februarie, etc.)
+        const day = dateObj.getDate();
+    
+        // Dacă nu sunt programări, toate intervalele orare sunt disponibile
+        const timeSlots = ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
+    
+        // Dacă nu sunt programări, afișează toate intervalele orare ca disponibile
+        if (appointments.length === 0) {
             noAppointments.style.display = 'block';
             appointmentsList.style.display = 'none';
-            noAppointments.textContent = 'Nu există programări pentru această zi.';
-            return;
+            noAppointments.textContent = 'Toate intervalele orare sunt disponibile pentru această zi.';
+        } else {
+            noAppointments.style.display = 'none';
+            appointmentsList.style.display = 'block';
+    
+            timeSlots.forEach(time => {
+                // Verificăm dacă există o programare la acea oră
+                const isBooked = appointments.includes(time.substring(0, 2));
+    
+                const appointmentCard = document.createElement('div');
+                appointmentCard.className = `appointment-card ${isBooked ? 'booked' : 'available'}`;
+    
+                const appointmentInfo = document.createElement('div');
+                appointmentInfo.className = 'appointment-info';
+    
+                const title = document.createElement('h4');
+                title.textContent = `Programare la ora ${time}`;
+    
+                const details = document.createElement('p');
+                details.textContent = isBooked ? 'Acest interval orar este deja ocupat.' : 'Acest interval orar este disponibil pentru programări.';
+    
+                appointmentInfo.appendChild(title);
+                appointmentInfo.appendChild(details);
+    
+                const status = document.createElement('div');
+                status.className = `appointment-status ${isBooked ? 'booked' : 'available'}`;
+                status.textContent = isBooked ? 'Ocupat' : 'Disponibil';
+    
+                appointmentCard.appendChild(appointmentInfo);
+                appointmentCard.appendChild(status);
+    
+                // Dacă intervalul este disponibil, adăugăm butonul de rezervare
+                if (!isBooked) {
+                    const bookButton = document.createElement('a');
+    
+                    const appointmentTime = time;  // Ora selectată
+                    const appointmentDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;  // Data selectată
+    
+                    // Salvăm data și ora în localStorage
+                   
+                    const user = localStorage.getItem("userData");
+                    bookButton.href = user?'programari.html':'login.html';
+                    bookButton.className = 'btn btn-primary btn-sm';
+                    bookButton.textContent = 'Rezervă';
+                    bookButton.addEventListener('click', function (e) {
+                        alert(appointmentDate + " " +  appointmentTime);
+
+                        localStorage.setItem('selectedAppointmentDate', appointmentDate);
+                        localStorage.setItem('selectedAppointmentTime', appointmentTime);
+                    });
+
+                    appointmentCard.appendChild(bookButton);
+                }
+    
+                appointmentsList.appendChild(appointmentCard);
+            });
         }
-
-        noAppointments.style.display = 'none';
-        appointmentsList.style.display = 'block';
-
-        // Generate mock appointments
-        const timeSlots = ['09:00', '10:30', '12:00', '14:00', '15:30', '17:00'];
-
-        timeSlots.forEach(time => {
-            const isAvailable = Math.random() > 0.5;
-
-            const appointmentCard = document.createElement('div');
-            appointmentCard.className = `appointment-card ${isAvailable ? 'available' : 'booked'}`;
-
-            const appointmentInfo = document.createElement('div');
-            appointmentInfo.className = 'appointment-info';
-
-            const title = document.createElement('h4');
-            title.textContent = `Programare la ora ${time}`;
-
-            const details = document.createElement('p');
-            if (isAvailable) {
-                details.textContent = 'Acest interval orar este disponibil pentru programări.';
-            } else {
-                details.textContent = 'Acest interval orar este deja ocupat.';
-            }
-
-            appointmentInfo.appendChild(title);
-            appointmentInfo.appendChild(details);
-
-            const status = document.createElement('div');
-            status.className = `appointment-status ${isAvailable ? 'available' : 'booked'}`;
-            status.textContent = isAvailable ? 'Disponibil' : 'Ocupat';
-
-            appointmentCard.appendChild(appointmentInfo);
-            appointmentCard.appendChild(status);
-
-            if (isAvailable) {
-                const bookButton = document.createElement('a');
-                bookButton.href = 'programari.html';
-                bookButton.className = 'btn btn-primary btn-sm';
-                bookButton.textContent = 'Rezervă';
-                appointmentCard.appendChild(bookButton);
-            }
-
-            appointmentsList.appendChild(appointmentCard);
-        });
     }
+    
 
     // Check if user is already logged in
     function checkLoggedInUser() {

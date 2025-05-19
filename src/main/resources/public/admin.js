@@ -24,48 +24,48 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Mock data
-    const appointments = [
-        {
-            id: 'ap1',
-            clientName: 'Alexandru Popescu',
-            vehicleType: 'motorcycle',
-            vehicleBrand: 'Honda',
-            vehicleModel: 'CBR 600',
-            problem: 'Schimb ulei și filtru, verificare generală',
-            date: '2023-05-15',
-            time: '10:00',
-            status: 'pending',
-            hasAttachments: true
-        },
-        {
-            id: 'ap2',
-            clientName: 'Maria Ionescu',
-            vehicleType: 'bicycle',
-            vehicleBrand: 'Scott',
-            vehicleModel: 'Aspect 960',
-            problem: 'Reglare frâne și schimbătoare',
-            date: '2023-05-16',
-            time: '14:00',
-            status: 'approved',
-            hasAttachments: false,
-            responseMessage: 'Așteptăm să veniți la ora programată. Putem rezolva problema în aproximativ o oră.',
-            estimatedPrice: '150 RON',
-            warranty: '30 zile'
-        },
-        {
-            id: 'ap3',
-            clientName: 'Andrei Georgescu',
-            vehicleType: 'scooter',
-            vehicleBrand: 'Xiaomi',
-            vehicleModel: 'Mi Pro 2',
-            problem: 'Baterie nu ține încărcarea',
-            date: '2023-05-17',
-            time: '11:00',
-            status: 'rejected',
-            hasAttachments: true,
-            responseMessage: 'Ne pare rău, dar nu avem în stoc bateria necesară. Vă rugăm să reveniți peste 2 săptămâni.'
-        }
-    ];
+    // const appointments = [
+    //     {
+    //         id: 'ap1',
+    //         clientName: 'Alexandru Popescu',
+    //         vehicleType: 'motorcycle',
+    //         vehicleBrand: 'Honda',
+    //         vehicleModel: 'CBR 600',
+    //         problem: 'Schimb ulei și filtru, verificare generală',
+    //         date: '2023-05-15',
+    //         time: '10:00',
+    //         status: 'pending',
+    //         hasAttachments: true
+    //     },
+    //     {
+    //         id: 'ap2',
+    //         clientName: 'Maria Ionescu',
+    //         vehicleType: 'bicycle',
+    //         vehicleBrand: 'Scott',
+    //         vehicleModel: 'Aspect 960',
+    //         problem: 'Reglare frâne și schimbătoare',
+    //         date: '2023-05-16',
+    //         time: '14:00',
+    //         status: 'approved',
+    //         hasAttachments: false,
+    //         responseMessage: 'Așteptăm să veniți la ora programată. Putem rezolva problema în aproximativ o oră.',
+    //         estimatedPrice: '150 RON',
+    //         warranty: '30 zile'
+    //     },
+    //     {
+    //         id: 'ap3',
+    //         clientName: 'Andrei Georgescu',
+    //         vehicleType: 'scooter',
+    //         vehicleBrand: 'Xiaomi',
+    //         vehicleModel: 'Mi Pro 2',
+    //         problem: 'Baterie nu ține încărcarea',
+    //         date: '2023-05-17',
+    //         time: '11:00',
+    //         status: 'rejected',
+    //         hasAttachments: true,
+    //         responseMessage: 'Ne pare rău, dar nu avem în stoc bateria necesară. Vă rugăm să reveniți peste 2 săptămâni.'
+    //     }
+    // ];
 
     const inventoryItems = [
         {
@@ -107,7 +107,20 @@ document.addEventListener('DOMContentLoaded', function () {
     ];
 
     // Load appointments
-    loadAppointments(appointments);
+
+    fetch("/api/appointments")
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    }).then(data => {
+        loadAppointments(data);
+    });
+    
+
+    //INVERTORY FORM VALIDATION
+
 
     // Load inventory items
     loadInventoryItems(inventoryItems);
@@ -186,6 +199,11 @@ document.addEventListener('DOMContentLoaded', function () {
             inventoryModal.style.display = 'none';
         });
     }
+
+
+
+
+
 
     // Filter and search inventory
     const searchInventory = document.getElementById('searchInventory');
@@ -403,7 +421,7 @@ document.addEventListener('DOMContentLoaded', function () {
         <div class="appointment-header">
           <div>
             <div class="appointment-title">${appointment.clientName}</div>
-            <div class="appointment-date">${appointment.date} - ${appointment.time}</div>
+            <div class="appointment-date">${appointment.date.split("-").reverse().join("-")}  -  ${appointment.time}:00</div>
           </div>
           ${statusBadge}
         </div>
@@ -413,7 +431,9 @@ document.addEventListener('DOMContentLoaded', function () {
           <span>${appointment.vehicleBrand} ${appointment.vehicleModel}</span>
         </div>
         
-        <div class="appointment-problem">${appointment.problem}</div>
+        <div class="appointment-problem">${appointment.problem.length > 20
+            ? appointment.problem.slice(0, 20) + '...'
+            : appointment.problem}</div>
         
         ${attachmentsBadge ? `<div class="appointment-attachments">${attachmentsBadge}</div>` : ''}
         
@@ -427,9 +447,11 @@ document.addEventListener('DOMContentLoaded', function () {
             // Add event listener for the view button
             card.querySelector('.view-appointment').addEventListener('click', function () {
                 const appId = this.getAttribute('data-id');
-                const app = appointments.find(a => a.id === appId);
+                
+                const app = appointments.find(a => a.id == appId);
 
                 if (app) {
+                    console.log(JSON.stringify(app,null,4));
                     currentAppointment = app;
 
                     const detailsContainer = document.getElementById('appointmentDetails');
@@ -441,7 +463,7 @@ document.addEventListener('DOMContentLoaded', function () {
               </div>
               <div class="detail-row">
                 <span class="detail-label">Programare:</span>
-                <span>${app.date} - ${app.time}</span>
+                <span>${app.date.split("-").reverse().join("-")}  -  ${app.time}:00</span>
               </div>
             </div>
             
@@ -460,17 +482,69 @@ document.addEventListener('DOMContentLoaded', function () {
               </div>
               
               ${app.hasAttachments ? `
-                <div class="attachments-box">
-                  <p class="font-medium">Atașamente</p>
-                  <p class="text-xs">Clientul a încărcat imagini și/sau videoclipuri.</p>
-                  <button class="btn btn-secondary" style="margin-top: 0.5rem; font-size: 0.875rem;">
-                    Vizualizare atașamente
-                  </button>
-                </div>
-              ` : ''}
+      <div class="attachments-box">
+        <p class="font-medium">Atașamente</p>
+        <p class="text-xs">Clientul a încărcat imagini și/sau videoclipuri.</p>
+        <div id="attachmentsContainer" class="attachments-content" style="margin-top:1rem;"></div>
+      </div>
+    ` : ''}
             </div>
           `;
-
+          if (app.hasAttachments) {
+            const container = detailsContainer.querySelector('#attachmentsContainer');
+            fetch(`/api/appointment/media/${app.id}`)
+              .then(res => {
+                if (!res.ok) throw new Error(res.statusText);
+                return res.json(); // expect [{ fileName, type, content }, …]
+              })
+              .then(files => {
+                // render each file inline
+                console.log(JSON.stringify(files, null, 4));
+                files.forEach(file => {
+                    const { fileName, contentType, content } = file;
+                    let previewEl;
+                  
+                    if (contentType.startsWith('image/')) {
+                      // Inline image preview
+                      previewEl = document.createElement('img');
+                      previewEl.src = `data:${contentType};base64,${content}`;
+                      previewEl.style.maxWidth = '200px';
+                      previewEl.style.margin = '.5rem';
+                    }
+                    else if (contentType.startsWith('video/')) {
+                      // Inline video preview
+                      previewEl = document.createElement('video');
+                      previewEl.src = `data:${contentType};base64,${content}`;
+                      previewEl.controls = true;
+                      previewEl.style.maxWidth = '300px';
+                      previewEl.style.display = 'block';
+                      previewEl.style.margin = '.5rem 0';
+                    }
+                    else {
+                      // For everything else, no inline preview
+                      previewEl = document.createElement('div');
+                      previewEl.textContent = `${fileName} (${contentType})`;
+                      previewEl.style.margin = '.5rem 0';
+                    }
+                  
+                    // Always create a download link
+                    const dlLink = document.createElement('a');
+                    dlLink.href = `data:${contentType};base64,${content}`;
+                    dlLink.download = fileName;
+                    dlLink.textContent = `⬇️ Descarcă ${fileName}`;
+                    dlLink.style.display = 'block';
+                    dlLink.style.margin = '0.25rem 0 1rem';
+                  
+                    // Append both preview and link
+                    container.appendChild(previewEl);
+                    container.appendChild(dlLink);
+                  });
+              })
+              .catch(err => {
+                console.error('Failed to load attachments', err);
+                alert('Eroare la încărcarea atașamentelor.');
+              });
+          }
                     // Set existing values if appointment has been processed
                     document.getElementById('responseMessage').value = app.responseMessage || '';
                     document.getElementById('estimatedPrice').value = app.estimatedPrice || '';

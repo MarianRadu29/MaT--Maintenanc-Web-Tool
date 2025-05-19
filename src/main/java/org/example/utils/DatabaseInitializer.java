@@ -1,4 +1,4 @@
-package org.example;
+package org.example.utils;
 
 // Database schema and creation class for motorcycle/bike/scooter service booking system
 
@@ -17,11 +17,12 @@ public class DatabaseInitializer {
             stmt.execute("DROP TABLE IF EXISTS media;");
             stmt.execute("DROP TABLE IF EXISTS appointments;");
             stmt.execute("DROP TABLE IF EXISTS inventory;");
-            stmt.execute("DROP TABLE IF EXISTS users;");
+//            stmt.execute("DROP TABLE IF EXISTS users;");
 
             // Clients
             //role_id 1 = client
-            //role_id 2 = admin
+            //role_id 2 = employee
+            //role_id 3 = admin
             stmt.execute("""
                         CREATE TABLE IF NOT EXISTS users (
                             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -40,8 +41,11 @@ public class DatabaseInitializer {
                             id INTEGER PRIMARY KEY AUTOINCREMENT,
                             client_id INTEGER NOT NULL,
                             date TEXT NOT NULL,
-                            time TEXT NOT NULL,
-                            description TEXT,
+                            hour TEXT NOT NULL,
+                            vehicle_brand TEXT ,
+                            vehicle_model TEXT ,
+                            vehicle_type TEXT NOT NULL,
+                            description TEXT NOT NULL,
                             status TEXT DEFAULT 'pending',
                             admin_message TEXT,
                             estimated_price REAL,
@@ -50,14 +54,30 @@ public class DatabaseInitializer {
                         );
                     """);
 
-            // Media
-            stmt.execute("""
-                        CREATE TABLE IF NOT EXISTS media (
+
+
+  /*
+   CREATE TABLE IF NOT EXISTS media (
                             id INTEGER PRIMARY KEY AUTOINCREMENT,
                             appointment_id INTEGER,
                             file_path TEXT,
                             type TEXT,
                             FOREIGN KEY(appointment_id) REFERENCES appointments(id)
+                        );
+
+
+
+
+*/
+            // Media
+            stmt.execute("""
+                        CREATE TABLE IF NOT EXISTS media (
+                          id             INTEGER PRIMARY KEY AUTOINCREMENT,
+                          appointment_id INTEGER NOT NULL,
+                          file_name      TEXT,
+                          type      TEXT,
+                          file_data      BLOB,
+                          FOREIGN KEY(appointment_id) REFERENCES appointments(id)
                         );
                     """);
 
