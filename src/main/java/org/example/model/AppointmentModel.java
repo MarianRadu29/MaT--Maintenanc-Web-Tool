@@ -30,7 +30,11 @@ public class AppointmentModel {
             return "[]";
         }
 
+        if(appointmentsJson.length() > 1) {
+            appointmentsJson.append(", ");
+        }
         appointmentsJson.append(" \"10\"]");
+        System.out.println(appointmentsJson);
         return appointmentsJson.toString();
     }
 }

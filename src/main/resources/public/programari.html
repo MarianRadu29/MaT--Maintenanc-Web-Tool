@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
 </head>
+<script src="programari.js"></script>
 <script src="scripts.js"></script>
 <body>
 <header class="header">
@@ -167,28 +168,5 @@
         </div>
     </div>
 </footer>
-
-
-<!-- <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const appointmentDate = localStorage.getItem('selectedAppointmentDate');
-        const appointmentTime = localStorage.getItem('selectedAppointmentTime');
-        console.log(appointmentDate + " " +  appointmentTime);
-        if (appointmentDate && appointmentTime) {
-            document.getElementById('appointmentDate').value = appointmentDate;
-            const timeSlotElements = document.querySelectorAll('.time-slot');
-
-            timeSlotElements.forEach(slot => {
-                console.log(slot.textContent);
-                if (slot.textContent.trim() === appointmentTime) {
-                    slot.classList.add('selected');
-                }
-            });
-
-            localStorage.removeItem('selectedAppointmentDate');
-            localStorage.removeItem('selectedAppointmentTime');
-        }
-    });
-</script> -->
 </body>
 </html>
