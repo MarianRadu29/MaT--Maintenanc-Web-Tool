@@ -47,4 +47,26 @@ public class UserModel {
         }
         return null;
     }
+
+
+    public static User getUserById(int id) {
+        String sql = "SELECT * FROM users WHERE id = ?";
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1,id);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                int roleId = rs.getInt("role_id");
+                String phoneNumber = rs.getString("phone_number");
+                String firstName = rs.getString("first_name");
+                String lastName = rs.getString("last_name");
+                String password = rs.getString("password");
+                String email = rs.getString("email");
+                return new User(firstName, lastName, password, email, id, phoneNumber, roleId);
+            }
+        } catch (SQLException e) {
+            System.out.println("[GET USER BY EMAIL ERROR] " + e.getMessage());
+        }
+        return null;
+    }
 }

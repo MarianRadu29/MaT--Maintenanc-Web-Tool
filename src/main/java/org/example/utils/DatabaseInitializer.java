@@ -13,16 +13,18 @@ public class DatabaseInitializer {
             Statement stmt = conn.createStatement();
 
 
-            stmt.execute("DROP TABLE IF EXISTS supplier_orders;");
-            stmt.execute("DROP TABLE IF EXISTS media;");
-            stmt.execute("DROP TABLE IF EXISTS appointments;");
-            stmt.execute("DROP TABLE IF EXISTS inventory;");
+//            stmt.execute("DROP TABLE IF EXISTS supplier_orders;");
+//            stmt.execute("DROP TABLE IF EXISTS media;");
+//            stmt.execute("DROP TABLE IF EXISTS appointments;");
+//            stmt.execute("DROP TABLE IF EXISTS inventory;");
 //            stmt.execute("DROP TABLE IF EXISTS users;");
 
             // Clients
             //role_id 1 = client
             //role_id 2 = employee
             //role_id 3 = admin
+
+
             stmt.execute("""
                         CREATE TABLE IF NOT EXISTS users (
                             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -33,6 +35,15 @@ public class DatabaseInitializer {
                             phone_number TEXT NOT NULL,
                             email TEXT NOT NULL
                         );
+                    """);
+            stmt.execute("""
+                    CREATE TABLE IF NOT EXISTS forgot_password (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        user_id INTEGER NOT NULL,
+                        token TEXT NOT NULL,
+                        expiration_date TEXT NOT NULL,
+                        FOREIGN KEY(user_id) REFERENCES users(id)
+                    );
                     """);
 
             // Appointments
@@ -54,21 +65,6 @@ public class DatabaseInitializer {
                         );
                     """);
 
-
-
-  /*
-   CREATE TABLE IF NOT EXISTS media (
-                            id INTEGER PRIMARY KEY AUTOINCREMENT,
-                            appointment_id INTEGER,
-                            file_path TEXT,
-                            type TEXT,
-                            FOREIGN KEY(appointment_id) REFERENCES appointments(id)
-                        );
-
-
-
-
-*/
             // Media
             stmt.execute("""
                         CREATE TABLE IF NOT EXISTS media (
@@ -82,6 +78,8 @@ public class DatabaseInitializer {
                     """);
 
             // Inventory
+
+            //pk id nume_furnizor nume_produs
             stmt.execute("""
                         CREATE TABLE IF NOT EXISTS inventory (
                             id INTEGER PRIMARY KEY AUTOINCREMENT,

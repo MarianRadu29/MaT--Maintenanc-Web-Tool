@@ -4,7 +4,7 @@ import static org.mindrot.jbcrypt.BCrypt.*;
 
 public class BCrypt {
     public static String hashPassword(String plainPassword) {
-        // gensalt(rounds) – rounds e aproximativ 10–12 pentru producție
+        // gensalt(rounds) – rounds e aproximativ 10–12 pentru productie
         String salt = gensalt(12);
         return hashpw(plainPassword, salt);
     }

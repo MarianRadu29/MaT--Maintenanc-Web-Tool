@@ -1,12 +1,46 @@
 <!DOCTYPE html>
 <html lang="ro">
 <head>
-    <meta charset="UTF-8">
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta charset="UTF-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Contul Meu - ServicePro</title>
-    <link href="styles.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet" />
+    <style>
+        .profile-tabs {
+            display: flex;
+            border-bottom: 2px solid var(--border-color, #e5e7eb);
+            margin-bottom: 1.5rem;
+            gap: 1rem;
+        }
+        .profile-tabs .tab-button {
+            background: none;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            color: var(--medium-text, #4b5563);
+            transition: border-color 0.3s ease, color 0.3s ease;
+        }
+        .profile-tabs .tab-button.active {
+            border-color: var(--primary-color, #3b82f6);
+            color: var(--primary-color, #3b82f6);
+        }
+        .profile-tabs .tab-button:hover:not(.active) {
+            color: var(--primary-hover, #2563eb);
+        }
+        @media (max-width: 576px) {
+            .profile-tabs {
+                flex-direction: column;
+            }
+            .profile-tabs .tab-button {
+                padding: 0.5rem 1rem;
+            }
+        }
+    </style>
 </head>
 <body>
 <header class="header">
@@ -15,11 +49,9 @@
             <div class="logo">
                 <h1>ServicePro</h1>
             </div>
-
             <button class="menu-toggle" id="menuToggle" aria-label="Deschide meniul">
                 <i class="ri-menu-line"></i>
             </button>
-
             <nav class="main-nav">
                 <ul>
                     <li><a href="/">Acasă</a></li>
@@ -41,40 +73,98 @@
 
 <section class="auth-section">
     <div class="container">
-        <div class="card auth-card profile-card">
+        <div class="card profile-card">
             <h2 class="section-title">Contul Meu</h2>
-            <div class="profile-info">
-                <div class="info-item">
-                    <i class="ri-user-line info-icon"></i>
-                    <div>
-                        <label>Nume complet</label>
-                        <p id="user-fullname">-</p>
+
+            <nav class="profile-tabs">
+                <button class="tab-button active" data-tab="info">Info</button>
+                <button class="tab-button" data-tab="appointments">Programările Mele</button>
+            </nav>
+
+            <div class="tab-content" id="tab-info">
+                <div class="profile-info">
+                    <div class="info-item">
+                        <i class="ri-user-line info-icon"></i>
+                        <div>
+                            <label>Nume complet</label>
+                            <p id="user-fullname">-</p>
+                        </div>
                     </div>
-                </div>
-                <div class="info-item">
-                    <i class="ri-mail-line info-icon"></i>
-                    <div>
-                        <label>Email</label>
-                        <p id="user-email">-</p>
+                    <div class="info-item">
+                        <i class="ri-mail-line info-icon"></i>
+                        <div>
+                            <label>Email</label>
+                            <p id="user-email">-</p>
+                        </div>
                     </div>
-                </div>
-                <div class="info-item">
-                    <i class="ri-phone-line info-icon"></i>
-                    <div>
-                        <label>Telefon</label>
-                        <p id="user-phone">-</p>
+                    <div class="info-item">
+                        <i class="ri-phone-line info-icon"></i>
+                        <div>
+                            <label>Telefon</label>
+                            <p id="user-phone">-</p>
+                        </div>
                     </div>
-                </div>
-                <div class="info-item">
-                    <i class="ri-shield-user-line info-icon"></i>
-                    <div>
-                        <label>Rol</label>
-                        <p id="user-role">-</p>
+                    <div class="info-item">
+                        <i class="ri-shield-user-line info-icon"></i>
+                        <div>
+                            <label>Rol</label>
+                            <p id="user-role">-</p>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="form-group text-center mt-4">
-                <a class="btn btn-primary" href="programari.html">Vezi Programările Mele</a>
+
+            <div class="tab-content" id="tab-appointments" style="display:none;">
+                <div class="appointments-filters">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="searchAppointments">Caută</label>
+                            <input type="text" id="searchAppointments" placeholder="Caută după tip vehicul, problemă..." />
+                        </div>
+                        <div class="form-group">
+                            <label for="vehicleTypeFilter">Tip vehicul</label>
+                            <select id="vehicleTypeFilter">
+                                <option value="">Toate</option>
+                                <option value="motorcycle">Motocicletă</option>
+                                <option value="bicycle">Bicicletă</option>
+                                <option value="scooter">Trotinetă</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="statusFilter">Status</label>
+                            <select id="statusFilter">
+                                <option value="">Toate</option>
+                                <option value="pending">În așteptare</option>
+                                <option value="approved">Aprobate</option>
+                                <option value="rejected">Respinse</option>
+                                <option value="completed">Finalizate</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="data-table" style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                        <tr>
+                            <th>Data & Ora</th>
+                            <th>Vehicul</th>
+                            <th>Problemă</th>
+                            <th>Status</th>
+                            <th>Acțiuni</th>
+                        </tr>
+                        </thead>
+                        <tbody id="appointmentsTableBody">
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="empty-state" id="emptyAppointments" style="display: none; text-align: center; margin-top: 1rem;">
+                    <i class="ri-calendar-2-line" style="font-size: 3rem; color: var(--light-text, #9ca3af);"></i>
+                    <h3>Nu aveți programări active</h3>
+                    <p>Creați o programare nouă pentru vehiculul dumneavoastră</p>
+                    <a href="programari.html" class="btn btn-primary mt-4">Creează Programare</a>
+                </div>
             </div>
         </div>
     </div>
@@ -106,9 +196,27 @@
     </div>
 </footer>
 
-<script src="scripts.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener("DOMContentLoaded", () => {
+        // Navbar mobil
+        const menuToggle = document.getElementById("menuToggle");
+        const mainNav = document.querySelector(".main-nav");
+        menuToggle?.addEventListener("click", () => mainNav.classList.toggle("open"));
+
+        // Tabs profile
+        const tabs = document.querySelectorAll(".profile-tabs .tab-button");
+        const tabContents = document.querySelectorAll(".tab-content");
+
+        tabs.forEach(tab => {
+            tab.addEventListener("click", () => {
+                tabs.forEach(t => t.classList.remove("active"));
+                tab.classList.add("active");
+                tabContents.forEach(tc => (tc.style.display = "none"));
+                document.getElementById("tab-" + tab.dataset.tab).style.display = "block";
+            });
+        });
+
+        // User data
         const userData = JSON.parse(localStorage.getItem('userData') || sessionStorage.getItem('userData') || null);
 
         if (!userData) {
@@ -116,54 +224,185 @@
             return;
         }
 
+        // Populare date user în profil
         document.getElementById('user-fullname').textContent = userData.firstName + ' ' + (userData.lastName || '');
         document.getElementById('user-email').textContent = userData.email || '-';
         document.getElementById('user-phone').textContent = userData.phoneNumber || '-';
         document.getElementById('user-role').textContent = userData.roleID == 2 ? 'Administrator' : 'Client';
 
-        document.getElementById('logoutButton').addEventListener('click', function (e) {
-            e.preventDefault();
-            localStorage.removeItem('userData');
-            sessionStorage.removeItem('userData');
-            window.location.href = '/';
+        updateAuthLinks();
+
+        let appointments = [];
+
+        // incarc programrile din API + fallback demo
+        async function loadAppointments() {
+            try {
+                const response = await fetch("/api/appointments/self", {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
+                    }
+                });
+
+                if (!response.ok) throw new Error(`HTTP status ${response.status}`);
+
+                appointments = await response.json();
+            } catch (error) {
+                console.error("Error fetching appointments:", error);
+                // Fallback
+                if (!localStorage.getItem("userAppointments")) {
+                    appointments = [
+                        { id: 1, dateTime: "2025-05-22 14:00", vehicleType: "motorcycle", problem: "Schimb ulei", status: "pending" },
+                        { id: 2, dateTime: "2025-05-25 10:00", vehicleType: "bicycle", problem: "Revizie frâne", status: "approved" },
+                        { id: 3, dateTime: "2025-06-01 16:00", vehicleType: "scooter", problem: "Înlocuire baterie", status: "completed" }
+                    ];
+                } else {
+                    appointments = JSON.parse(localStorage.getItem("userAppointments"));
+                }
+            }
+            renderAppointments();
+        }
+
+        // Render tabel programari
+        function renderAppointments(filter = {}) {
+            const tbody = document.getElementById("appointmentsTableBody");
+            const emptyState = document.getElementById("emptyAppointments");
+            tbody.innerHTML = "";
+
+            let filtered = appointments;
+
+            if (filter.search) {
+                const s = filter.search.toLowerCase();
+                filtered = filtered.filter(a =>
+                    (a.vehicleType && a.vehicleType.toLowerCase().includes(s)) ||
+                    (a.problem && a.problem.toLowerCase().includes(s))
+                );
+            }
+            if (filter.vehicleType) {
+                filtered = filtered.filter(a => a.vehicleType === filter.vehicleType);
+            }
+            if (filter.status) {
+                filtered = filtered.filter(a => a.status === filter.status);
+            }
+
+            if (filtered.length === 0) {
+                emptyState.style.display = "block";
+                tbody.style.display = "none";
+            } else {
+                emptyState.style.display = "none";
+                tbody.style.display = "table-row-group";
+
+                filtered.forEach(a => {
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td>${a.date.split("-").reverse().join("-") + " " + a.time+":00"}</td>
+                        <td>${capitalize(a.vehicleType)}</td>
+                        <td>${a.problem}</td>
+                        <td>${capitalize(a.status)}</td>
+                        <td><button class="btn btn-primary btn-sm view-details" data-id="${a.id}">Vezi</button></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+        }
+
+        // Capitalize helper
+        function capitalize(str) {
+            if (!str) return "";
+            switch(str.toLowerCase()){
+                case "motorcycle":{
+                    str = "motocicletă"
+                }
+                break;
+                case "bicycle":{
+                    str = "bicicletă"
+                }
+                break;
+                case"scooter":{
+                    str = "trotinetă"
+                }
+                break;
+                case "pending":{
+                    str = "in asteptare"
+                }
+                break;
+                case "approved":{
+                    str = "aprobat"
+                }
+                break;
+                case "rejected":{
+                    str = "refuzat" 
+                }
+                break;
+                default:
+            }
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        // Evenimente filtre input
+        document.getElementById("searchAppointments").addEventListener("input", e => {
+            renderAppointments({
+                search: e.target.value,
+                vehicleType: document.getElementById("vehicleTypeFilter").value,
+                status: document.getElementById("statusFilter").value
+            });
         });
-    });
+        document.getElementById("vehicleTypeFilter").addEventListener("change", () => {
+            renderAppointments({
+                search: document.getElementById("searchAppointments").value,
+                vehicleType: document.getElementById("vehicleTypeFilter").value,
+                status: document.getElementById("statusFilter").value
+            });
+        });
+        document.getElementById("statusFilter").addEventListener("change", () => {
+            renderAppointments({
+                search: document.getElementById("searchAppointments").value,
+                vehicleType: document.getElementById("vehicleTypeFilter").value,
+                status: document.getElementById("statusFilter").value
+            });
+        });
 
-    function checkLoggedInUser() {
-        const userData = JSON.parse(localStorage.getItem('userData') || sessionStorage.getItem('userData') || null);
-        console.log(userData);
-        if (userData) {
-            // Update UI for logged in user
+        // Actualizează butoanele login/logout din header
+        function updateAuthLinks() {
+            const userData = JSON.parse(localStorage.getItem('userData') || sessionStorage.getItem('userData') || null);
             const authLinks = document.querySelector('.auth-links');
-            if (authLinks) {
-                document.getElementById('user-account').style.display = "block";
-                authLinks.innerHTML = `
-          <a href="#" id="logoutButton" class="btn btn-secondary">Deconectare</a>
-        `;
+            const userAccountLink = document.getElementById('user-account');
 
-                // Add logout functionality
-                document.getElementById('logoutButton').addEventListener('click', function (e) {
-                    e.preventDefault();
-                    localStorage.removeItem('userData');
-                    sessionStorage.removeItem('userData');
-                    window.location.reload();
+            if (userData) {
+                if (authLinks) {
+                    userAccountLink.style.display = "block";
+                    authLinks.innerHTML = `<a href="#" id="logoutButton" class="btn btn-secondary">Deconectare</a>`;
+                    document.getElementById('logoutButton').addEventListener('click', e => {
+                        e.preventDefault();
+                        localStorage.removeItem('userData');
+                        sessionStorage.removeItem('userData');
+                        localStorage.removeItem('accessToken');
+                        window.location.reload();
+                    });
+                }
+            } else {
+                if (authLinks) {
+                    userAccountLink.style.display = "none";
                     authLinks.innerHTML = `
                         <a href="login.html" class="btn btn-primary">Conectare</a>
                         <a href="register.html" class="btn btn-secondary">Înregistrare</a>
                     `;
-                });
+                }
             }
         }
-    }
 
-    // Call this on page load
-    checkLoggedInUser();
-    const userData = JSON.parse(localStorage.getItem("userData"));
-    const adminLink = document.getElementById('admin-link');
-    if (adminLink && userData["roleID"] == 1) {
-        adminLink.style.display = 'none';
-    }
+        // Ascunde link admin dacă user nu e admin
+        const adminLink = document.getElementById('admin-link');
+        if (adminLink && userData && userData.roleID == 1) {
+            adminLink.style.display = 'none';
+        }
+
+
+        //incarc la randare programarile
+        loadAppointments();
+
+        document.getElementById("currentYear").textContent = new Date().getFullYear();
+    });
 </script>
-
 </body>
 </html>

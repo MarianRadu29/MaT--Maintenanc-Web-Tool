@@ -21,14 +21,14 @@ document.addEventListener("DOMContentLoaded", function () {
     // click pe zona custom deschide dialogul
     fileUploadArea.addEventListener("click", () => fileUpload.click());
 
-    // atunci când alegi noi fișiere în dialog
+    // atunci când alegi noi fisierer în dialog
     fileUpload.addEventListener("change", () => {
-      // adaugă fiecare fișier nou în dt și în lista vizuală
+      // adaugă fiecare fisire nou id dt si in lista vizuala
       Array.from(fileUpload.files).forEach((file) => {
-        dt.items.add(file); // adaugă în DataTransfer
-        appendFileItem(file); // afișează în UI
+        dt.items.add(file); // adaug  DataTransfer
+        appendFileItem(file); // afisez în UI
       });
-      fileUpload.files = dt.files; // sincronizează input.files
+      fileUpload.files = dt.files; // sincronizez input.files
     });
 
     // suport drag & drop
@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", function () {
       fileUploadArea.classList.remove("dragover");
     });
 
-    // funcție ajutătoare pentru afișare + ștergere
+    // functie helper pentru afisare + ștergere
     function appendFileItem(file) {
       // validare
       if (!file.type.match("image/*") && !file.type.match("video/*")) {
@@ -72,7 +72,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // handler pentru ștergere
       fileItem.querySelector(".remove-file").addEventListener("click", () => {
-        // găsește indexul fișierului în dt.files
+        // gasesc indexul fisierului in dt.files
         const idx = Array.from(dt.files).findIndex(
           (f) =>
             f.name === file.name &&
@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", function () {
         );
         if (idx > -1) {
           dt.items.remove(idx); // scoate din DataTransfer
-          fileUpload.files = dt.files; // actualizează input.files
+          fileUpload.files = dt.files; // update input.files
         }
         fileItem.remove(); // scoate din UI
       });
@@ -136,10 +136,6 @@ document.addEventListener("DOMContentLoaded", function () {
   if (appointmentForm) {
     appointmentForm.addEventListener("submit", function (e) {
       e.preventDefault();
-
-      //rezolvare request(pe partea de server) in care introduc si fisierele
-
-
       // Get form data
       const data = new FormData(this);
      
@@ -155,58 +151,52 @@ document.addEventListener("DOMContentLoaded", function () {
       data.append("appointmentHour", hour);
       data.append("idClient", JSON.parse(localStorage.getItem("userData")).id);
 
-      for (let [name, value] of data.entries()) {
-        if (value instanceof File) {
-          console.log(name, "→ File:", value.name, value.size, value.type);
-        } else {
-          console.log(name, "→", value);
-        }
-      }
+      // for (let [name, value] of data.entries()) {
+      //   if (value instanceof File) {
+      //     console.log(name, "→ File:", value.name, value.size, value.type);
+      //   } else {
+      //     console.log(name, "→", value);
+      //   }
+      // }
 
       // Simulate form submission
       const submitButton = this.querySelector('button[type="submit"]');
       submitButton.disabled = true;
       submitButton.textContent = "Se procesează...";
+
       // Trimite ca multipart/form-data
       fetch("/api/appointment", {
         method: "POST",
         body: data,
       })
         .then(async res => {
-          // 1) dacă status-ul e 2xx => parsează JSON şi trimite-l mai departe
           if (res.ok) {
             const json = await res.json();
             return json;
           }
-          // 2) altfel încearcă să citeşti JSON-ul de eroare (dacă există)
           let err;
           try {
             err = await res.json();
           } catch {
             err = { message: res.statusText || `HTTP ${res.status}` };
           }
-          // 3) aruncă pentru a ajunge în .catch()
           throw { status: res.status, ...err };
         })
         .then(json => {
-          // aici ai răspunsul JSON de succes
           alert("Rezervare creată: " + JSON.stringify(json));
         })
         .catch(err => {
-          // aici ajung atât erorile de rețea, cât și cele din throw-ul de mai sus
           console.error("Eroare la fetch:", err);
           if (err.status) {
-            // eroare HTTP de la server
             alert(`Server error ${err.status}: ${err.message || ""}`);
           } else {
-            // altă eroare (de exemplu timeout, de rețea etc)
             alert(`Network/JS error: ${err.message}`);
           }
         });
       
 
       setTimeout(() => {
-        // Show success message
+        //ar trebui facut un pop up frumos elegant cat de cat
         alert(
           "Programare trimisă cu succes! Veți primi un email de confirmare."
         );
@@ -254,7 +244,10 @@ document.addEventListener("DOMContentLoaded", function () {
           .addEventListener("click", function (e) {
             e.preventDefault();
             localStorage.removeItem("userData");
-            sessionStorage.removeItem("userData");
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+
+
             window.location.reload();
             authLinks.innerHTML = `
                         <a href="login.html" class="btn btn-primary">Conectare</a>

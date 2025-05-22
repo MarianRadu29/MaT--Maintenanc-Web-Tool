@@ -12,17 +12,21 @@ import java.net.InetSocketAddress;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-//        DatabaseInitializer.initialize();
+        DatabaseInitializer.initialize();
         HttpServer server = HttpServer.create(new InetSocketAddress(8001), 0);
 
         server.createContext("/api/register", new AuthController.Register());
         server.createContext("/api/login", new AuthController.Login());
         server.createContext("/api/user", new UserController.GetUserInfo());
+        server.createContext("/api/forgot-password",new UserController.ForgotPassword());
+        server.createContext("/api/validate-reset-token",new UserController.ValidateTokenResetPassword());
+        server.createContext("/api/reset-password",new UserController.ResetPassword());
         server.createContext("/api/refresh", new RefreshController.RefreshToken());
+        server.createContext("/api/appointments", new AppointmentController.GetAppointments());
+        server.createContext("/api/appointments/self", new AppointmentController.GetAppointmentsSelf());
         server.createContext("/api/appointments/day/", new AppointmentController.GetDayAppointments());
         server.createContext("/api/appointment", new AppointmentController.SetAppointment());
         server.createContext("/api/appointment/media/", new AppointmentController.GetMedia());
-        server.createContext("/api/appointments", new AppointmentController.GetAppointments());
         server.createContext("/", new StaticFileHandler("src/main/resources/public"));
 
         server.setExecutor(null);

@@ -113,9 +113,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
-            // // Simulate register request
-            // registerRequest(firstName, lastName, phone, email, password);
-
             const form = new FormData(this);
             const params = new URLSearchParams(form);
             const response = await fetch("/api/register", {
@@ -150,19 +147,16 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Helper function to validate email
     function validateEmail(email) {
         const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return re.test(email);
     }
 
-    // Helper function to validate phone number
     function validatePhone(phone) {
         const re = /^(07[0-9]{8})$/;
         return re.test(phone.replace(/\s+/g, ''));
     }
 
-    // Function to show error message
     function showError(message) {
         // Check if error element already exists
         let errorElement = document.querySelector('.auth-error');
@@ -186,7 +180,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 5000);
     }
 
-    // Function to show success message
     function showSuccess(message) {
         // Create success element
         const successElement = document.createElement('div');
@@ -230,40 +223,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Redirect after short delay
             setTimeout(() => {
-                window.location.href = 'index.html';
+                window.location.href = '/';
             }, 1000);
         }, 1500);
     }
-
-    // Simulate register request
-    // function registerRequest(firstName, lastName, phone, email, password) {
-    //     // In a real app, this would be an API call
-    //     const submitButton = document.querySelector('button[type="submit"]');
-    //     submitButton.disabled = true;
-    //     submitButton.textContent = 'Se procesează...';
-    //
-    //     setTimeout(() => {
-    //         // Mock successful registration
-    //         const userData = {
-    //             email: email,
-    //             firstName: firstName,
-    //             lastName: lastName,
-    //             phone: phone,
-    //             isLoggedIn: true
-    //         };
-    //
-    //         // Store user data (in session by default for new registrations)
-    //         sessionStorage.setItem('userData', JSON.stringify(userData));
-    //
-    //         // Show success message
-    //         showSuccess('Înregistrare reușită! Veți fi redirecționat...');
-    //
-    //         // Redirect after short delay
-    //         setTimeout(() => {
-    //             window.location.href = 'index.html';
-    //         }, 1000);
-    //     }, 1500);
-    // }
 
     // Check if user is already logged in
     function checkLoggedInUser() {
@@ -272,7 +235,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (userData.isLoggedIn) {
             // If on login or register page, redirect to home
             if (window.location.pathname.includes('login.html') || window.location.pathname.includes('register.html')) {
-                window.location.href = 'index.html';
+                window.location.href = '/';
             }
         }
     }

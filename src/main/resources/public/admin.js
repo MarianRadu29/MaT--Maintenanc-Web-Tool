@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const user = JSON.parse(localStorage.getItem("userData") || null);
 
     if (!user || user.roleID !== 2) {
-        window.location.replace("/notFound");
+        window.location.replace("/notFound");//o sa mi dea 100% 404 de la server
     }
     // Tab functionality
     const tabs = document.querySelectorAll('.tab');

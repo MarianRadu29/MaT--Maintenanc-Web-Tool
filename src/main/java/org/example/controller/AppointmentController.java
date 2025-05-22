@@ -12,7 +12,10 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
 
 import org.example.model.AppointmentModel;
+import org.example.utils.EmailSender;
+import org.example.utils.EmailTemplate;
 import org.example.utils.HttpExchangeRequestContext;
+import org.example.utils.JwtUtil;
 import org.example.view.JsonView;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -164,6 +167,32 @@ public class AppointmentController {
                         ps2.executeBatch();
                     }
                 }
+                String firstName = null;
+                String lastName = null;
+                String userSQL = "SELECT  first_name,last_name FROM users WHERE id = ?";
+                try (Connection conn = DriverManager.getConnection(DB_URL);
+                     PreparedStatement stmt = conn.prepareStatement(userSQL)) {
+                    stmt.setInt(1, clientId);
+
+                    try (ResultSet rs = stmt.executeQuery()) {
+                        while (rs.next()) {
+                           firstName = rs.getString("first_name");
+                            lastName = rs.getString("last_name");
+                        }
+                    }
+                }
+
+                String bodyEmail = EmailTemplate.createConfirmationEmailHtml(
+                        firstName + " " + lastName,
+                        date,
+                        time + ":00",
+                        vehicleType,
+                        problemDescription,
+                        uploadedFiles.stream().map(FileUploadData::fileName).toList()
+                );
+                EmailSender.sendEmail("radumariansebastian29@gmail.com","Programare primita #" + appointmentId, bodyEmail);
+
+
 
                 String resp = new JSONObject().put("appointmentId", appointmentId).toString();
                 System.out.println(resp);
@@ -271,6 +300,116 @@ public class AppointmentController {
         }
     }
 
+
+    public static class GetAppointmentsSelf implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            if (!"GET".equalsIgnoreCase(exchange.getRequestMethod())) {
+                exchange.sendResponseHeaders(405, -1);
+                return;
+            }
+
+            String authHeader = exchange.getRequestHeaders().getFirst("Authorization");
+
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                JsonView.send(exchange, 401, "{\"message\":\"Missing or invalid token\"}");
+                return;
+            }
+
+            String token = authHeader.substring(7); // Remove "Bearer "
+            Map<String, Object> claims = JwtUtil.validateAndExtractClaims(token);
+
+            if (claims == null) {
+                JsonView.send(exchange, 401, "{\"message\":\"Invalid or expired token\"}");
+                return;
+            }
+
+
+            JSONArray resultArray = new JSONArray();
+
+            String sqlAppointments = """
+                SELECT
+                  a.id                               AS id,
+                  u.last_name || ' ' || u.first_name AS clientName,
+                  a.vehicle_type                     AS vehicleType,
+                  a.vehicle_brand                    AS vehicleBrand,
+                  a.vehicle_model                    AS vehicleModel,
+                  a.description                      AS problem,
+                  a.date                             AS date,
+                  a.hour                             AS time,
+                  a.status                           AS status
+                FROM appointments AS a
+                JOIN users        AS u ON u.id = a.client_id
+                WHERE a.client_id = ?
+                ORDER BY a.date, a.hour;
+            """;
+
+            String sqlMedia = "SELECT * FROM media WHERE appointment_id = ?";
+
+            try (Connection conn = DriverManager.getConnection(DB_URL);
+                 PreparedStatement psAppt = conn.prepareStatement(sqlAppointments);
+                 PreparedStatement psMedia = conn.prepareStatement(sqlMedia);
+                 ) {
+
+                psAppt.setInt(1, (int)claims.get("id"));
+                ResultSet rsAppt = psAppt.executeQuery();
+                while (rsAppt.next()) {
+                    int        id           = rsAppt.getInt("id");
+                    String     clientName   = rsAppt.getString("clientName");
+                    String     vehicleType  = rsAppt.getString("vehicleType");
+                    String     brand        = rsAppt.getString("vehicleBrand");
+                    String     model        = rsAppt.getString("vehicleModel");
+                    String     problem      = rsAppt.getString("problem");
+                    String     date         = rsAppt.getString("date");
+                    String     time         = rsAppt.getString("time");
+                    String     status       = rsAppt.getString("status");
+
+                    // 1) Obținem lista de fișiere atașate
+                    psMedia.setInt(1, id);
+                    List<String> attachments = new ArrayList<>();
+                    try (ResultSet rsMed = psMedia.executeQuery()) {
+                        while (rsMed.next()) {
+                            attachments.add(rsMed.getString("file_name"));
+                        }
+                    }
+
+                    // 2) Construim obiectul JSON pentru această programare
+                    JSONObject obj = new JSONObject()
+                            .put("id",            id)
+                            .put("clientName",    clientName)
+                            .put("vehicleType",   vehicleType)
+                            .put("vehicleBrand",  brand)
+                            .put("vehicleModel",  model)
+                            .put("problem",       problem)
+                            .put("date",          date)
+                            .put("time",          time)
+                            .put("status",        status)
+                            .put("hasAttachments", !attachments.isEmpty());
+//                            .put("attachments",   new JSONArray(attachments));
+
+                    resultArray.put(obj);
+                }
+
+                String response = resultArray.toString();
+
+
+                System.out.println("siii\n" + response);
+
+
+                exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
+                byte[] bytes = response.getBytes(StandardCharsets.UTF_8);
+                exchange.sendResponseHeaders(200, bytes.length);
+                exchange.getResponseBody().write(bytes);
+                exchange.getResponseBody().close();
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+                System.out.println("eroare "  + e.getMessage());
+                JSONObject err = new JSONObject().put("error", "Database error");
+                JsonView.send(exchange, 500, err.toString());
+            }
+        }
+    }
     public static class GetMedia implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {

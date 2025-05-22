@@ -47,6 +47,7 @@ public class StaticFileHandler implements HttpHandler {
                 return;
             }
         }*/
+
         File file = new File(root + path).getCanonicalFile();
         if (!file.exists() || !file.getPath().startsWith(new File(root).getCanonicalPath())) {
             exchange.sendResponseHeaders(404, -1);
