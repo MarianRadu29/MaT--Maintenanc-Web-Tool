@@ -4,21 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a1a27d4e-17cb-4261-b221-8c0b2f038ddc" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MaT--Maintenanc-Web-Tool" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MaT--Maintenanc-Web-Tool/service_booking.db" beforeDir="false" afterPath="$PROJECT_DIR$/MaT--Maintenanc-Web-Tool/service_booking.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MaT--Maintenanc-Web-Tool/src/main/resources/public/admin.css" beforeDir="false" afterPath="$PROJECT_DIR$/MaT--Maintenanc-Web-Tool/src/main/resources/public/admin.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MaT--Maintenanc-Web-Tool/src/main/resources/public/admin.html" beforeDir="false" afterPath="$PROJECT_DIR$/MaT--Maintenanc-Web-Tool/src/main/resources/public/admin.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MaT--Maintenanc-Web-Tool/src/main/resources/public/admin.js" beforeDir="false" afterPath="$PROJECT_DIR$/MaT--Maintenanc-Web-Tool/src/main/resources/public/admin.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MaT--Maintenanc-Web-Tool/src/main/resources/public/profile.html" beforeDir="false" afterPath="$PROJECT_DIR$/MaT--Maintenanc-Web-Tool/src/main/resources/public/profile.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MaT--Maintenanc-Web-Tool/src/main/resources/public/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/MaT--Maintenanc-Web-Tool/src/main/resources/public/styles.css" afterDir="false" />
-    </list>
+    <list default="true" id="a1a27d4e-17cb-4261-b221-8c0b2f038ddc" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings">
+    <execution />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -30,9 +23,21 @@
     </option>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/MaT--Maintenanc-Web-Tool" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="ROOT_SYNC" value="SYNC" />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;MarianRadu29&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/MarianRadu29/MaT--Maintenanc-Web-Tool&quot;,
+    &quot;accountId&quot;: &quot;dc023cf8-35a8-46bc-9f48-02f0ae0079d1&quot;
+  }
+}</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 2
 }</component>
@@ -41,25 +46,25 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
-    &quot;Node.js.scripts.js.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Proiect FEEA&quot;,
-    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settings.ide.settings.web.browsers&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Node.js.scripts.js.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "C:/Proiect FEEA",
+    "list.type.of.created.stylesheet": "CSS",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "reference.settings.ide.settings.web.browsers",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\FACULTATE\ANUL 2\SEMESTRUL2\WEB\Web-Project\assets" />
@@ -74,7 +79,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-WS-243.26053.12" />
+        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.25410.129" />
+        <option value="bundled-js-predefined-d6986cc7102b-6a121458b545-JavaScript-IU-251.25410.129" />
       </set>
     </attachedChunks>
   </component>
@@ -117,6 +123,7 @@
       <workItem from="1747305285697" duration="723000" />
       <workItem from="1747307470948" duration="38000" />
       <workItem from="1747808751312" duration="6177000" />
+      <workItem from="1747921063691" duration="235000" />
     </task>
     <servers />
   </component>
