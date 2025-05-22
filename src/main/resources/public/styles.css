@@ -293,11 +293,12 @@ ul {
 
 input, textarea, select {
     width: 100%;
-    padding: 0.75rem;
+   padding: 0.75rem;
     border: 1px solid var(--border-color);
     border-radius: var(--radius);
     font-family: inherit;
     font-size: 1rem;
+    cursor: pointer;
 }
 
 textarea {
@@ -886,7 +887,7 @@ textarea {
 }
 
 .container .profile-card {
-    max-width: 600px;
+    max-width: 800px;
     margin: 2rem auto;
     width: 100%;
 }
@@ -1048,3 +1049,187 @@ textarea {
         font-size: 0.95rem;
     }
 }
+
+.profile-tabs {
+    display: flex;
+    border-bottom: 2px solid var(--border-color, #e5e7eb);
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+}
+.profile-tabs .tab-button {
+    background: none;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    color: var(--medium-text, #4b5563);
+    transition: border-color 0.3s ease, color 0.3s ease;
+}
+.profile-tabs .tab-button.active {
+    border-color: var(--primary-color, #3b82f6);
+    color: var(--primary-color, #3b82f6);
+}
+.profile-tabs .tab-button:hover:not(.active) {
+    color: var(--primary-hover, #2563eb);
+}
+@media (max-width: 576px) {
+    .profile-tabs {
+        flex-direction: column;
+    }
+    .profile-tabs .tab-button {
+        padding: 0.5rem 1rem;
+    }
+}
+
+/* Styling pentru tabelul de programări */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    background-color: white;
+}
+
+.data-table th,
+.data-table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: top;
+}
+
+.data-table th {
+    background-color: var(--light-bg);
+    font-weight: 600;
+    color: var(--dark-text);
+}
+
+.data-table tr:nth-child(even) {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.data-table tr:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+}
+
+/* Badge styles pentru status-uri */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 9999px;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border: 1px solid;
+}
+
+.badge-pending {
+    background-color: rgba(245, 158, 11, 0.1);
+    color: #d97706;
+    border-color: rgba(245, 158, 11, 0.3);
+}
+
+.badge-approved {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: #059669;
+    border-color: rgba(16, 185, 129, 0.3);
+}
+
+.badge-rejected {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+.badge-completed {
+    background-color: rgba(59, 130, 246, 0.1);
+    color: #2563eb;
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+.badge-motorcycle {
+    background-color: rgba(59, 130, 246, 0.1);
+    color: #2563eb;
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+.badge-bicycle {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: #059669;
+    border-color: rgba(16, 185, 129, 0.3);
+}
+
+.badge-scooter {
+    background-color: rgba(139, 92, 246, 0.1);
+    color: #7c3aed;
+    border-color: rgba(139, 92, 246, 0.3);
+}
+
+/* Table responsive wrapper */
+.table-responsive {
+    overflow-x: auto;
+    border-radius: var(--radius);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Butoane de acțiune din tabel */
+.btn-sm {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+    border-radius: 0.25rem;
+}
+
+.table-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+/* Hover effects pentru rândurile tabelului */
+.data-table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+
+
+/* Responsive behavior pentru tabel */
+@media (max-width: 768px) {
+    .data-table {
+        font-size: 0.875rem;
+    }
+
+    .data-table th,
+    .data-table td {
+        padding: 0.5rem;
+    }
+}
+
+@media (max-width: 1024px) {
+    .table-responsive {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .data-table {
+        min-width: 600px;
+    }
+
+    .data-table th,
+    .data-table td {
+        white-space: nowrap;
+    }
+}
+
+.view-details{
+    background: none;
+    color: var(--primary-color) !important;
+}
+
+.view-details:hover{
+    background-color: rgba(59, 130, 246, 0.1);
+}
+

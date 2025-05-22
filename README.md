@@ -26,6 +26,13 @@
 - la programare la `vezi detalii` ar trebui sa punem si un fel de select multiplu care sa pot alege ce din inventarul service ului se foloseste la aceea programare
 
 
+## Chestii de modificat pe front
+- de rezolvat bugul la tabele pe ecrane mici 
+- de facut `pop up` uri in loc de alerte
+- de rezolvat cum arata filtrele la pagina de profil 
+- de adaugat `interactiune` sa iti poti schimba datele direct din profil
+- de reparat `navbar` pentru pagina de programari (doar pe asta nu merge din ceva motiv)
+
 
 
 

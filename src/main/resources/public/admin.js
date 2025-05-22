@@ -23,50 +23,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Mock data
-    // const appointments = [
-    //     {
-    //         id: 'ap1',
-    //         clientName: 'Alexandru Popescu',
-    //         vehicleType: 'motorcycle',
-    //         vehicleBrand: 'Honda',
-    //         vehicleModel: 'CBR 600',
-    //         problem: 'Schimb ulei și filtru, verificare generală',
-    //         date: '2023-05-15',
-    //         time: '10:00',
-    //         status: 'pending',
-    //         hasAttachments: true
-    //     },
-    //     {
-    //         id: 'ap2',
-    //         clientName: 'Maria Ionescu',
-    //         vehicleType: 'bicycle',
-    //         vehicleBrand: 'Scott',
-    //         vehicleModel: 'Aspect 960',
-    //         problem: 'Reglare frâne și schimbătoare',
-    //         date: '2023-05-16',
-    //         time: '14:00',
-    //         status: 'approved',
-    //         hasAttachments: false,
-    //         responseMessage: 'Așteptăm să veniți la ora programată. Putem rezolva problema în aproximativ o oră.',
-    //         estimatedPrice: '150 RON',
-    //         warranty: '30 zile'
-    //     },
-    //     {
-    //         id: 'ap3',
-    //         clientName: 'Andrei Georgescu',
-    //         vehicleType: 'scooter',
-    //         vehicleBrand: 'Xiaomi',
-    //         vehicleModel: 'Mi Pro 2',
-    //         problem: 'Baterie nu ține încărcarea',
-    //         date: '2023-05-17',
-    //         time: '11:00',
-    //         status: 'rejected',
-    //         hasAttachments: true,
-    //         responseMessage: 'Ne pare rău, dar nu avem în stoc bateria necesară. Vă rugăm să reveniți peste 2 săptămâni.'
-    //     }
-    // ];
-
     const inventoryItems = [
         {
             id: 'i1',
@@ -106,20 +62,23 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     ];
 
+    // Variable to store appointments data
+    let appointments = [];
+
     // Load appointments
-
     fetch("/api/appointments")
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    }).then(data => {
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        }).then(data => {
+        appointments = data; // Store the data
         loadAppointments(data);
-    });
-    
-
-    //INVERTORY FORM VALIDATION
+    })
+        .catch(error => {
+            console.error('Error loading appointments:', error);
+        });
 
 
     // Load inventory items
@@ -200,11 +159,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-
-
-
-
-
     // Filter and search inventory
     const searchInventory = document.getElementById('searchInventory');
     const categoryFilter = document.getElementById('categoryFilter');
@@ -230,6 +184,34 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
             loadInventoryItems(filteredItems);
+        }
+    }
+
+    // Add filters for appointments
+    const searchAppointments = document.getElementById('searchAppointments');
+    const statusFilterAppointments = document.getElementById('statusFilterAppointments');
+    const vehicleFilterAppointments = document.getElementById('vehicleFilterAppointments');
+
+    if (searchAppointments && statusFilterAppointments && vehicleFilterAppointments) {
+        searchAppointments.addEventListener('input', filterAppointments);
+        statusFilterAppointments.addEventListener('change', filterAppointments);
+        vehicleFilterAppointments.addEventListener('change', filterAppointments);
+
+        function filterAppointments() {
+            const searchValue = searchAppointments.value.toLowerCase();
+            const statusValue = statusFilterAppointments.value;
+            const vehicleValue = vehicleFilterAppointments.value;
+
+            const filteredAppointments = appointments.filter(appointment => {
+                const matchesSearch = appointment.clientName.toLowerCase().includes(searchValue) ||
+                    appointment.problem.toLowerCase().includes(searchValue);
+                const matchesStatus = !statusValue || appointment.status === statusValue;
+                const matchesVehicle = !vehicleValue || appointment.vehicleType === vehicleValue;
+
+                return matchesSearch && matchesStatus && matchesVehicle;
+            });
+
+            loadAppointments(filteredAppointments);
         }
     }
 
@@ -378,173 +360,172 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Helper Functions
-    function loadAppointments(appointments) {
-        const appointmentsList = document.getElementById('appointmentsList');
-        if (!appointmentsList) return;
+    function loadAppointments(appointmentsData) {
+        const tableBody = document.getElementById('appointmentsTableBody');
+        if (!tableBody) return;
 
-        appointmentsList.innerHTML = '';
+        tableBody.innerHTML = '';
 
-        appointments.forEach(appointment => {
-            const card = document.createElement('div');
-            card.className = 'appointment-card';
+        appointmentsData.forEach(appointment => {
+            const row = document.createElement('tr');
 
-            let statusBadge = '';
+            // Format date
+            const formattedDate = appointment.date ?
+                appointment.date.split("-").reverse().join("-") : 'N/A';
+
+            // Status text and class
+            let statusText = '';
+            let statusClass = '';
             switch (appointment.status) {
                 case 'pending':
-                    statusBadge = '<span class="badge badge-outline badge-pending">În așteptare</span>';
+                    statusText = 'În așteptare';
+                    statusClass = 'status-pending';
                     break;
                 case 'approved':
-                    statusBadge = '<span class="badge badge-outline badge-approved">Aprobată</span>';
+                    statusText = 'Aprobată';
+                    statusClass = 'status-approved';
                     break;
                 case 'rejected':
-                    statusBadge = '<span class="badge badge-outline badge-rejected">Respinsă</span>';
+                    statusText = 'Respinsă';
+                    statusClass = 'status-rejected';
                     break;
+                default:
+                    statusText = appointment.status || 'Necunoscut';
+                    statusClass = 'status-unknown';
             }
 
-            let vehicleBadge = '';
+            // Vehicle type text
+            let vehicleTypeText = '';
             switch (appointment.vehicleType) {
                 case 'motorcycle':
-                    vehicleBadge = '<span class="badge badge-outline badge-motorcycle">Motocicletă</span>';
+                    vehicleTypeText = 'Motocicletă';
                     break;
                 case 'bicycle':
-                    vehicleBadge = '<span class="badge badge-outline badge-bicycle">Bicicletă</span>';
+                    vehicleTypeText = 'Bicicletă';
                     break;
                 case 'scooter':
-                    vehicleBadge = '<span class="badge badge-outline badge-scooter">Trotinetă</span>';
+                    vehicleTypeText = 'Trotinetă';
                     break;
+                default:
+                    vehicleTypeText = appointment.vehicleType || 'Necunoscut';
             }
 
-            const attachmentsBadge = appointment.hasAttachments ?
-                '<span class="badge badge-outline badge-attachments">Conține atașamente</span>' : '';
+            // Truncate problem text
+            const problemText = appointment.problem && appointment.problem.length > 50
+                ? appointment.problem.slice(0, 50) + '...'
+                : appointment.problem || 'N/A';
 
-            card.innerHTML = `
-        <div class="appointment-header">
-          <div>
-            <div class="appointment-title">${appointment.clientName}</div>
-            <div class="appointment-date">${appointment.date.split("-").reverse().join("-")}  -  ${appointment.time}:00</div>
-          </div>
-          ${statusBadge}
-        </div>
-        
-        <div class="appointment-vehicle">
-          ${vehicleBadge}
-          <span>${appointment.vehicleBrand} ${appointment.vehicleModel}</span>
-        </div>
-        
-        <div class="appointment-problem">${appointment.problem.length > 20
-            ? appointment.problem.slice(0, 20) + '...'
-            : appointment.problem}</div>
-        
-        ${attachmentsBadge ? `<div class="appointment-attachments">${attachmentsBadge}</div>` : ''}
-        
-        <div class="appointment-footer">
-          <button class="btn btn-secondary view-appointment" data-id="${appointment.id}">Vezi detalii</button>
-        </div>
-      `;
+            row.innerHTML = `
+                <td>${appointment.clientName || 'N/A'}</td>
+                <td>${formattedDate} - ${appointment.time || 'N/A'}:00</td>
+                <td>${appointment.vehicleBrand || ''} ${appointment.vehicleModel || ''} (${vehicleTypeText})</td>
+                <td>${problemText}</td>
+                <td><span class="status ${statusClass}">${statusText}</span></td>
+                <td>${appointment.hasAttachments ? '📎 Da' : 'Nu'}</td>
+                <td class="table-actions">
+                    <button class="action-btn action-btn-view" data-id="${appointment.id}">Vezi</button>
+                </td>
+            `;
 
-            appointmentsList.appendChild(card);
+            tableBody.appendChild(row);
 
             // Add event listener for the view button
-            card.querySelector('.view-appointment').addEventListener('click', function () {
+            row.querySelector('.action-btn-view').addEventListener('click', function () {
                 const appId = this.getAttribute('data-id');
-                
-                const app = appointments.find(a => a.id == appId);
+                const app = appointmentsData.find(a => a.id == appId);
 
                 if (app) {
-                    console.log(JSON.stringify(app,null,4));
+                    console.log(JSON.stringify(app, null, 4));
                     currentAppointment = app;
 
                     const detailsContainer = document.getElementById('appointmentDetails');
                     detailsContainer.innerHTML = `
-            <div class="appointment-detail-section">
-              <div class="detail-row">
-                <span class="detail-label">Client:</span>
-                <span>${app.clientName}</span>
-              </div>
-              <div class="detail-row">
-                <span class="detail-label">Programare:</span>
-                <span>${app.date.split("-").reverse().join("-")}  -  ${app.time}:00</span>
-              </div>
-            </div>
-            
-            <div class="appointment-detail-section">
-              <div class="detail-row">
-                <span class="detail-label">Vehicul:</span>
-                <span>${app.vehicleBrand} ${app.vehicleModel} 
-                  (${app.vehicleType === 'motorcycle' ? 'Motocicletă' :
-                        app.vehicleType === 'bicycle' ? 'Bicicletă' : 'Trotinetă'})
-                </span>
-              </div>
-              
-              <div class="detail-row">
-                <span class="detail-label">Problemă:</span>
-                <span>${app.problem}</span>
-              </div>
-              
-              ${app.hasAttachments ? `
-      <div class="attachments-box">
-        <p class="font-medium">Atașamente</p>
-        <p class="text-xs">Clientul a încărcat imagini și/sau videoclipuri.</p>
-        <div id="attachmentsContainer" class="attachments-content" style="margin-top:1rem;"></div>
-      </div>
-    ` : ''}
-            </div>
-          `;
-          if (app.hasAttachments) {
-            const container = detailsContainer.querySelector('#attachmentsContainer');
-            fetch(`/api/appointment/media/${app.id}`)
-              .then(res => {
-                if (!res.ok) throw new Error(res.statusText);
-                return res.json(); // expect [{ fileName, type, content }, …]
-              })
-              .then(files => {
-                // render each file inline
-                console.log(JSON.stringify(files, null, 4));
-                files.forEach(file => {
-                    const { fileName, contentType, content } = file;
-                    let previewEl;
-                  
-                    if (contentType.startsWith('image/')) {
-                      // Inline image preview
-                      previewEl = document.createElement('img');
-                      previewEl.src = `data:${contentType};base64,${content}`;
-                      previewEl.style.maxWidth = '200px';
-                      previewEl.style.margin = '.5rem';
+                        <div class="appointment-detail-section">
+                            <div class="detail-row">
+                                <span class="detail-label">Client:</span>
+                                <span>${app.clientName}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Programare:</span>
+                                <span>${app.date ? app.date.split("-").reverse().join("-") : 'N/A'} - ${app.time || 'N/A'}:00</span>
+                            </div>
+                        </div>
+                        
+                        <div class="appointment-detail-section">
+                            <div class="detail-row">
+                                <span class="detail-label">Vehicul:</span>
+                                <span>${app.vehicleBrand || ''} ${app.vehicleModel || ''} 
+                                    (${app.vehicleType === 'motorcycle' ? 'Motocicletă' :
+                        app.vehicleType === 'bicycle' ? 'Bicicletă' :
+                            app.vehicleType === 'scooter' ? 'Trotinetă' : 'Necunoscut'})
+                                </span>
+                            </div>
+                            
+                            <div class="detail-row">
+                                <span class="detail-label">Problemă:</span>
+                                <span>${app.problem || 'N/A'}</span>
+                            </div>
+                            
+                            ${app.hasAttachments ? `
+                                <div class="attachments-box">
+                                    <p class="font-medium">Atașamente</p>
+                                    <p class="text-xs">Clientul a încărcat imagini și/sau videoclipuri.</p>
+                                    <div id="attachmentsContainer" class="attachments-content" style="margin-top:1rem;"></div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+
+                    if (app.hasAttachments) {
+                        const container = detailsContainer.querySelector('#attachmentsContainer');
+                        fetch(`/api/appointment/media/${app.id}`)
+                            .then(res => {
+                                if (!res.ok) throw new Error(res.statusText);
+                                return res.json();
+                            })
+                            .then(files => {
+                                console.log(JSON.stringify(files, null, 4));
+                                files.forEach(file => {
+                                    const { fileName, contentType, content } = file;
+                                    let previewEl;
+
+                                    if (contentType.startsWith('image/')) {
+                                        previewEl = document.createElement('img');
+                                        previewEl.src = `data:${contentType};base64,${content}`;
+                                        previewEl.style.maxWidth = '200px';
+                                        previewEl.style.margin = '.5rem';
+                                    }
+                                    else if (contentType.startsWith('video/')) {
+                                        previewEl = document.createElement('video');
+                                        previewEl.src = `data:${contentType};base64,${content}`;
+                                        previewEl.controls = true;
+                                        previewEl.style.maxWidth = '300px';
+                                        previewEl.style.display = 'block';
+                                        previewEl.style.margin = '.5rem 0';
+                                    }
+                                    else {
+                                        previewEl = document.createElement('div');
+                                        previewEl.textContent = `${fileName} (${contentType})`;
+                                        previewEl.style.margin = '.5rem 0';
+                                    }
+
+                                    const dlLink = document.createElement('a');
+                                    dlLink.href = `data:${contentType};base64,${content}`;
+                                    dlLink.download = fileName;
+                                    dlLink.textContent = `⬇️ Descarcă ${fileName}`;
+                                    dlLink.style.display = 'block';
+                                    dlLink.style.margin = '0.25rem 0 1rem';
+
+                                    container.appendChild(previewEl);
+                                    container.appendChild(dlLink);
+                                });
+                            })
+                            .catch(err => {
+                                console.error('Failed to load attachments', err);
+                                alert('Eroare la încărcarea atașamentelor.');
+                            });
                     }
-                    else if (contentType.startsWith('video/')) {
-                      // Inline video preview
-                      previewEl = document.createElement('video');
-                      previewEl.src = `data:${contentType};base64,${content}`;
-                      previewEl.controls = true;
-                      previewEl.style.maxWidth = '300px';
-                      previewEl.style.display = 'block';
-                      previewEl.style.margin = '.5rem 0';
-                    }
-                    else {
-                      // For everything else, no inline preview
-                      previewEl = document.createElement('div');
-                      previewEl.textContent = `${fileName} (${contentType})`;
-                      previewEl.style.margin = '.5rem 0';
-                    }
-                  
-                    // Always create a download link
-                    const dlLink = document.createElement('a');
-                    dlLink.href = `data:${contentType};base64,${content}`;
-                    dlLink.download = fileName;
-                    dlLink.textContent = `⬇️ Descarcă ${fileName}`;
-                    dlLink.style.display = 'block';
-                    dlLink.style.margin = '0.25rem 0 1rem';
-                  
-                    // Append both preview and link
-                    container.appendChild(previewEl);
-                    container.appendChild(dlLink);
-                  });
-              })
-              .catch(err => {
-                console.error('Failed to load attachments', err);
-                alert('Eroare la încărcarea atașamentelor.');
-              });
-          }
+
                     // Set existing values if appointment has been processed
                     document.getElementById('responseMessage').value = app.responseMessage || '';
                     document.getElementById('estimatedPrice').value = app.estimatedPrice || '';
@@ -602,17 +583,17 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             row.innerHTML = `
-        <td>${item.name}</td>
-        <td>${item.category}</td>
-        <td>${item.quantity}</td>
-        <td>${item.price.toFixed(2)} RON</td>
-        <td>${item.supplier}</td>
-        <td><span class="status ${statusClass}">${statusText}</span></td>
-        <td class="table-actions">
-          <button class="action-btn action-btn-edit" data-id="${item.id}">Editează</button>
-          <button class="action-btn action-btn-delete" data-id="${item.id}">Șterge</button>
-        </td>
-      `;
+                <td>${item.name}</td>
+                <td>${item.category}</td>
+                <td>${item.quantity}</td>
+                <td>${item.price.toFixed(2)} RON</td>
+                <td>${item.supplier}</td>
+                <td><span class="status ${statusClass}">${statusText}</span></td>
+                <td class="table-actions">
+                    <button class="action-btn action-btn-edit" data-id="${item.id}">Editează</button>
+                    <button class="action-btn action-btn-delete" data-id="${item.id}">Șterge</button>
+                </td>
+            `;
 
             tableBody.appendChild(row);
 

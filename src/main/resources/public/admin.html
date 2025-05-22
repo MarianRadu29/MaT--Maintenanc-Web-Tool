@@ -58,9 +58,43 @@
 
         <div class="tab-content">
             <div class="tab-pane active" id="appointments">
-                <div class="appointments-list" id="appointmentsList">
-                    <!-- Appointments will be loaded here by JavaScript -->
+                <div class="appointments-tools">
+                    <h3>Gestionare Programări</h3>
+                    <div class="toolbar">
+                        <div class="search-box">
+                            <input id="searchAppointments" placeholder="Caută în programări..." type="text">
+                        </div>
+                        <select id="statusFilterAppointments">
+                            <option value="">Toate statusurile</option>
+                            <option value="pending">În așteptare</option>
+                            <option value="approved">Aprobate</option>
+                            <option value="rejected">Respinse</option>
+                        </select>
+                        <select id="vehicleFilterAppointments">
+                            <option value="">Toate vehiculele</option>
+                            <option value="motorcycle">Motociclete</option>
+                            <option value="bicycle">Biciclete</option>
+                            <option value="scooter">Trotinete</option>
+                        </select>
+                    </div>
                 </div>
+
+                <table class="appointments-table">
+                    <thead>
+                    <tr>
+                        <th>Client</th>
+                        <th>Data/Ora</th>
+                        <th>Vehicul</th>
+                        <th>Problemă</th>
+                        <th>Status</th>
+                        <th>Atașamente</th>
+                        <th>Acțiuni</th>
+                    </tr>
+                    </thead>
+                    <tbody id="appointmentsTableBody">
+                    <!-- Appointments will be loaded here by JavaScript -->
+                    </tbody>
+                </table>
             </div>
 
             <div class="tab-pane" id="inventory">
@@ -162,6 +196,7 @@
             <button class="btn btn-secondary" id="cancelAppointment">Anulează</button>
             <button class="btn btn-danger" id="rejectAppointment">Respinge</button>
             <button class="btn btn-success" id="approveAppointment">Aprobă</button>
+            <button class="btn btn-primary" id="modifyAppointment">Modifică</button>
         </div>
     </div>
 </div>
@@ -220,6 +255,7 @@
         </form>
     </div>
 </div>
+
 <footer class="footer">
     <div class="container">
         <div class="footer-content">

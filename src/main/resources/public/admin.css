@@ -62,36 +62,126 @@
     display: block;
 }
 
-/* Appointments */
-.appointments-list {
-    display: grid;
-    gap: 1rem;
+/* Appointments Tools */
+.appointments-tools {
+    margin-bottom: 1.5rem;
 }
 
-.appointment-card {
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius);
-    padding: 1rem;
-    position: relative;
-}
-
-.appointment-header {
+.toolbar {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    align-items: center;
 }
 
-.appointment-title {
-    font-size: 1.1rem;
+.search-box {
+    flex-grow: 1;
+}
+
+/* Filter select inputs styling */
+.toolbar select {
+    cursor: pointer;
+    padding-right: 2rem; /* Space for arrow */
+    background-position: calc(100% - 0.75rem) center; /* Move arrow left from edge */
+    background-repeat: no-repeat;
+    background-size: 16px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+/* For WebKit browsers (Chrome, Safari) */
+.toolbar select::-webkit-outer-spin-button,
+.toolbar select::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* For Firefox */
+.toolbar select::-moz-focus-inner {
+    border: 0;
+}
+
+/* Custom dropdown arrow */
+.toolbar select {
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+}
+
+/* Appointments Table */
+.appointments-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.appointments-table th,
+.appointments-table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: top;
+}
+
+.appointments-table th {
+    background-color: var(--light-bg);
+    font-weight: 600;
+    color: var(--dark-text);
+}
+
+.appointments-table tr:nth-child(even) {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.appointments-table tr:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+}
+
+.appointments-table .client-name {
     font-weight: 500;
+    color: var(--dark-text);
 }
 
-.appointment-date {
+.appointments-table .date-time {
     font-size: 0.875rem;
+    color: var(--medium-text);
+    white-space: nowrap;
+}
+
+.appointments-table .vehicle-info {
+    font-size: 0.875rem;
+}
+
+.appointments-table .vehicle-type {
+    display: inline-block;
+    margin-bottom: 0.25rem;
+}
+
+.appointments-table .vehicle-details {
     color: var(--medium-text);
 }
 
+.appointments-table .problem-text {
+    font-size: 0.875rem;
+    max-width: 200px;
+    word-wrap: break-word;
+}
+
+.appointments-table .attachments-cell {
+    text-align: center;
+}
+
+.appointments-table .has-attachments {
+    color: var(--primary-color);
+    font-size: 1.2rem;
+}
+
+.appointments-table .no-attachments {
+    color: var(--light-text);
+    font-size: 1rem;
+}
+
+/* Badge styles for appointments table */
 .badge {
     display: inline-flex;
     align-items: center;
@@ -147,43 +237,9 @@
     border-color: rgba(59, 130, 246, 0.3);
 }
 
-.appointment-vehicle {
-    display: flex;
-    align-items: center;
-    margin-bottom: 0.5rem;
-}
-
-.appointment-vehicle .badge {
-    margin-right: 0.5rem;
-}
-
-.appointment-problem {
-    font-size: 0.875rem;
-    color: var(--medium-text);
-    margin-bottom: 0.75rem;
-}
-
-.appointment-footer {
-    border-top: 1px solid var(--border-color);
-    padding-top: 0.75rem;
-    text-align: right;
-}
-
 /* Inventory */
 .inventory-tools {
     margin-bottom: 1.5rem;
-}
-
-.toolbar {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-top: 0.75rem;
-    align-items: center;
-}
-
-.search-box {
-    flex-grow: 1;
 }
 
 .inventory-table {
@@ -241,6 +297,7 @@
 .table-actions {
     display: flex;
     gap: 0.5rem;
+    flex-wrap: wrap;
 }
 
 .action-btn {
@@ -251,6 +308,15 @@
     padding: 0.25rem 0.5rem;
     border-radius: 0.25rem;
     transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.action-btn-view {
+    color: var(--primary-color);
+}
+
+.action-btn-view:hover {
+    background-color: rgba(59, 130, 246, 0.1);
 }
 
 .action-btn-edit {
@@ -313,7 +379,7 @@
     gap: 0.5rem;
 }
 
-/* Modals */  
+/* Modals */
 .modal {
     display: none;
     position: fixed;
@@ -328,7 +394,7 @@
 
 body.modal-actions {
     overflow: hidden;
-  }
+}
 
 .modal-content {
     position: absolute;
@@ -341,7 +407,7 @@ body.modal-actions {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     max-width: 600px;
     width: 100%;
-    max-height: 80vh;    /* pentru scroll intern */
+    max-height: 80vh;
     overflow-y: auto;
 }
 
@@ -364,6 +430,19 @@ body.modal-actions {
     justify-content: flex-end;
     gap: 0.5rem;
     margin-top: 1.5rem;
+}
+
+/* Modal form select styling */
+.modal select {
+    cursor: pointer;
+    padding-right: 2rem;
+    background-position: calc(100% - 0.75rem) center;
+    background-repeat: no-repeat;
+    background-size: 16px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
 }
 
 /* Appointment details in modal */
@@ -393,4 +472,55 @@ body.modal-actions {
     margin: 0;
     font-size: 0.875rem;
     color: var(--medium-text);
+}
+
+/* Responsive table */
+@media (max-width: 768px) {
+    .appointments-table {
+        font-size: 0.875rem;
+    }
+
+    .appointments-table th,
+    .appointments-table td {
+        padding: 0.5rem;
+    }
+
+    .problem-text {
+        max-width: 150px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .toolbar {
+        justify-content: space-between;
+    }
+
+    .search-box {
+        min-width: 200px;
+    }
+}
+
+/* Responsive Tables */
+@media (max-width: 1100px) {
+    .appointments-table,
+    .inventory-table {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .appointments-table table,
+    .inventory-table table {
+        width: 100%;
+        min-width: 600px; /* or more, depending on columns */
+    }
+
+    .appointments-table th,
+    .appointments-table td,
+    .inventory-table th,
+    .inventory-table td {
+        white-space: nowrap;
+    }
 }
