@@ -20,18 +20,18 @@
 
 - de gandit daca mai treb sa facem chestia aia cu `forget password`
 - ar trebui generat in singur `token jwt` ,daca apas pe `tine ma minte` sa fie de 7 zile altfel sa fie de doar o zii
-- la calendar sa nu pot selecta ziua de duminica
 - la pagina de profil ar trebui facut un mini navbar(cum este la admin page) cu sectiune de info si sectiune de vizualizarea tuturor programarilor si a detaliilor acestora
 - ar trebui un nou rol de employee care sa aiba acces la programari si inventar
 - la programare la `vezi detalii` ar trebui sa punem si un fel de select multiplu care sa pot alege ce din inventarul service ului se foloseste la aceea programare
 
 
 ## Chestii de modificat pe front
-- de rezolvat bugul la tabele pe ecrane mici 
+- de rezolvat bugul la tabele pe ecrane mici ✅
+- la calendar sa nu pot selecta ziua de duminica ✅
 - de facut `pop up` uri in loc de alerte
-- de rezolvat cum arata filtrele la pagina de profil 
+- de rezolvat cum arata filtrele la pagina de profil ✅
 - de adaugat `interactiune` sa iti poti schimba datele direct din profil
-- de reparat `navbar` pentru pagina de programari (doar pe asta nu merge din ceva motiv)
+- de reparat `navbar` pentru pagina de programari (doar pe asta nu merge din ceva motiv)✅
 
 
 

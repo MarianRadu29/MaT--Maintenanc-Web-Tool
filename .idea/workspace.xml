@@ -5,15 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a1a27d4e-17cb-4261-b221-8c0b2f038ddc" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/resources/public/profile.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/public/admin.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/public/admin.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/admin.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/public/admin.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/admin.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/public/admin.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/profile.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/public/profile.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/programari.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/public/programari.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/public/calendar.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/public/calendar.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/public/programari.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/public/programari.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/public/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/public/styles.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -153,7 +149,9 @@
       <workItem from="1747921063691" duration="235000" />
       <workItem from="1747932056311" duration="886000" />
       <workItem from="1747933288297" duration="20000" />
-      <workItem from="1747940224340" duration="5824000" />
+      <workItem from="1747940224340" duration="6720000" />
+      <workItem from="1748098036421" duration="4000" />
+      <workItem from="1748098064020" duration="4645000" />
     </task>
     <servers />
   </component>
