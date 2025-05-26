@@ -256,6 +256,7 @@ public class AppointmentController {
                     // 1) Obținem lista de fișiere atașate
                     psMedia.setInt(1, id);
                     List<String> attachments = new ArrayList<>();
+
                     try (ResultSet rsMed = psMedia.executeQuery()) {
                         while (rsMed.next()) {
                             attachments.add(rsMed.getString("file_name"));
@@ -274,7 +275,6 @@ public class AppointmentController {
                             .put("time",          time)
                             .put("status",        status)
                             .put("hasAttachments", !attachments.isEmpty());
-//                            .put("attachments",   new JSONArray(attachments));
 
                     resultArray.put(obj);
                 }

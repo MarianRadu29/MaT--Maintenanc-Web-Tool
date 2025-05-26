@@ -18,12 +18,20 @@
 --- 
 ## Chestii de implementat:
 
-- de gandit daca mai treb sa facem chestia aia cu `forget password`
 - ar trebui generat in singur `token jwt` ,daca apas pe `tine ma minte` sa fie de 7 zile altfel sa fie de doar o zii
-- la pagina de profil ar trebui facut un mini navbar(cum este la admin page) cu sectiune de info si sectiune de vizualizarea tuturor programarilor si a detaliilor acestora
 - ar trebui un nou rol de employee care sa aiba acces la programari si inventar
-- la programare la `vezi detalii` ar trebui sa punem si un fel de select multiplu care sa pot alege ce din inventarul service ului se foloseste la aceea programare
+- la programare la `vezi detalii` ar trebui sa punem si un fel de select multiplu care sa pot alege ce din inventarul service ului ce se foloseste la aceea programare si sa se faca un fel de total,dar campul de pret sa l se poatea modifica separat(pret piese + manopera + garantie + etc) 
+- adminu sau mecanicul pot schimba ora unei programari(sau sa o prelungeasca)
+-clientul poate sa schimbe ora programarii daca nu a fost inca aprobata
+- clientul poate sa anuleze programarea daca nu a fost inca aprobata
+- la lista de programari la admin sa se vada numai programarile din ziua respectiva si din zilele urmatoare
+- daca o programare este aprobata,se poate adauga un buton de `order` sau `completed` care ar face un order al programarii respective(pretul garantia + piese utilizate)
+-mecanicul poate avea acces numai la sectiunea de programari si inventar(asta ar treb discutat)
+- la programari sa se vada si piesele utilizate la acea programare
+- la programari sa se vada si garantia oferita la acea programare
+- la operatiuni unde se foloseste tokenul daca nu este valid sa se verifice si daca este inca valid, daca nu sa se dea un mesaj de eroare si sa se redirectioneze la login
 
+---
 
 ## Chestii de modificat pe front
 - de rezolvat bugul la tabele pe ecrane mici ✅
