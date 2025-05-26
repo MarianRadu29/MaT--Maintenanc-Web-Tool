@@ -874,7 +874,7 @@ textarea {
 .profile-info {
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
+    gap: .1rem;
     margin-bottom: 2rem;
 }
 
@@ -925,17 +925,6 @@ textarea {
 
 .info-content {
     flex: 1;
-}
-
-.info-icon {
-    font-size: 1.75rem;
-    color: var(--primary-color);
-    flex-shrink: 0;
-    margin-top: 0.15rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 45px;
 }
 
 .info-item label {
@@ -1264,5 +1253,163 @@ select:focus {
 
 select:hover {
     border-color: var(--primary-hover);
+}
+
+
+/* Profile inline editing styles */
+.info-item-inline {
+    margin-bottom: 1.25rem;
+}
+
+.info-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background-color: var(--light-bg);
+    padding: 1rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border-color);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.info-row:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.info-icon {
+    font-size: 1.25rem;
+    color: var(--primary-color);
+    flex-shrink: 0;
+    width: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.info-label {
+    font-weight: 600;
+    color: var(--medium-text);
+    flex-shrink: 0;
+}
+
+.info-value {
+    flex: 1;
+    color: var(--dark-text);
+    font-size: 1rem;
+    word-break: break-word;
+}
+
+.edit-btn {
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 0.25rem;
+    transition: background-color 0.2s ease;
+    flex-shrink: 0;
+    font-size: larger;
+}
+
+.edit-btn:hover {
+    background-color: rgba(59, 130, 246, 0.1);
+}
+
+.info-edit {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background-color: var(--card-bg);
+    padding: 1rem;
+    border-radius: var(--radius);
+    border: 2px solid var(--primary-color);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.edit-inputs {
+    flex: 1;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.edit-inputs input {
+    flex: 1;
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.25rem;
+    font-size: 0.95rem;
+}
+
+.edit-inputs input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.edit-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.save-btn, .cancel-btn {
+    background: none;
+    border: none;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    font-size: 1rem;
+}
+
+.save-btn {
+    color: var(--success-color);
+}
+
+.save-btn:hover {
+    background-color: rgba(16, 185, 129, 0.1);
+}
+
+.cancel-btn {
+    color: var(--danger-color);
+}
+
+.cancel-btn:hover {
+    background-color: rgba(239, 68, 68, 0.1);
+}
+
+/* Responsive pentru editare inline */
+@media (max-width: 768px) {
+    .info-label {
+        min-width: 100px;
+        font-size: 0.9rem;
+    }
+
+    .info-row, .info-edit {
+        padding: 0.75rem;
+        gap: 0.75rem;
+    }
+
+    .edit-inputs {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .info-row, .info-edit {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .info-label {
+        min-width: auto;
+    }
+
+    .edit-actions {
+        align-self: flex-end;
+    }
 }
 

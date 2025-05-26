@@ -49,32 +49,94 @@
 
             <div class="tab-content" id="tab-info">
                 <div class="profile-info">
-                    <div class="info-item">
-                        <i class="ri-user-line info-icon"></i>
-                        <div>
-                            <label>Nume complet</label>
-                            <p id="user-fullname">-</p>
+                    <!-- Nume complet -->
+                    <div class="info-item-inline">
+                        <div class="info-row">
+                            <i class="ri-user-line info-icon"></i>
+                            <span class="info-label">Nume complet:</span>
+                            <span class="info-value" id="user-fullname-display">-</span>
+                            <button class="edit-btn" data-field="fullname" title="Editează">
+                                <i class="ri-edit-line"></i>
+                            </button>
+                        </div>
+                        <div class="info-edit" id="edit-fullname" style="display: none;">
+                            <i class="ri-user-line info-icon"></i>
+                            <span class="info-label">Nume complet:</span>
+                            <div class="edit-inputs">
+                                <input type="text" id="user-firstname" placeholder="Prenume" />
+                                <input type="text" id="user-lastname" placeholder="Nume" />
+                            </div>
+                            <div class="edit-actions">
+                                <button class="save-btn" data-field="fullname">
+                                    <i class="ri-check-line"></i>
+                                </button>
+                                <button class="cancel-btn" data-field="fullname">
+                                    <i class="ri-close-line"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    <div class="info-item">
-                        <i class="ri-mail-line info-icon"></i>
-                        <div>
-                            <label>Email</label>
-                            <p id="user-email">-</p>
+
+                    <!-- Email -->
+                    <div class="info-item-inline">
+                        <div class="info-row">
+                            <i class="ri-mail-line info-icon"></i>
+                            <span class="info-label">Email:</span>
+                            <span class="info-value" id="user-email-display">-</span>
+                            <button class="edit-btn" data-field="email" title="Editează">
+                                <i class="ri-edit-line"></i>
+                            </button>
+                        </div>
+                        <div class="info-edit" id="edit-email" style="display: none;">
+                            <i class="ri-mail-line info-icon"></i>
+                            <span class="info-label">Email:</span>
+                            <div class="edit-inputs">
+                                <input type="email" id="user-email-input" placeholder="Email" />
+                            </div>
+                            <div class="edit-actions">
+                                <button class="save-btn" data-field="email">
+                                    <i class="ri-check-line"></i>
+                                </button>
+                                <button class="cancel-btn" data-field="email">
+                                    <i class="ri-close-line"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    <div class="info-item">
-                        <i class="ri-phone-line info-icon"></i>
-                        <div>
-                            <label>Telefon</label>
-                            <p id="user-phone">-</p>
+
+                    <!-- Telefon -->
+                    <div class="info-item-inline">
+                        <div class="info-row">
+                            <i class="ri-phone-line info-icon"></i>
+                            <span class="info-label">Telefon:</span>
+                            <span class="info-value" id="user-phone-display">-</span>
+                            <button class="edit-btn" data-field="phone" title="Editează">
+                                <i class="ri-edit-line"></i>
+                            </button>
+                        </div>
+                        <div class="info-edit" id="edit-phone" style="display: none;">
+                            <i class="ri-phone-line info-icon"></i>
+                            <span class="info-label">Telefon:</span>
+                            <div class="edit-inputs">
+                                <input type="tel" id="user-phone-input" placeholder="Număr telefon" />
+                            </div>
+                            <div class="edit-actions">
+                                <button class="save-btn" data-field="phone">
+                                    <i class="ri-check-line"></i>
+                                </button>
+                                <button class="cancel-btn" data-field="phone">
+                                    <i class="ri-close-line"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    <div class="info-item">
-                        <i class="ri-shield-user-line info-icon"></i>
-                        <div>
-                            <label>Rol</label>
-                            <p id="user-role">-</p>
+
+                    <!-- Rol (nu se poate edita) -->
+                    <div class="info-item-inline">
+                        <div class="info-row">
+                            <i class="ri-shield-user-line info-icon"></i>
+                            <span class="info-label">Rol:</span>
+                            <span class="info-value" id="user-role-display">-</span>
                         </div>
                     </div>
                 </div>

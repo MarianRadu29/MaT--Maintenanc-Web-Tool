@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // User data
-    const userData = JSON.parse(localStorage.getItem('userData') || sessionStorage.getItem('userData') || null);
+    let userData = JSON.parse(localStorage.getItem('userData') || sessionStorage.getItem('userData') || null);
 
     if (!userData) {
         window.location.href = 'login.html';
@@ -26,12 +26,149 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Populare date user în profil
-    document.getElementById('user-fullname').textContent = userData.firstName + ' ' + (userData.lastName || '');
-    document.getElementById('user-email').textContent = userData.email || '-';
-    document.getElementById('user-phone').textContent = userData.phoneNumber || '-';
-    document.getElementById('user-role').textContent = userData.roleID == 2 ? 'Administrator' : 'Client';
+    function populateUserData() {
+        document.getElementById('user-fullname-display').textContent = (userData.firstName || '') + ' ' + (userData.lastName || '');
+        document.getElementById('user-email-display').textContent = userData.email || '-';
+        document.getElementById('user-phone-display').textContent = userData.phoneNumber || '-';
+        document.getElementById('user-role-display').textContent = userData.roleID == 2 ? 'Administrator' : 'Client';
+    }
 
+    populateUserData();
     updateAuthLinks();
+
+    // Sistem de editare inline
+    const editButtons = document.querySelectorAll('.edit-btn');
+    const saveButtons = document.querySelectorAll('.save-btn');
+    const cancelButtons = document.querySelectorAll('.cancel-btn');
+
+    // Event listeners pentru butoanele de editare
+    editButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const field = e.target.closest('.edit-btn').dataset.field;
+            startEdit(field);
+        });
+    });
+
+    // Event listeners pentru butoanele de salvare
+    saveButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const field = e.target.closest('.save-btn').dataset.field;
+            saveEdit(field);
+        });
+    });
+
+    // Event listeners pentru butoanele de anulare
+    cancelButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const field = e.target.closest('.cancel-btn').dataset.field;
+            cancelEdit(field);
+        });
+    });
+
+    function startEdit(field) {
+        const displayRow = document.querySelector(`[data-field="${field}"]`).closest('.info-item-inline').querySelector('.info-row');
+        const editRow = document.getElementById(`edit-${field}`);
+
+        // Ascunde rândul de afișare și arată rândul de editare
+        displayRow.style.display = 'none';
+        editRow.style.display = 'flex';
+
+        // Populează câmpurile de input cu valorile curente
+        if (field === 'fullname') {
+            document.getElementById('user-firstname').value = userData.firstName || '';
+            document.getElementById('user-lastname').value = userData.lastName || '';
+            document.getElementById('user-firstname').focus();
+        } else if (field === 'email') {
+            document.getElementById('user-email-input').value = userData.email || '';
+            document.getElementById('user-email-input').focus();
+        } else if (field === 'phone') {
+            document.getElementById('user-phone-input').value = userData.phoneNumber || '';
+            document.getElementById('user-phone-input').focus();
+        }
+    }
+
+    function saveEdit(field) {
+        let hasChanges = false;
+        let newData = { ...userData };
+
+        if (field === 'fullname') {
+            const firstName = document.getElementById('user-firstname').value.trim();
+            const lastName = document.getElementById('user-lastname').value.trim();
+
+            if (firstName !== userData.firstName || lastName !== userData.lastName) {
+                newData.firstName = firstName;
+                newData.lastName = lastName;
+                hasChanges = true;
+            }
+        } else if (field === 'email') {
+            const email = document.getElementById('user-email-input').value.trim();
+
+            // Validare simplă de email
+            if (email && !isValidEmail(email)) {
+                alert('Vă rugăm să introduceți o adresă de email validă.');
+                return;
+            }
+
+            if (email !== userData.email) {
+                newData.email = email;
+                hasChanges = true;
+            }
+        } else if (field === 'phone') {
+            const phone = document.getElementById('user-phone-input').value.trim();
+
+            if (phone !== userData.phoneNumber) {
+                newData.phoneNumber = phone;
+                hasChanges = true;
+            }
+        }
+
+        if (hasChanges) {
+            // Salvează în localStorage/sessionStorage
+            userData = newData;
+            localStorage.setItem('userData', JSON.stringify(userData));
+            if (sessionStorage.getItem('userData')) {
+                sessionStorage.setItem('userData', JSON.stringify(userData));
+            }
+
+            // Actualizează afișarea
+            populateUserData();
+
+            // Aici ai putea face și un call către API pentru a salva în baza de date
+            // await updateUserProfile(userData);
+        }
+
+        cancelEdit(field);
+    }
+
+    function cancelEdit(field) {
+        const displayRow = document.querySelector(`[data-field="${field}"]`).closest('.info-item-inline').querySelector('.info-row');
+        const editRow = document.getElementById(`edit-${field}`);
+
+        // Arată rândul de afișare și ascunde rândul de editare
+        displayRow.style.display = 'flex';
+        editRow.style.display = 'none';
+    }
+
+    function isValidEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+
+    // Suport pentru Enter și Escape în câmpurile de editare
+    document.addEventListener('keydown', (e) => {
+        if (e.target.closest('.edit-inputs')) {
+            const editContainer = e.target.closest('.info-edit');
+            const field = editContainer.id.replace('edit-', '');
+
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                saveEdit(field);
+            } else if (e.key === 'Escape') {
+                e.preventDefault();
+                cancelEdit(field);
+            }
+        }
+    });
 
     let appointments = [];
 
