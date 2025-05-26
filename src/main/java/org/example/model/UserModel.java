@@ -27,6 +27,24 @@ public class UserModel {
         }
     }
 
+    public static User updateUser(User user){
+        String sql = "UPDATE users SET first_name = ?, last_name = ?, email = ?, phone_number = ? WHERE id = ?";
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, user.getFirstName());
+            pstmt.setString(2, user.getLastName());
+            pstmt.setString(3, user.getEmail());
+            pstmt.setString(4, user.getPhoneNumber());
+            pstmt.setInt(5, user.getId());
+
+            pstmt.executeUpdate();
+            return user;
+        } catch (SQLException e) {
+            System.out.println("[UPDATE USER ERROR] " + e.getMessage());
+        }
+        return null;
+    }
+
     public static User getUserByEmail(String email) {
         String sql = "SELECT * FROM users WHERE email = ?";
         try (Connection conn = DriverManager.getConnection(DB_URL);

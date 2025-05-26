@@ -24,6 +24,7 @@ form.addEventListener("submit", async (e) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
     });
+    console.log(JSON.stringify(response.status,null,4));
 
     if (!response.ok) {
       throw new Error("A apărut o eroare. Încearcă din nou.");

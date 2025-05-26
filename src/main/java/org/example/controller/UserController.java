@@ -57,6 +57,96 @@ public class UserController {
             JsonView.send(exchange, 200, json);
         }
     }
+    public static class UpdateUserInfo implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            if (!"PATCH".equalsIgnoreCase(exchange.getRequestMethod())) {
+                exchange.sendResponseHeaders(405, -1); // Method Not Allowed
+                return;
+            }
+
+            String authHeader = exchange.getRequestHeaders().getFirst("Authorization");
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                JsonView.send(exchange, 401, "{\"message\":\"Missing or invalid token\"}");
+                return;
+            }
+
+            String token = authHeader.substring(7); // Remove "Bearer "
+            Map<String, Object> claims = JwtUtil.validateAndExtractClaims(token);
+
+            if (claims == null) {
+                JsonView.send(exchange, 401, "{\"message\":\"Invalid or expired token\"}");
+                return;
+            }
+
+            int userId = (int) claims.get("id");
+            String email = (String) claims.get("email");
+            User user = UserModel.getUserByEmail(email);
+
+            if (user == null || user.getId() != userId) {
+                JsonView.send(exchange, 404, "{\"message\":\"User not found\"}");
+                return;
+            }
+
+            // Citim corpul cererii (body)
+            StringBuilder sb = new StringBuilder();
+            try (BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(exchange.getRequestBody(), StandardCharsets.UTF_8))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line);
+                }
+            }
+
+            String requestBody = sb.toString();
+            System.out.println("Daaa\n"+requestBody);
+            try {
+                JSONObject json = new JSONObject(requestBody);
+                String firstName = json.optString("firstName", null);
+                String lastName = json.optString("lastName", null);
+                String phoneNumber = json.optString("phoneNumber", null);
+                String emailFromJson = json.optString("email", null);
+
+                if ((firstName == null || firstName.isEmpty()) &&
+                        (lastName == null || lastName.isEmpty()) &&
+                        (phoneNumber == null || phoneNumber.isEmpty())
+                && (emailFromJson == null || emailFromJson.isEmpty())) {
+                    JsonView.send(exchange, 400, "{\"message\":\"Not field found\"}");
+                    return;
+                }
+
+                if (!(firstName == null || firstName.isEmpty())) {
+                    user.setFirstName(firstName);
+                }
+
+                if (!(lastName == null || lastName.isEmpty())) {
+                    user.setLastName(lastName);
+                }
+
+                if (!(phoneNumber == null || phoneNumber.isEmpty())) {
+                    user.setPhoneNumber(phoneNumber);
+                }
+                if (!(emailFromJson == null || emailFromJson.isEmpty())) {
+                    user.setEmail(emailFromJson);
+                }
+                if(emailFromJson!=null){
+                    var userEmailCheck = UserModel.getUserByEmail(emailFromJson);
+                    if(user.getId()!=userEmailCheck.getId()){
+                        JsonView.send(exchange, 409, "{\"message\":\"User with this email already exists\"}");
+
+                    }
+                }
+                UserModel.updateUser(user);
+
+
+                JsonView.send(exchange, 200, "{\"message\":\"User information updated successfully\"}");
+            } catch
+            (Exception e) {
+                e.printStackTrace();
+                JsonView.send(exchange, 400, "{\"message\":\"Invalid JSON format\"}");
+            }
+        }
+    }
 
     public static class ForgotPassword implements HttpHandler {
         @Override

@@ -18,6 +18,7 @@ public class Main {
         server.createContext("/api/register", new AuthController.Register());
         server.createContext("/api/login", new AuthController.Login());
         server.createContext("/api/user", new UserController.GetUserInfo());
+        server.createContext("/api/user/update", new UserController.UpdateUserInfo());
         server.createContext("/api/forgot-password",new UserController.ForgotPassword());
         server.createContext("/api/validate-reset-token",new UserController.ValidateTokenResetPassword());
         server.createContext("/api/reset-password",new UserController.ResetPassword());

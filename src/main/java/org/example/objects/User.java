@@ -1,8 +1,10 @@
 package org.example.objects;
 
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class User extends RegisterData {
     private int id;
     private int roleId;

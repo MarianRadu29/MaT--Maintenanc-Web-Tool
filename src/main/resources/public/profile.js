@@ -100,10 +100,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 newData.lastName = lastName;
                 hasChanges = true;
             }
+            fetch("/api/user/update",{
+                method: "PATCH",
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    firstName: newData.firstName,
+                    lastName: newData.lastName
+                })
+            })
         } else if (field === 'email') {
             const email = document.getElementById('user-email-input').value.trim();
 
-            // Validare simplă de email
             if (email && !isValidEmail(email)) {
                 alert('Vă rugăm să introduceți o adresă de email validă.');
                 return;
@@ -113,6 +123,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 newData.email = email;
                 hasChanges = true;
             }
+            fetch("/api/user/update",{
+                method: "PATCH",
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    email:newData.email,
+                })
+            })
         } else if (field === 'phone') {
             const phone = document.getElementById('user-phone-input').value.trim();
 
@@ -120,16 +140,25 @@ document.addEventListener("DOMContentLoaded", () => {
                 newData.phoneNumber = phone;
                 hasChanges = true;
             }
+            fetch("/api/user/update",{
+                method: "PATCH",
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    phoneNumber:newData.phoneNumber,
+                })
+            })
         }
 
         if (hasChanges) {
-            // Salvează în localStorage/sessionStorage
             userData = newData;
             localStorage.setItem('userData', JSON.stringify(userData));
             if (sessionStorage.getItem('userData')) {
                 sessionStorage.setItem('userData', JSON.stringify(userData));
             }
-
+           
             // Actualizează afișarea
             populateUserData();
 
@@ -155,6 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Suport pentru Enter și Escape în câmpurile de editare
+    
     document.addEventListener('keydown', (e) => {
         if (e.target.closest('.edit-inputs')) {
             const editContainer = e.target.closest('.info-edit');
@@ -263,12 +293,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (a.date && a.time) {
                     // Pentru datele cu date și time separate
                     const dateParts = a.date.split("-");
-                    dateTimeDisplay = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]} ${a.time}`;
+                    dateTimeDisplay = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]} ${a.time}:00`;
                 } else if (a.dateTime) {
                     // Pentru datele cu dateTime combinat
                     const [datePart, timePart] = a.dateTime.split(" ");
                     const dateParts = datePart.split("-");
-                    dateTimeDisplay = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]} ${timePart}`;
+                    dateTimeDisplay = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]} ${timePart}:00`;
                 }
 
                 tr.innerHTML = `
