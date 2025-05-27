@@ -495,7 +495,7 @@ body.modal-actions {
 }
 
 /* Responsive Tables */
-@media (max-width: 1100px) {
+@media (max-width: 842px) {
     .appointments-table,
     .inventory-table {
         display: block;
@@ -503,19 +503,6 @@ body.modal-actions {
         overflow-x: auto;
         white-space: nowrap;
         -webkit-overflow-scrolling: touch;
-    }
-
-    .appointments-table table,
-    .inventory-table table {
-        width: 100%;
-        min-width: 600px; /* or more, depending on columns */
-    }
-
-    .appointments-table th,
-    .appointments-table td,
-    .inventory-table th,
-    .inventory-table td {
-        white-space: nowrap;
     }
 }
 

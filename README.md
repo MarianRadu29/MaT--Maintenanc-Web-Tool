@@ -41,7 +41,8 @@
 - de adaugat `interactiune` sa iti poti schimba datele direct din profil ✅
 - de reparat `navbar` pentru pagina de programari (doar pe asta nu merge din ceva motiv)✅
 - la admin sa apara doar programarile din ziua respectiva si din viitor ✅
-
+- de facut tabelele sa fie 100% responsive 
+- de modificat sa nu mai apara butonul de conectare de fiecare data cand intru pe o pagina noua
 
 
 

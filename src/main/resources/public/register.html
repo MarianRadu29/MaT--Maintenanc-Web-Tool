@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>Înregistrare - ServicePro</title>
-    <link href="styles.css" rel="stylesheet">
+    <link href="auth.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
 </head>
@@ -20,7 +20,6 @@
                 <i class="ri-menu-line"></i>
             </button>
 
-            <!-- Main navigation -->
             <nav class="main-nav" id="mainNav">
                 <ul>
                     <li><a href="index.html">Acasă</a></li>
@@ -38,6 +37,7 @@
         <h2 class="section-title">Înregistrare</h2>
 
         <form class="auth-form" id="registerForm">
+            <!-- Nume + Prenume -->
             <div class="form-grid">
                 <div class="form-group">
                     <label for="firstName">Nume</label>
@@ -50,31 +50,35 @@
                 </div>
             </div>
 
-            <div class="form-group">
-                <label for="phone">Număr de telefon</label>
-                <input id="phone" name="phone_number" placeholder="0700 123 456" required type="tel">
+            <!-- Telefon + Email -->
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="phone">Număr de telefon</label>
+                    <input id="phone" name="phone_number" placeholder="0700 123 456" required type="tel">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input id="email" name="email" placeholder="exemplu@email.com" required type="email">
+                </div>
             </div>
 
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input id="email" name="email" placeholder="exemplu@email.com" required type="email">
-            </div>
+            <!-- Parolă + Confirmare parolă -->
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="password">Parolă</label>
+                    <input id="password" name="password" placeholder="Introduceți parola" required type="password">
+                </div>
 
-            <div class="form-group">
-                <label for="password">Parolă</label>
-                <input id="password" name="password" placeholder="Introduceți parola" required type="password">
-            </div>
-
-            <div class="form-group">
-                <label for="confirmPassword">Confirmare parolă</label>
-                <input id="confirmPassword" name="confirmPassword" placeholder="Confirmați parola" required
-                       type="password">
+                <div class="form-group">
+                    <label for="confirmPassword">Confirmare parolă</label>
+                    <input id="confirmPassword" name="confirmPassword" placeholder="Confirmați parola" required type="password">
+                </div>
             </div>
 
             <div class="form-group terms">
                 <input id="termsAgree" name="termsAgree" required type="checkbox">
-                <label for="termsAgree">Sunt de acord cu <a href="#">Termenii și Condițiile</a> și <a href="#">Politica
-                    de Confidențialitate</a></label>
+                <label for="termsAgree">Sunt de acord cu <a href="#">Termenii și Condițiile</a> și <a href="#">Politica de Confidențialitate</a></label>
             </div>
 
             <button class="btn btn-primary btn-block" type="submit">Înregistrare</button>
@@ -84,6 +88,7 @@
                 <a href="login.html">Conectează-te</a>
             </div>
         </form>
+
     </div>
 </section>
 
