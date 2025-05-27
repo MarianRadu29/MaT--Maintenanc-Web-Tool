@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function () {
     ];
 
     // Variable to store appointments data
-    let appointments = [];
+    let appointments ;
 
     // Load appointments
     fetch("/api/appointments")
@@ -74,6 +74,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return response.json();
         }).then(data => {
         appointments = data; // Store the data
+        console.log(data);
         loadAppointments(data);
     })
         .catch(error => {
@@ -360,187 +361,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Helper Functions
-    function loadAppointments(appointmentsData) {
-        const tableBody = document.getElementById('appointmentsTableBody');
-        if (!tableBody) return;
-
-        tableBody.innerHTML = '';
-
-        appointmentsData.forEach(appointment => {
-            const row = document.createElement('tr');
-
-            // Format date
-            const formattedDate = appointment.date ?
-                appointment.date.split("-").reverse().join("-") : 'N/A';
-
-            // Status text and class
-            let statusText = '';
-            let statusClass = '';
-            switch (appointment.status) {
-                case 'pending':
-                    statusText = 'În așteptare';
-                    statusClass = 'status-pending';
-                    break;
-                case 'approved':
-                    statusText = 'Aprobată';
-                    statusClass = 'status-approved';
-                    break;
-                case 'rejected':
-                    statusText = 'Respinsă';
-                    statusClass = 'status-rejected';
-                    break;
-                default:
-                    statusText = appointment.status || 'Necunoscut';
-                    statusClass = 'status-unknown';
-            }
-
-            // Vehicle type text
-            let vehicleTypeText = '';
-            switch (appointment.vehicleType) {
-                case 'motorcycle':
-                    vehicleTypeText = 'Motocicletă';
-                    break;
-                case 'bicycle':
-                    vehicleTypeText = 'Bicicletă';
-                    break;
-                case 'scooter':
-                    vehicleTypeText = 'Trotinetă';
-                    break;
-                default:
-                    vehicleTypeText = appointment.vehicleType || 'Necunoscut';
-            }
-
-            // Truncate problem text
-            const problemText = appointment.problem && appointment.problem.length > 50
-                ? appointment.problem.slice(0, 50) + '...'
-                : appointment.problem || 'N/A';
-
-            row.innerHTML = `
-                <td>${appointment.clientName || 'N/A'}</td>
-                <td>${formattedDate} - ${appointment.time || 'N/A'}:00</td>
-                <td>${appointment.vehicleBrand || ''} ${appointment.vehicleModel || ''} (${vehicleTypeText})</td>
-                <td>${problemText}</td>
-                <td><span class="status ${statusClass}">${statusText}</span></td>
-                <td>${appointment.hasAttachments ? '📎 Da' : 'Nu'}</td>
-                <td class="table-actions">
-                    <button class="action-btn action-btn-view" data-id="${appointment.id}">Vezi</button>
-                </td>
-            `;
-
-            tableBody.appendChild(row);
-
-            // Add event listener for the view button
-            row.querySelector('.action-btn-view').addEventListener('click', function () {
-                const appId = this.getAttribute('data-id');
-                const app = appointmentsData.find(a => a.id == appId);
-
-                if (app) {
-                    console.log(JSON.stringify(app, null, 4));
-                    currentAppointment = app;
-
-                    const detailsContainer = document.getElementById('appointmentDetails');
-                    detailsContainer.innerHTML = `
-                        <div class="appointment-detail-section">
-                            <div class="detail-row">
-                                <span class="detail-label">Client:</span>
-                                <span>${app.clientName}</span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="detail-label">Programare:</span>
-                                <span>${app.date ? app.date.split("-").reverse().join("-") : 'N/A'} - ${app.time || 'N/A'}:00</span>
-                            </div>
-                        </div>
-                        
-                        <div class="appointment-detail-section">
-                            <div class="detail-row">
-                                <span class="detail-label">Vehicul:</span>
-                                <span>${app.vehicleBrand || ''} ${app.vehicleModel || ''} 
-                                    (${app.vehicleType === 'motorcycle' ? 'Motocicletă' :
-                        app.vehicleType === 'bicycle' ? 'Bicicletă' :
-                            app.vehicleType === 'scooter' ? 'Trotinetă' : 'Necunoscut'})
-                                </span>
-                            </div>
-                            
-                            <div class="detail-row">
-                                <span class="detail-label">Problemă:</span>
-                                <span>${app.problem || 'N/A'}</span>
-                            </div>
-                            
-                            ${app.hasAttachments ? `
-                                <div class="attachments-box">
-                                    <p class="font-medium">Atașamente</p>
-                                    <p class="text-xs">Clientul a încărcat imagini și/sau videoclipuri.</p>
-                                    <div id="attachmentsContainer" class="attachments-content" style="margin-top:1rem;"></div>
-                                </div>
-                            ` : ''}
-                        </div>
-                    `;
-
-                    if (app.hasAttachments) {
-                        const container = detailsContainer.querySelector('#attachmentsContainer');
-                        fetch(`/api/appointment/media/${app.id}`)
-                            .then(res => {
-                                if (!res.ok) throw new Error(res.statusText);
-                                return res.json();
-                            })
-                            .then(files => {
-                                console.log(JSON.stringify(files, null, 4));
-                                files.forEach(file => {
-                                    const { fileName, contentType, content } = file;
-                                    let previewEl;
-
-                                    if (contentType.startsWith('image/')) {
-                                        previewEl = document.createElement('img');
-                                        previewEl.src = `data:${contentType};base64,${content}`;
-                                        previewEl.style.maxWidth = '200px';
-                                        previewEl.style.margin = '.5rem';
-                                    }
-                                    else if (contentType.startsWith('video/')) {
-                                        previewEl = document.createElement('video');
-                                        previewEl.src = `data:${contentType};base64,${content}`;
-                                        previewEl.controls = true;
-                                        previewEl.style.maxWidth = '300px';
-                                        previewEl.style.display = 'block';
-                                        previewEl.style.margin = '.5rem 0';
-                                    }
-                                    else {
-                                        previewEl = document.createElement('div');
-                                        previewEl.textContent = `${fileName} (${contentType})`;
-                                        previewEl.style.margin = '.5rem 0';
-                                    }
-
-                                    const dlLink = document.createElement('a');
-                                    dlLink.href = `data:${contentType};base64,${content}`;
-                                    dlLink.download = fileName;
-                                    dlLink.textContent = `⬇️ Descarcă ${fileName}`;
-                                    dlLink.style.display = 'block';
-                                    dlLink.style.margin = '0.25rem 0 1rem';
-
-                                    container.appendChild(previewEl);
-                                    container.appendChild(dlLink);
-                                });
-                            })
-                            .catch(err => {
-                                console.error('Failed to load attachments', err);
-                                alert('Eroare la încărcarea atașamentelor.');
-                            });
-                    }
-
-                    // Set existing values if appointment has been processed
-                    document.getElementById('responseMessage').value = app.responseMessage || '';
-                    document.getElementById('estimatedPrice').value = app.estimatedPrice || '';
-                    document.getElementById('warranty').value = app.warranty || '';
-
-                    // Show or hide buttons based on status
-                    approveButton.style.display = app.status === 'rejected' ? 'none' : 'block';
-                    rejectButton.style.display = app.status === 'approved' ? 'none' : 'block';
-
-                    appointmentModal.style.display = 'block';
-                }
-            });
-        });
-    }
-
+    
     function loadAppointments(appointmentsData) {
         const tableBody = document.getElementById('appointmentsTableBody');
         if (!tableBody) return;
@@ -599,10 +420,10 @@ document.addEventListener('DOMContentLoaded', function () {
             const problemText = appointment.problem && appointment.problem.length > 50
                 ? appointment.problem.slice(0, 50) + '...'
                 : appointment.problem || 'N/A';
-
+            console.log(appointment.hasAttachments)
             row.innerHTML = `
             <td>${appointment.clientName || 'N/A'}</td>
-            <td>${formattedDate} - ${appointment.time || 'N/A'}:00</td>
+            <td>${formattedDate}    ${appointment.startTime + ":00-" + appointment.endTime + ":00"  || 'N/A'}</td>
             <td>${appointment.vehicleBrand || ''} ${appointment.vehicleModel || ''} (${vehicleTypeText})</td>
             <td>${problemText}</td>
             <td><span class="status ${statusClass}">${statusText}</span></td>

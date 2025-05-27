@@ -217,39 +217,39 @@ document.addEventListener("DOMContentLoaded", () => {
             appointments = await response.json();
         } catch (error) {
             console.error("Error fetching appointments:", error);
-            // Fallback - folosim date demo cu structura corectă
-            if (!localStorage.getItem("userAppointments")) {
-                appointments = [
-                    {
-                        id: 1,
-                        date: "2025-05-22",
-                        time: "14:00",
-                        vehicleType: "motorcycle",
-                        problem: "Schimb ulei",
-                        status: "pending"
-                    },
-                    {
-                        id: 2,
-                        date: "2025-05-25",
-                        time: "10:00",
-                        vehicleType: "bicycle",
-                        problem: "Revizie frâne",
-                        status: "approved"
-                    },
-                    {
-                        id: 3,
-                        date: "2025-06-01",
-                        time: "16:00",
-                        vehicleType: "scooter",
-                        problem: "Înlocuire baterie",
-                        status: "completed"
-                    }
-                ];
-                // Salvăm datele demo pentru utilizare ulterioară
-                localStorage.setItem("userAppointments", JSON.stringify(appointments));
-            } else {
-                appointments = JSON.parse(localStorage.getItem("userAppointments"));
-            }
+            // // Fallback - folosim date demo cu structura corectă
+            // if (!localStorage.getItem("userAppointments")) {
+            //     appointments = [
+            //         {
+            //             id: 1,
+            //             date: "2025-05-22",
+            //             time: "14:00",
+            //             vehicleType: "motorcycle",
+            //             problem: "Schimb ulei",
+            //             status: "pending"
+            //         },
+            //         {
+            //             id: 2,
+            //             date: "2025-05-25",
+            //             time: "10:00",
+            //             vehicleType: "bicycle",
+            //             problem: "Revizie frâne",
+            //             status: "approved"
+            //         },
+            //         {
+            //             id: 3,
+            //             date: "2025-06-01",
+            //             time: "16:00",
+            //             vehicleType: "scooter",
+            //             problem: "Înlocuire baterie",
+            //             status: "completed"
+            //         }
+            //     ];
+            //     // Salvăm datele demo pentru utilizare ulterioară
+            //     localStorage.setItem("userAppointments", JSON.stringify(appointments));
+            // } else {
+            //     appointments = JSON.parse(localStorage.getItem("userAppointments"));
+            // }
         }
         renderAppointments();
     }
@@ -290,15 +290,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 // Formatare dată corectă
                 let dateTimeDisplay = '';
-                if (a.date && a.time) {
-                    // Pentru datele cu date și time separate
+                if (a.date && a.startTime && a.endTime) {
                     const dateParts = a.date.split("-");
-                    dateTimeDisplay = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]} ${a.time}:00`;
+                    dateTimeDisplay = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]} ${a.startTime+ ":00" + " - " + a.endTime+":00"}`;
                 } else if (a.dateTime) {
                     // Pentru datele cu dateTime combinat
                     const [datePart, timePart] = a.dateTime.split(" ");
                     const dateParts = datePart.split("-");
-                    dateTimeDisplay = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]} ${timePart}:00`;
+                    dateTimeDisplay = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]} ${timePart}`;
                 }
 
                 tr.innerHTML = `

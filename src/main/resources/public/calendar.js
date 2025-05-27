@@ -154,7 +154,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function showAppointmentsForDay(dateString, appointments) {
     appointmentsList.innerHTML = "";
-
+    
     const dateObj = new Date(dateString);
     const year = dateObj.getFullYear();
     const month = dateObj.getMonth();
@@ -165,11 +165,11 @@ document.addEventListener("DOMContentLoaded", function () {
       "13:00", "14:00", "15:00", "16:00", "17:00"
     ];
 
-    if (appointments.length === 0) {
-      noAppointments.style.display = "block";
-      appointmentsList.style.display = "none";
-      noAppointments.textContent = "Toate intervalele orare sunt disponibile pentru această zi.";
-    } else {
+    // if (appointments.length === 0) {
+    //   noAppointments.style.display = "block";
+    //   appointmentsList.style.display = "none";
+    //   noAppointments.textContent = "Toate intervalele orare sunt disponibile pentru această zi.";
+    // } else {
       noAppointments.style.display = "none";
       appointmentsList.style.display = "block";
 
@@ -221,7 +221,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         appointmentsList.appendChild(appointmentCard);
       });
-    }
+    // }
   }
 
   function checkLoggedInUser() {

@@ -40,7 +40,7 @@ public class AppointmentController {
             String path       = exchange.getRequestURI().getPath();
             String dateString = path.substring("/api/appointments/day/".length());
             String response   = AppointmentModel.getAppointmentsForDate(dateString);
-
+            System.out.println(response);
             exchange.getResponseHeaders().set("Content-Type", "application/json");
             byte[] bytes = response.getBytes(StandardCharsets.UTF_8);
             exchange.sendResponseHeaders(200, bytes.length);
@@ -93,12 +93,14 @@ public class AppointmentController {
 
                                 String fileName    = new File(item.getName()).getName();
                                 String contentType = item.getContentType();
-                                uploadedFiles.add(new FileUploadData(
-                                        item.getFieldName(),
-                                        fileName,
-                                        contentType,
-                                        data
-                                ));
+                                if (data.length > 0 && !("application/octet-stream".equalsIgnoreCase(contentType))) {
+                                    uploadedFiles.add(new FileUploadData(
+                                            item.getFieldName(),
+                                            fileName,
+                                            contentType,
+                                            data
+                                    ));
+                                }
                             }
                         }
                     }
@@ -109,14 +111,16 @@ public class AppointmentController {
                 String model              = fields.get("vehicleModel");
                 String problemDescription = fields.get("problemDescription");
                 String date               = fields.get("appointmentDate");
-                String time               = fields.get("appointmentHour");
+                String startTime               = fields.get("appointmentStartTime");
+                String endTime         = fields.get("appointmentEndTime");
                 String vehicleType        = fields.get("vehicleType");
                 System.out.println("clientId: " + clientId);
                 System.out.println("brand: " + brand);
                 System.out.println("model: " + model);
                 System.out.println("problemDescription: " + problemDescription);
                 System.out.println("date: " + date);
-                System.out.println("time: " + time);
+                System.out.println("startTime: " + startTime);
+                System.out.println("endTime: " + endTime);
                 System.out.println("vehicleType: " + vehicleType);
                 System.out.println("uploadedFiles: " + uploadedFiles.size());
                 uploadedFiles.forEach(f -> {
@@ -130,8 +134,8 @@ public class AppointmentController {
                     INSERT INTO appointments
                       (client_id, vehicle_brand, vehicle_model,
                        description, date,
-                       hour,vehicle_type)
-                    VALUES (?, ?, ?, ?, ?, ?,?)
+                       start_time,end_time,vehicle_type)
+                    VALUES (?, ?, ?, ?, ?, ?,?,?)
                 """;
                 try (Connection conn = DriverManager.getConnection(DB_URL);
                      PreparedStatement ps = conn.prepareStatement(sqlA)) {
@@ -141,13 +145,14 @@ public class AppointmentController {
                     ps.setString(3, model);
                     ps.setString(4, problemDescription);
                     ps.setString(5, date);
-                    ps.setString(6, time);
-                    ps.setString(7, vehicleType);
+                    ps.setString(6, startTime);
+                    ps.setString(7, endTime);
+                    ps.setString(8, vehicleType);
                     ps.executeUpdate();
                     try (Statement stmt = conn.createStatement();
                          ResultSet rs = stmt.executeQuery("SELECT last_insert_rowid()")) {
                         if (!rs.next()) {
-                            throw new SQLException("Nu pot obține last_insert_rowid()");
+                            throw new SQLException("Nu pot obtine last_insert_rowid()");
                         }
                         appointmentId = rs.getInt(1);
                     }
@@ -158,6 +163,10 @@ public class AppointmentController {
                     """;
                     try (PreparedStatement ps2 = conn.prepareStatement(sqlM)) {
                         for (FileUploadData f : uploadedFiles) {
+                            if (f.content == null || f.content.length == 0 ||
+                                    "application/octet-stream".equalsIgnoreCase(f.contentType)) {
+                                continue;
+                            }
                             ps2.setInt   (1, appointmentId);
                             ps2.setString(2, f.fileName);
                             ps2.setString(3, f.contentType);
@@ -185,7 +194,7 @@ public class AppointmentController {
                 String bodyEmail = EmailTemplate.createConfirmationEmailHtml(
                         firstName + " " + lastName,
                         date,
-                        time + ":00",
+                        startTime + " - " + endTime,
                         vehicleType,
                         problemDescription,
                         uploadedFiles.stream().map(FileUploadData::fileName).toList()
@@ -227,12 +236,13 @@ public class AppointmentController {
                   a.vehicle_model                    AS vehicleModel,
                   a.description                      AS problem,
                   a.date                             AS date,
-                  a.hour                             AS time,
+                  a.start_time                             AS startTime,
+                  a.end_time                             AS endTime,
                   a.status                           AS status
                 FROM appointments AS a
                 JOIN users        AS u ON u.id = a.client_id
                 WHERE a.status = 'pending'
-                ORDER BY a.date, a.hour;
+                ORDER BY a.date, a.start_time,a.end_time;
             """;
 
             String sqlMedia = "SELECT * FROM media WHERE appointment_id = ?";
@@ -250,7 +260,8 @@ public class AppointmentController {
                     String     model        = rsAppt.getString("vehicleModel");
                     String     problem      = rsAppt.getString("problem");
                     String     date         = rsAppt.getString("date");
-                    String     time         = rsAppt.getString("time");
+                    String     startTime         = rsAppt.getString("startTime");
+                    String     endTime         = rsAppt.getString("endTime");
                     String     status       = rsAppt.getString("status");
 
                     // 1) Obținem lista de fișiere atașate
@@ -272,7 +283,8 @@ public class AppointmentController {
                             .put("vehicleModel",  model)
                             .put("problem",       problem)
                             .put("date",          date)
-                            .put("time",          time)
+                            .put("endTime",          endTime)
+                            .put("startTime",          startTime)
                             .put("status",        status)
                             .put("hasAttachments", !attachments.isEmpty());
 
@@ -282,7 +294,7 @@ public class AppointmentController {
                 String response = resultArray.toString();
 
 
-                System.out.println("siii\n" + response);
+//                System.out.println("siii\n" + response);
 
 
                 exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
@@ -336,12 +348,13 @@ public class AppointmentController {
                   a.vehicle_model                    AS vehicleModel,
                   a.description                      AS problem,
                   a.date                             AS date,
-                  a.hour                             AS time,
+                  a.start_time                             AS startTime,
+                  a.end_time                             AS endTime,
                   a.status                           AS status
                 FROM appointments AS a
                 JOIN users        AS u ON u.id = a.client_id
                 WHERE a.client_id = ?
-                ORDER BY a.date, a.hour;
+                ORDER BY a.date, a.start_time,a.end_time;
             """;
 
             String sqlMedia = "SELECT * FROM media WHERE appointment_id = ?";
@@ -361,7 +374,8 @@ public class AppointmentController {
                     String     model        = rsAppt.getString("vehicleModel");
                     String     problem      = rsAppt.getString("problem");
                     String     date         = rsAppt.getString("date");
-                    String     time         = rsAppt.getString("time");
+                    String     endTime         = rsAppt.getString("endTime");
+                    String     startTime         = rsAppt.getString("startTime");
                     String     status       = rsAppt.getString("status");
 
                     // 1) Obținem lista de fișiere atașate
@@ -382,7 +396,8 @@ public class AppointmentController {
                             .put("vehicleModel",  model)
                             .put("problem",       problem)
                             .put("date",          date)
-                            .put("time",          time)
+                            .put("endTime",          endTime)
+                            .put("startTime",          startTime)
                             .put("status",        status)
                             .put("hasAttachments", !attachments.isEmpty());
 //                            .put("attachments",   new JSONArray(attachments));

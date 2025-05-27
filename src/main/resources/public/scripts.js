@@ -148,7 +148,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const hour = selectedTime.textContent.trim().substring(0, 2);
       data.append("vehicleType", selectedVehicleType);
-      data.append("appointmentHour", hour);
+      data.append("appointmentStartTime", hour);
+      data.append("appointmentEndTime",String(parseInt(hour) + 1) );
+      console.log(hour  + " - " + String(parseInt(hour) + 1));
+
       data.append("idClient", JSON.parse(localStorage.getItem("userData")).id);
 
       // for (let [name, value] of data.entries()) {
@@ -279,11 +282,12 @@ function generateTimeSlots(selectedDate) {
   // Fetch appointments for the selected date from the server
   const dateString = selectedDate; // Formatul datei selectate este deja acceptabil
   const apiUrl = `/api/appointments/day/${dateString}`; // Endpointul care returnează programările pentru ziua respectivă
-
+  console.log(apiUrl)
   fetch(apiUrl)
     .then((response) => response.json())
     .then((appointments) => {
       // Generate time slots from 9:00 to 17:00
+      console.log(appointments)
       const startHour = 9;
       const endHour = 17;
 

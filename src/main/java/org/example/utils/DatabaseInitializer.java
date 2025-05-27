@@ -47,23 +47,42 @@ public class DatabaseInitializer {
                     """);
 
             // Appointments
-            stmt.execute("""
-                        CREATE TABLE IF NOT EXISTS appointments (
-                            id INTEGER PRIMARY KEY AUTOINCREMENT,
-                            client_id INTEGER NOT NULL,
-                            date TEXT NOT NULL,
-                            hour TEXT NOT NULL,
-                            vehicle_brand TEXT ,
-                            vehicle_model TEXT ,
-                            vehicle_type TEXT NOT NULL,
-                            description TEXT NOT NULL,
-                            status TEXT DEFAULT 'pending',
-                            admin_message TEXT,
-                            estimated_price REAL,
-                            warranty_months INTEGER,
-                            FOREIGN KEY(client_id) REFERENCES users(id)
-                        );
-                    """);
+//            stmt.execute("""
+//                        CREATE TABLE IF NOT EXISTS appointments (
+//                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+//                            client_id INTEGER NOT NULL,
+//                            date TEXT NOT NULL,
+//                            hour TEXT NOT NULL,
+//                            vehicle_brand TEXT ,
+//                            vehicle_model TEXT ,
+//                            vehicle_type TEXT NOT NULL,
+//                            description TEXT NOT NULL,
+//                            status TEXT DEFAULT 'pending',
+//                            admin_message TEXT,
+//                            estimated_price REAL,
+//                            warranty_months INTEGER,
+//                            FOREIGN KEY(client_id) REFERENCES users(id)
+//                        );
+//                    """);
+
+                        stmt.execute("""
+                CREATE TABLE IF NOT EXISTS appointments (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    client_id INTEGER NOT NULL,
+                    date TEXT NOT NULL,
+                    start_time TEXT NOT NULL,
+                    end_time TEXT NOT NULL,
+                    vehicle_brand TEXT,
+                    vehicle_model TEXT,
+                    vehicle_type TEXT NOT NULL,
+                    description TEXT NOT NULL,
+                    status TEXT DEFAULT 'pending',
+                    admin_message TEXT,
+                    estimated_price REAL,
+                    warranty_months INTEGER,
+                    FOREIGN KEY(client_id) REFERENCES users(id)
+                );
+            """);
 
             // Media
             stmt.execute("""
