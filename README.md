@@ -48,6 +48,7 @@
 - de modificat cum e responsive la profile 
 - eventual de facut o pagina de servicii unde sa se detalieze mai mult fiecare serviciu in parte
 - de facut meniurile dropdown sa arate mai frumos
+- de facut calendarul responsive pe ecrane f mici (cand e ecranul mic sa apara prescurtarile zilelor saptamanii)
 
 
 
