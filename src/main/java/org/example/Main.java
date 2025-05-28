@@ -25,6 +25,7 @@ public class Main {
         server.createContext("/api/appointments/day/", new AppointmentController.GetDayAppointments());
         server.createContext("/api/appointment", new AppointmentController.SetAppointment());
         server.createContext("/api/appointment/media/", new AppointmentController.GetMedia());
+        server.createContext("/api/inventory", new InventoryController.GetInventory());
         server.createContext("/api/inventory/categories", new InventoryController.GetCategory());
         server.createContext("/api/inventory/add", new InventoryController.AddItem());
         server.createContext("/", new StaticFileHandler("src/main/resources/public"));

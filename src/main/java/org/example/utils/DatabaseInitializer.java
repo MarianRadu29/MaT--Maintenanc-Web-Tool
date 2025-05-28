@@ -78,30 +78,19 @@ public class DatabaseInitializer {
 
             // Inventory
 
+            //pe viitor ar putea fii:
             //pk id nume_furnizor nume_produs
-//            stmt.execute("""
-//                        CREATE TABLE IF NOT EXISTS inventory (
-//                            id INTEGER PRIMARY KEY AUTOINCREMENT,
-//                            name TEXT NOT NULL,
-//                            category TEXT NOT NULL,
-//                            quantity INTEGER NOT NULL,
-//                            price REAL NOT NULL,
-//                            supplier TEXT NOT NULL,
-//                            status TEXT DEFAULT '' --in-stock , out-of-stock, low-stock,ordered
-//                        );
-//                    """);
             stmt.execute("""
                     CREATE TABLE IF NOT EXISTS inventory (
-                        id        INTEGER      NOT NULL,
-                        name      TEXT         NOT NULL,
-                        category  INTEGER         NOT NULL,
-                        quantity  INTEGER      NOT NULL,
-                        price     REAL         NOT NULL,
-                        supplier  TEXT         NOT NULL,
-                        status    TEXT    DEFAULT '' , -- in-stock, out-of-stock, low-stock, ordered
-                        PRIMARY KEY (id, supplier, name)
-                        FOREIGN KEY (category) REFERENCES category(id)
-                    );
+                          id        INTEGER PRIMARY KEY AUTOINCREMENT,
+                          name      TEXT    NOT NULL,
+                          category  INTEGER NOT NULL,
+                          quantity  INTEGER NOT NULL,
+                          price     REAL    NOT NULL,
+                          supplier  TEXT    NOT NULL,
+                          status    TEXT    DEFAULT '', -- in-stock, out-of-stock, low-stock, ordered
+                          FOREIGN KEY (category) REFERENCES category(id)
+                      );
                 """);
 
             stmt.execute("""
@@ -112,7 +101,7 @@ public class DatabaseInitializer {
             """);
 
             stmt.execute("""
-                INSERT INTO category (name) VALUES
+                INSERT OR IGNORE INTO category (name) VALUES
                 -- Sistem de frânare: plăcuțe, discuri, saboți, lichid de frână, manete
                 ('Brake System'),
                 

@@ -79,46 +79,25 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById(tabId).classList.add('active');
         });
     });
-
-    const inventoryItems = [
-        {
-            id: 'i1',
-            name: 'Ulei Motor 10W40',
-            category: 'Lichide',
-            quantity: 25,
-            price: 45.99,
-            supplier: 'MotorOil SRL',
-            status: 'in-stock'
-        },
-        {
-            id: 'i2',
-            name: 'Filtru ulei Honda',
-            category: 'Filtre',
-            quantity: 12,
-            price: 29.99,
-            supplier: 'AutoParts SRL',
-            status: 'in-stock'
-        },
-        {
-            id: 'i3',
-            name: 'Plăcuțe frână Shimano',
-            category: 'Frâne',
-            quantity: 5,
-            price: 79.99,
-            supplier: 'BikeZone',
-            status: 'low-stock'
-        },
-        {
-            id: 'i4',
-            name: 'Baterie trotinetă Xiaomi',
-            category: 'Electrice',
-            quantity: 0,
-            price: 349.99,
-            supplier: 'TechParts',
-            status: 'out-of-stock'
-        }
-    ];
-
+    let inventoryItems = [];
+    async function loadInventoryAPI(){
+        let res = await fetch("/api/inventory",{
+            method:"GET"
+        });
+        return res.json();
+    }
+    function initInventoryLoad() {
+        loadInventoryAPI().then(list => {
+            inventoryItems = list;
+           
+            loadInventoryItems(inventoryItems);
+        }).catch(error => {
+            console.error("Eroare la încărcarea inventarului:", error);
+        });
+    }
+    initInventoryLoad();
+    
+   
     function loadInventoryItems(items) {
         const tableBody = document.getElementById('inventoryTableBody');
         if (!tableBody) return;
@@ -162,7 +141,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             row.innerHTML = `
                 <td>${item.name}</td>
-                <td>${item.category}</td>
+                <td>${translateCategory(item.category)}</td>
                 <td>${item.quantity}</td>
                 <td>${item.price.toFixed(2)} RON</td>
                 <td>${item.supplier}</td>
@@ -178,22 +157,43 @@ document.addEventListener('DOMContentLoaded', function () {
             // Add event listeners for edit and delete buttons
             row.querySelector('.action-btn-edit').addEventListener('click', function () {
                 const itemId = this.getAttribute('data-id');
-                const item = inventoryItems.find(i => i.id === itemId);
-
+                const item = inventoryItems.find(i => i.id == itemId);
+            
                 if (item) {
+                    const selectCategories = document.getElementById("itemCategory");
+            
+                    // mai întâi curăță selectul
+                    selectCategories.innerHTML = "<option value=\"\">Selectează categoria</option>";
+            
+                    // încarcă opțiunile și abia apoi setează valoarea
+                    fetch("api/inventory/categories", {
+                        method: "GET"
+                    })
+                    .then(res => res.json())
+                    .then(list => {
+                        list.forEach(category => {
+                            const option = document.createElement("option");
+                            option.value = category.id;
+                            option.text = translateCategory(category.name);
+                            selectCategories.appendChild(option);
+                        });
+            
+                        // ⬅️ acum e safe să setezi
+                        selectCategories.value = item.categoryID;
+                    })
+                    .catch(e => {
+                        console.log(e);
+                    });
+            
                     document.getElementById('inventoryModalTitle').textContent = 'Editează produs';
                     document.getElementById('itemId').value = item.id;
                     document.getElementById('itemName').value = item.name;
-                    document.getElementById('itemCategory').value = item.category;
                     document.getElementById('itemQuantity').value = item.quantity;
                     document.getElementById('itemPrice').value = item.price;
                     document.getElementById('itemSupplier').value = item.supplier;
                     document.getElementById('itemStatus').value = item.status;
-
+            
                     inventoryModal.style.display = 'block';
-                    // document.querySelector('.btn .btn-primary').addEventListener('click',()=>{
-
-                    // })
                 }
             });
 
@@ -254,6 +254,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+
+
+
     // Add inventory item button
     const addItemBtn = document.getElementById('addItemBtn');
     if (addItemBtn) {
@@ -262,7 +265,24 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('inventoryForm').reset();
             document.getElementById('itemId').value = '';
             inventoryModal.style.display = 'block';
+            const selectCategory = document.getElementById("itemCategory");
             
+        fetch("api/inventory/categories",{
+            method:"GET"
+        }).then(res=>{
+            return res.json()
+        })
+        .then(list=>{
+            list.forEach(category=>{
+                const option = document.createElement("option");
+                option.value = category.id;
+                option.text = translateCategory(category.name);
+                selectCategory.appendChild(option);
+            })
+        })
+        .catch(e=>{
+            console.log(e);
+        })
         });
     }
 
@@ -289,14 +309,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 status: itemStatus
             };
             alert(JSON.stringify(newItem,null,4));
-            // fetch("/api/inventory/add",{
-            //     method:"POST",
-            //     body: JSON.stringify(newItem)
-            // }).then(res=>{
-            //     return res.json();
-            // }).then( obj=>{
-
-            // })
+            fetch("/api/inventory/add",{
+                method:"POST",
+                body: JSON.stringify(newItem)
+            }).then(res=>{
+                return res.json();
+            }).catch(e=>console.log(e))
 
             if (itemId) {
                 // Update existing item
@@ -323,6 +341,41 @@ document.addEventListener('DOMContentLoaded', function () {
     const statusFilter = document.getElementById('statusFilter');
 
     if (searchInventory && categoryFilter && statusFilter) {
+        function translateCategory(categoryEn) {
+            const translations = {
+                "Brake System": "Sistem de frânare",
+                "Transmission System": "Sistem de transmisie",
+                "Wheels and Tires": "Roți și anvelope",
+                "Suspension and Fork": "Suspensie și furcă",
+                "Electrical Components": "Componente electrice",
+                "Battery and Charging": "Baterii și încărcare",
+                "Lighting": "Iluminat",
+                "Engine and Clutch": "Motor și ambreiaj",
+                "Cables and Housings": "Cabluri și cămăși",
+                "Consumables": "Consumabile",
+                "Bearings and Seals": "Rulmenți și simeringuri",
+                "Fasteners and Mounts": "Elemente de prindere și montaj"
+            };
+        
+            return translations[categoryEn] || categoryEn;
+        }
+        
+        fetch("api/inventory/categories",{
+            method:"GET"
+        }).then(res=>{
+            return res.json()
+        })
+        .then(list=>{
+            list.forEach(category=>{
+                const option = document.createElement("option");
+                option.value = category.id;
+                option.text = translateCategory(category.name);
+                categoryFilter.appendChild(option);
+            })
+        })
+        .catch(e=>{
+            console.log(e);
+        })
         searchInventory.addEventListener('input', filterInventory);
         categoryFilter.addEventListener('change', filterInventory);
         statusFilter.addEventListener('change', filterInventory);
@@ -372,92 +425,7 @@ document.addEventListener('DOMContentLoaded', function () {
             loadAppointments(filteredAppointments);
         }
     }
-
-    // Import/Export functionality
-    const importButtons = document.querySelectorAll('button[data-import]');
-    const exportButtons = document.querySelectorAll('button[data-export]');
-
-    importButtons.forEach(button => {
-        button.addEventListener('click', function () {
-            const importType = this.getAttribute('data-import');
-            const fileInput = document.getElementById(`${importType}Import`);
-
-            if (fileInput.files.length === 0) {
-                alert(`Vă rugăm să selectați un fișier ${importType.toUpperCase()} pentru import.`);
-                return;
-            }
-
-            const file = fileInput.files[0];
-            const reader = new FileReader();
-
-            reader.onload = function (e) {
-                try {
-                    let data;
-
-                    if (importType === 'csv') {
-                        // Parse CSV
-                        const csvData = e.target.result;
-                        // Simple CSV parsing (in real app, use a library)
-                        data = parseCSV(csvData);
-                    } else if (importType === 'json') {
-                        // Parse JSON
-                        data = JSON.parse(e.target.result);
-                    }
-
-                    alert(`${importType.toUpperCase()} importat cu succes!`);
-                    console.log('Imported data:', data);
-
-                } catch (error) {
-                    alert(`Eroare la importul ${importType.toUpperCase()}: ${error.message}`);
-                }
-            };
-
-            reader.onerror = function () {
-                alert('Eroare la citirea fișierului.');
-            };
-
-            if (importType === 'csv') {
-                reader.readAsText(file);
-            } else {
-                reader.readAsText(file);
-            }
-        });
-    });
-
-    exportButtons.forEach(button => {
-        button.addEventListener('click', function () {
-            const exportType = this.getAttribute('data-export');
-            let data, filename, contentType, content;
-
-            // For demo, we'll export inventory data
-            data = inventoryItems;
-
-            if (exportType === 'csv') {
-                filename = 'inventory.csv';
-                contentType = 'text/csv';
-                content = convertToCSV(data);
-            } else if (exportType === 'json') {
-                filename = 'inventory.json';
-                contentType = 'application/json';
-                content = JSON.stringify(data, null, 2);
-            } else if (exportType === 'pdf') {
-                alert('Funcționalitatea de export PDF va fi implementată în viitor.');
-                return;
-            }
-
-            // Create download link
-            const blob = new Blob([content], {type: contentType});
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.style.display = 'none';
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            window.URL.revokeObjectURL(url);
-        });
-    });
-
+    
     // Add event listeners for appointment management
     const approveButton = document.getElementById('approveAppointment');
     const rejectButton = document.getElementById('rejectAppointment');
@@ -703,6 +671,109 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    // Import/Export functionality
+    const importButtons = document.querySelectorAll('button[data-import]');
+    const exportButtons = document.querySelectorAll('button[data-export]');
+
+    importButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const importType = this.getAttribute('data-import');
+            const fileInput = document.getElementById(`${importType}Import`);
+
+            if (fileInput.files.length === 0) {
+                alert(`Vă rugăm să selectați un fișier ${importType.toUpperCase()} pentru import.`);
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                try {
+                    let data;
+
+                    if (importType === 'csv') {
+                        // Parse CSV
+                        const csvData = e.target.result;
+                        // Simple CSV parsing (in real app, use a library)
+                        data = parseCSV(csvData);
+                    } else if (importType === 'json') {
+                        // Parse JSON
+                        data = JSON.parse(e.target.result);
+                    }
+
+                    alert(`${importType.toUpperCase()} importat cu succes!`);
+                    console.log('Imported data:', data);
+
+                } catch (error) {
+                    alert(`Eroare la importul ${importType.toUpperCase()}: ${error.message}`);
+                }
+            };
+
+            reader.onerror = function () {
+                alert('Eroare la citirea fișierului.');
+            };
+
+            if (importType === 'csv') {
+                reader.readAsText(file);
+            } else {
+                reader.readAsText(file);
+            }
+        });
+    });
+
+    exportButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const exportType = this.getAttribute('data-export');
+            let data, filename, contentType, content;
+
+            // For demo, we'll export inventory data
+            data = inventoryItems;
+
+            if (exportType === 'csv') {
+                filename = 'inventory.csv';
+                contentType = 'text/csv';
+                content = convertToCSV(data);
+            } else if (exportType === 'json') {
+                filename = 'inventory.json';
+                contentType = 'application/json';
+                content = JSON.stringify(data, null, 2);
+            } else if (exportType === 'pdf') {
+                alert('Funcționalitatea de export PDF va fi implementată în viitor.');
+                return;
+            }
+
+            // Create download link
+            const blob = new Blob([content], {type: contentType});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+        });
+    });
     function parseCSV(csv) {
         const lines = csv.split('\n');
         const headers = lines[0].split(',').map(header => header.trim());
