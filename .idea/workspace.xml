@@ -5,7 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a1a27d4e-17cb-4261-b221-8c0b2f038ddc" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/service_booking.db" beforeDir="false" afterPath="$PROJECT_DIR$/service_booking.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/public/admin.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/public/admin.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/public/admin.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/public/admin.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/public/admin.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/public/admin.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/public/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,8 +27,8 @@
       <list>
         <option value="HTML File" />
         <option value="CSS File" />
-        <option value="JavaScript File" />
         <option value="Class" />
+        <option value="JavaScript File" />
       </list>
     </option>
   </component>
@@ -87,8 +94,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.25410.129" />
-        <option value="bundled-js-predefined-d6986cc7102b-6a121458b545-JavaScript-IU-251.25410.129" />
+        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-WS-243.26053.12" />
       </set>
     </attachedChunks>
   </component>
@@ -144,6 +150,11 @@
       <workItem from="1748375616131" duration="157000" />
       <workItem from="1748376971310" duration="1388000" />
       <workItem from="1748437472147" duration="8705000" />
+      <workItem from="1748459247907" duration="80000" />
+      <workItem from="1748459340213" duration="42000" />
+      <workItem from="1748459516763" duration="90000" />
+      <workItem from="1748459637209" duration="2000" />
+      <workItem from="1748459940484" duration="7139000" />
     </task>
     <servers />
   </component>

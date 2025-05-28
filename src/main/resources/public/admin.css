@@ -565,3 +565,210 @@ body.modal-actions {
         -webkit-overflow-scrolling: touch;
     }
 }
+
+/* Adaugă aceste stiluri la sfârșitul fișierului admin.css */
+
+/* Inventory Selection in Modal */
+.inventory-selection-section {
+    border-top: 1px solid var(--border-color);
+    padding-top: 1.5rem;
+}
+
+.inventory-selection-section h4,
+.inventory-selection-section h5 {
+    margin-bottom: 0.75rem;
+    color: var(--dark-text);
+}
+
+.inventory-search-box input {
+    transition: border-color 0.2s ease;
+}
+
+.inventory-search-box input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.inventory-results {
+    background-color: white;
+}
+
+.inventory-item-result {
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.inventory-item-result:last-child {
+    border-bottom: none;
+}
+
+.inventory-item-result:hover {
+    background-color: rgba(59, 130, 246, 0.05);
+}
+
+.inventory-item-info {
+    flex-grow: 1;
+}
+
+.inventory-item-name {
+    font-weight: 500;
+    color: var(--dark-text);
+    margin-bottom: 0.25rem;
+}
+
+.inventory-item-details {
+    font-size: 0.875rem;
+    color: var(--medium-text);
+}
+
+.inventory-item-price {
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-left: 1rem;
+}
+
+.selected-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    background-color: var(--light-bg);
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+    border: 1px solid var(--border-color);
+}
+
+.selected-item-info {
+    flex-grow: 1;
+}
+
+.selected-item-name {
+    font-weight: 500;
+    color: var(--dark-text);
+}
+
+.selected-item-details {
+    font-size: 0.875rem;
+    color: var(--medium-text);
+}
+
+.selected-item-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.quantity-control {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.quantity-btn {
+    width: 24px;
+    height: 24px;
+    border: 1px solid var(--border-color);
+    background: white;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+}
+
+.quantity-btn:hover {
+    background-color: var(--light-bg);
+    border-color: var(--primary-color);
+}
+
+.quantity-input {
+    width: 50px;
+    text-align: center;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 0.25rem;
+    font-size: 0.875rem;
+}
+
+.remove-item-btn {
+    background: none;
+    border: none;
+    color: var(--danger-color);
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.remove-item-btn:hover {
+    background-color: rgba(239, 68, 68, 0.1);
+}
+
+.total-price {
+    font-size: 1.1rem !important;
+}
+
+.no-results {
+    padding: 1rem;
+    text-align: center;
+    color: var(--medium-text);
+    font-style: italic;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .selected-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .selected-item-controls {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+
+.inventory-selection-section {
+    margin-top: 1.5rem;
+}
+
+/* Inventory search input styling */
+.inventory-search-input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+}
+
+/* Inventory search box styling */
+.inventory-search-box {
+    margin-bottom: 1rem;
+}
+
+/* Inventory results container styling */
+.inventory-results {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+/* Total price styling */
+.total-price {
+    text-align: right;
+    font-weight: bold;
+    font-size: 1.1rem;
+    padding: 0.5rem;
+    background-color: var(--light-bg);
+    border-radius: 4px;
+}

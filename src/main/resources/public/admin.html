@@ -178,6 +178,24 @@
         <span class="close">&times;</span>
         <h3>Detalii Programare</h3>
         <div id="appointmentDetails"></div>
+        <div class="inventory-selection-section">
+            <h4>Selectează produsele necesare pentru această comandă.</h4>
+
+            <div class="inventory-search-box">
+                <input id="inventorySearchModal" placeholder="Caută produse în inventar..." type="text" class="inventory-search-input">
+            </div>
+
+            <div class="inventory-results" id="inventoryResults">
+                <!-- Rezultatele căutării vor fi afișate aici -->
+            </div>
+
+            <div class="selected-items-section">
+
+                <div class="total-price">
+                    Total: <span id="totalPrice">0.00</span> RON
+                </div>
+            </div>
+        </div>
         <div class="form-group">
             <label for="responseMessage">Mesaj pentru client</label>
             <textarea id="responseMessage" placeholder="Introduceți un mesaj pentru client..." rows="3"></textarea>
@@ -284,5 +302,6 @@
 
 
 <script src="admin.js"></script>
+<script src="admin-appointment-items.js" ></script>
 </body>
 </html>
