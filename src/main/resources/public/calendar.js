@@ -2,6 +2,10 @@ document.addEventListener("DOMContentLoaded", function () {
   // Get current year for footer
   document.getElementById("currentYear").innerText = new Date().getFullYear();
 
+  // Initialize UI elements
+  document.getElementById("user-account").style.display = "none";
+  document.getElementById("admin-link").style.display = "none";
+
   // Calendar functionality
   const calendarDays = document.getElementById("calendarDays");
   const currentMonthYearElement = document.getElementById("currentMonthYear");
@@ -149,6 +153,10 @@ document.addEventListener("DOMContentLoaded", function () {
         })
         .catch((error) => {
           console.error("Error fetching appointments:", error);
+          // Show fallback message in case of error
+          noAppointments.style.display = "block";
+          appointmentsList.style.display = "none";
+          noAppointments.textContent = "Eroare la încărcarea programărilor pentru această zi.";
         });
   }
 
@@ -205,13 +213,18 @@ document.addEventListener("DOMContentLoaded", function () {
           const appointmentDate = `${year}-${String(month + 1).padStart(2, "0")}-${String(
               day
           ).padStart(2, "0")}`;
-          const user = localStorage.getItem("userData");
 
-          bookButton.href = user ? "programari.html" : "login.html";
+          // Check if user is logged in
+          const userData = JSON.parse(
+              localStorage.getItem("userData") ||
+              sessionStorage.getItem("userData") ||
+              "null"
+          );
+
+          bookButton.href = userData ? "programari.html" : "login.html";
           bookButton.className = "btn btn-primary btn-sm";
           bookButton.textContent = "Rezervă";
           bookButton.addEventListener("click", function (e) {
-            alert(appointmentDate + " " + time);
             localStorage.setItem("selectedAppointmentDate", appointmentDate);
             localStorage.setItem("selectedAppointmentTime", time);
           });
@@ -224,29 +237,86 @@ document.addEventListener("DOMContentLoaded", function () {
     // }
   }
 
+  // Mobile menu toggle functionality
+  const menuToggle = document.getElementById("menuToggle");
+  const mainNav = document.querySelector(".main-nav");
+
+  if (menuToggle && mainNav) {
+    menuToggle.addEventListener("click", () => {
+      mainNav.classList.toggle("open");
+    });
+  }
+
+  // Check if user is already logged in and update UI accordingly
   function checkLoggedInUser() {
     const userData = JSON.parse(
         localStorage.getItem("userData") ||
         sessionStorage.getItem("userData") ||
-        "{}"
+        "null"
     );
 
-    if (userData.isLoggedIn) {
+    if (userData && userData.isLoggedIn) {
       const authLinks = document.querySelector(".auth-links");
+      const adminLink = document.getElementById("admin-link");
+      const userAccount = document.getElementById("user-account");
+
       if (authLinks) {
+        // Show user account link
+        if (userAccount) {
+          userAccount.style.display = "block";
+        }
+
+        // Show admin link if user has admin role
+        if (adminLink && userData.roleID == 2) {
+          adminLink.style.display = "block";
+        }
+
+        // Update auth links to show welcome message and logout button
         authLinks.innerHTML = `
           <span class="welcome-user">Bine ai venit, ${userData.firstName || userData.email}</span>
           <a href="#" id="logoutButton" class="btn btn-secondary">Deconectare</a>
         `;
-        document.getElementById("logoutButton").addEventListener("click", function (e) {
-          e.preventDefault();
-          localStorage.removeItem("userData");
-          sessionStorage.removeItem("userData");
-          window.location.reload();
-        });
+
+        // Add logout functionality
+        const logoutButton = document.getElementById("logoutButton");
+        if (logoutButton) {
+          logoutButton.addEventListener("click", function (e) {
+            e.preventDefault();
+
+            // Clear all user data from storage
+            localStorage.removeItem("userData");
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+            sessionStorage.removeItem("userData");
+
+            // Reload page to reset UI
+            window.location.reload();
+          });
+        }
+      }
+    } else {
+      // User is not logged in, ensure proper UI state
+      const authLinks = document.querySelector(".auth-links");
+      const adminLink = document.getElementById("admin-link");
+      const userAccount = document.getElementById("user-account");
+
+      if (userAccount) {
+        userAccount.style.display = "none";
+      }
+
+      if (adminLink) {
+        adminLink.style.display = "none";
+      }
+
+      if (authLinks) {
+        authLinks.innerHTML = `
+          <a href="login.html" class="btn btn-primary">Conectare</a>
+          <a href="register.html" class="btn btn-secondary">Înregistrare</a>
+        `;
       }
     }
   }
 
+  // Initialize user authentication state
   checkLoggedInUser();
 });

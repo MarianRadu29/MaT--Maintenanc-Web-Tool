@@ -6,22 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="a1a27d4e-17cb-4261-b221-8c0b2f038ddc" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/service_booking.db" beforeDir="false" afterPath="$PROJECT_DIR$/service_booking.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/AppointmentController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/AppointmentController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/model/AppointmentModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/model/AppointmentModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/utils/DatabaseInitializer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/utils/DatabaseInitializer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/admin.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/public/admin.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/admin.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/public/admin.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/calendar.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/public/calendar.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/calendar.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/public/calendar.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/public/index.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/public/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/public/login.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/profile.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/public/profile.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/profile.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/public/profile.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/programari.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/public/programari.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/public/register.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/scripts.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/public/scripts.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -91,17 +76,17 @@
       <recent name="C:\FACULTATE\ANUL 2\SEMESTRUL2\WEB\Web-Project\assets" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\FACULTATE\ANUL 2\SEMESTRUL2\WEB\Web-Project\js" />
-      <recent name="C:\FACULTATE\ANUL 2\SEMESTRUL2\WEB\Web-Project\assets" />
-      <recent name="C:\FACULTATE\ANUL 2\SEMESTRUL2\WEB\Web-Project\css" />
-      <recent name="C:\FACULTATE\ANUL 2\SEMESTRUL2\WEB\Web-Project\pages" />
+      <recent name="C:\FACULTATE\ANUL 2\SEMESTRUL2\WEB\MaT--Maintenanc-Web-Tool\src\main\resources\public" />
+      <recent name="C:\FACULTATE\ANUL 2\SEMESTRUL2\WEB\MaT--Maintenanc-Web-Tool\src\main\resources\public\profile" />
+      <recent name="C:\FACULTATE\ANUL 2\SEMESTRUL2\WEB\MaT--Maintenanc-Web-Tool\src\main\resources\public\calendar" />
+      <recent name="C:\FACULTATE\ANUL 2\SEMESTRUL2\WEB\MaT--Maintenanc-Web-Tool\src\main\resources\public\programari" />
+      <recent name="C:\FACULTATE\ANUL 2\SEMESTRUL2\WEB\MaT--Maintenanc-Web-Tool\src\main\resources\public\admin" />
     </key>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.25410.129" />
-        <option value="bundled-js-predefined-d6986cc7102b-6a121458b545-JavaScript-IU-251.25410.129" />
+        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-WS-243.26053.12" />
       </set>
     </attachedChunks>
   </component>
@@ -150,7 +135,12 @@
       <workItem from="1747940224340" duration="6720000" />
       <workItem from="1748098036421" duration="4000" />
       <workItem from="1748098064020" duration="4645000" />
-      <workItem from="1748275449780" duration="20683000" />
+      <workItem from="1748275449780" duration="3606000" />
+      <workItem from="1748292883484" duration="1217000" />
+      <workItem from="1748342643674" duration="7114000" />
+      <workItem from="1748368506063" duration="2306000" />
+      <workItem from="1748375616131" duration="157000" />
+      <workItem from="1748376971310" duration="1388000" />
     </task>
     <servers />
   </component>

@@ -30,7 +30,7 @@
 - la programari sa se vada si piesele utilizate la acea programare
 - la programari sa se vada si garantia oferita la acea programare
 - la operatiuni unde se foloseste tokenul daca nu este valid sa se verifice si daca este inca valid, daca nu sa se dea un mesaj de eroare si sa se redirectioneze la login
-
+- la profil sa apara comenzile utilizatorului (acum sunt mock)
 ---
 
 ## Chestii de modificat pe front
@@ -41,10 +41,14 @@
 - de adaugat `interactiune` sa iti poti schimba datele direct din profil ✅
 - de reparat `navbar` pentru pagina de programari (doar pe asta nu merge din ceva motiv)✅
 - la admin sa apara doar programarile din ziua respectiva si din viitor ✅
-
-
-
-
+- de facut tabelele sa fie 100% responsive ✅
+- de modificat sa nu mai apara butonul de conectare de fiecare data cand intru pe o pagina noua
+- de modificat cand faci o programare chenarul de la incarcare documente e prea mare
+- de modificat imaginea cu motocicleta de pe home-page
+- de modificat cum e responsive la profile 
+- eventual de facut o pagina de servicii unde sa se detalieze mai mult fiecare serviciu in parte
+- de facut meniurile dropdown sa arate mai frumos
+- de facut calendarul responsive pe ecrane f mici (cand e ecranul mic sa apara prescurtarile zilelor saptamanii)
 
 
 

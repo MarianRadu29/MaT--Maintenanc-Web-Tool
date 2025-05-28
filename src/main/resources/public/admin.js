@@ -1,10 +1,67 @@
 document.addEventListener('DOMContentLoaded', function () {
+    // Get current year for footer
+    document.getElementById("currentYear").innerText = new Date().getFullYear();
+    document.getElementById("user-account").style.display = "none";
+    document.getElementById("admin-link").style.display = "none";
 
     const user = JSON.parse(localStorage.getItem("userData") || null);
 
     if (!user || user.roleID !== 2) {
         window.location.replace("/notFound");//o sa mi dea 100% 404 de la server
     }
+
+    // Check if user is already logged in
+    function checkLoggedInUser() {
+        const userData = JSON.parse(
+            localStorage.getItem("userData") ||
+            sessionStorage.getItem("userData") ||
+            null
+        );
+        if (userData) {
+            // Update UI for logged in user
+            const authLinks = document.querySelector(".auth-links");
+            const adminLink = document.getElementById("admin-link");
+            if (authLinks && adminLink) {
+                document.getElementById("user-account").style.display = "block";
+
+                authLinks.innerHTML = `
+          <a href="#" id="logoutButton" class="btn btn-secondary">Deconectare</a>
+        `;
+                if (userData.roleID == 2) {
+                    adminLink.style.display = "block";
+                }
+                // Add logout functionality
+                document
+                    .getElementById("logoutButton")
+                    .addEventListener("click", function (e) {
+                        e.preventDefault();
+                        localStorage.removeItem("userData");
+                        localStorage.removeItem("accessToken");
+                        localStorage.removeItem("refreshToken");
+
+                        window.location.reload();
+                        authLinks.innerHTML = `
+                        <a href="login.html" class="btn btn-primary">Conectare</a>
+                        <a href="register.html" class="btn btn-secondary">Înregistrare</a>
+                    `;
+                    });
+            }
+        }
+    }
+
+    // Call this on page load
+    checkLoggedInUser();
+
+    // Mobile menu toggle
+    const menuToggle = document.getElementById("menuToggle");
+    const mainNav = document.querySelector(".main-nav");
+
+    if (menuToggle) {
+        menuToggle.addEventListener("click", () => {
+            mainNav.classList.toggle("open");
+        });
+    }
+
     // Tab functionality
     const tabs = document.querySelectorAll('.tab');
     const tabPanes = document.querySelectorAll('.tab-pane');
@@ -62,8 +119,98 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     ];
 
+    function loadInventoryItems(items) {
+        const tableBody = document.getElementById('inventoryTableBody');
+        if (!tableBody) return;
+
+        tableBody.innerHTML = '';
+
+        items.forEach(item => {
+            const row = document.createElement('tr');
+
+            let statusClass = '';
+            switch (item.status) {
+                case 'in-stock':
+                    statusClass = 'status-in-stock';
+                    break;
+                case 'low-stock':
+                    statusClass = 'status-low-stock';
+                    break;
+                case 'out-of-stock':
+                    statusClass = 'status-out-of-stock';
+                    break;
+                case 'ordered':
+                    statusClass = 'status-ordered';
+                    break;
+            }
+
+            let statusText = '';
+            switch (item.status) {
+                case 'in-stock':
+                    statusText = 'În stoc';
+                    break;
+                case 'low-stock':
+                    statusText = 'Stoc limitat';
+                    break;
+                case 'out-of-stock':
+                    statusText = 'Epuizat';
+                    break;
+                case 'ordered':
+                    statusText = 'Comandat';
+                    break;
+            }
+
+            row.innerHTML = `
+                <td>${item.name}</td>
+                <td>${item.category}</td>
+                <td>${item.quantity}</td>
+                <td>${item.price.toFixed(2)} RON</td>
+                <td>${item.supplier}</td>
+                <td><span class="status ${statusClass}">${statusText}</span></td>
+                <td class="table-actions">
+                    <button class="action-btn action-btn-edit" data-id="${item.id}">Editează</button>
+                    <button class="action-btn action-btn-delete" data-id="${item.id}">Șterge</button>
+                </td>
+            `;
+
+            tableBody.appendChild(row);
+
+            // Add event listeners for edit and delete buttons
+            row.querySelector('.action-btn-edit').addEventListener('click', function () {
+                const itemId = this.getAttribute('data-id');
+                const item = inventoryItems.find(i => i.id === itemId);
+
+                if (item) {
+                    document.getElementById('inventoryModalTitle').textContent = 'Editează produs';
+                    document.getElementById('itemId').value = item.id;
+                    document.getElementById('itemName').value = item.name;
+                    document.getElementById('itemCategory').value = item.category;
+                    document.getElementById('itemQuantity').value = item.quantity;
+                    document.getElementById('itemPrice').value = item.price;
+                    document.getElementById('itemSupplier').value = item.supplier;
+                    document.getElementById('itemStatus').value = item.status;
+
+                    inventoryModal.style.display = 'block';
+                }
+            });
+
+            row.querySelector('.action-btn-delete').addEventListener('click', function () {
+                const itemId = this.getAttribute('data-id');
+
+                if (confirm('Sigur doriți să ștergeți acest produs?')) {
+                    const index = inventoryItems.findIndex(i => i.id === itemId);
+
+                    if (index !== -1) {
+                        inventoryItems.splice(index, 1);
+                        loadInventoryItems(inventoryItems);
+                    }
+                }
+            });
+        });
+    }
+
     // Variable to store appointments data
-    let appointments ;
+    let appointments = [];
 
     // Load appointments
     fetch("/api/appointments")
@@ -74,13 +221,11 @@ document.addEventListener('DOMContentLoaded', function () {
             return response.json();
         }).then(data => {
         appointments = data; // Store the data
-        console.log(data);
         loadAppointments(data);
     })
         .catch(error => {
             console.error('Error loading appointments:', error);
         });
-
 
     // Load inventory items
     loadInventoryItems(inventoryItems);
@@ -361,7 +506,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Helper Functions
-    
     function loadAppointments(appointmentsData) {
         const tableBody = document.getElementById('appointmentsTableBody');
         if (!tableBody) return;
@@ -420,10 +564,10 @@ document.addEventListener('DOMContentLoaded', function () {
             const problemText = appointment.problem && appointment.problem.length > 50
                 ? appointment.problem.slice(0, 50) + '...'
                 : appointment.problem || 'N/A';
-            console.log(appointment.hasAttachments)
+
             row.innerHTML = `
             <td>${appointment.clientName || 'N/A'}</td>
-            <td>${formattedDate}    ${appointment.startTime + ":00-" + appointment.endTime + ":00"  || 'N/A'}</td>
+            <td>${formattedDate} - ${appointment.time || 'N/A'}:00</td>
             <td>${appointment.vehicleBrand || ''} ${appointment.vehicleModel || ''} (${vehicleTypeText})</td>
             <td>${problemText}</td>
             <td><span class="status ${statusClass}">${statusText}</span></td>
@@ -546,7 +690,6 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
     }
-
 
     function parseCSV(csv) {
         const lines = csv.split('\n');
