@@ -1,10 +1,7 @@
 package org.example;
 
 import com.sun.net.httpserver.HttpServer;
-import org.example.controller.AppointmentController;
-import org.example.controller.AuthController;
-import org.example.controller.RefreshController;
-import org.example.controller.UserController;
+import org.example.controller.*;
 import org.example.utils.DatabaseInitializer;
 import org.example.utils.StaticFileHandler;
 
@@ -28,6 +25,8 @@ public class Main {
         server.createContext("/api/appointments/day/", new AppointmentController.GetDayAppointments());
         server.createContext("/api/appointment", new AppointmentController.SetAppointment());
         server.createContext("/api/appointment/media/", new AppointmentController.GetMedia());
+        server.createContext("/api/inventory/categories", new InventoryController.GetCategory());
+        server.createContext("/api/inventory/add", new InventoryController.AddItem());
         server.createContext("/", new StaticFileHandler("src/main/resources/public"));
 
         server.setExecutor(null);

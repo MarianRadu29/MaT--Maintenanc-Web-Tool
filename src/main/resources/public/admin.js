@@ -191,6 +191,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     document.getElementById('itemStatus').value = item.status;
 
                     inventoryModal.style.display = 'block';
+                    // document.querySelector('.btn .btn-primary').addEventListener('click',()=>{
+
+                    // })
                 }
             });
 
@@ -259,6 +262,7 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('inventoryForm').reset();
             document.getElementById('itemId').value = '';
             inventoryModal.style.display = 'block';
+            
         });
     }
 
@@ -277,7 +281,6 @@ document.addEventListener('DOMContentLoaded', function () {
             const itemStatus = document.getElementById('itemStatus').value;
 
             const newItem = {
-                id: itemId || 'i' + (inventoryItems.length + 1),
                 name: itemName,
                 category: itemCategory,
                 quantity: parseInt(itemQuantity),
@@ -285,6 +288,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 supplier: itemSupplier,
                 status: itemStatus
             };
+            alert(JSON.stringify(newItem,null,4));
+            // fetch("/api/inventory/add",{
+            //     method:"POST",
+            //     body: JSON.stringify(newItem)
+            // }).then(res=>{
+            //     return res.json();
+            // }).then( obj=>{
+
+            // })
 
             if (itemId) {
                 // Update existing item
@@ -567,7 +579,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             row.innerHTML = `
             <td>${appointment.clientName || 'N/A'}</td>
-            <td>${formattedDate} - ${appointment.time || 'N/A'}:00</td>
+            <td>${formattedDate} / ${appointment.startTime+":00-"+appointment.endTime+":00" || 'N/A'}</td>
             <td>${appointment.vehicleBrand || ''} ${appointment.vehicleModel || ''} (${vehicleTypeText})</td>
             <td>${problemText}</td>
             <td><span class="status ${statusClass}">${statusText}</span></td>
@@ -596,7 +608,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         </div>
                         <div class="detail-row">
                             <span class="detail-label">Programare:</span>
-                            <span>${app.date ? app.date.split("-").reverse().join("-") : 'N/A'} - ${app.time || 'N/A'}:00</span>
+                            <span>${app.date ? app.date.split("-").reverse().join("-") : 'N/A'} / ${app.startTime+":00-"+app.endTime+":00" || 'N/A'}</span>
                         </div>
                     </div>
                     

@@ -194,7 +194,7 @@ public class AppointmentController {
                 String bodyEmail = EmailTemplate.createConfirmationEmailHtml(
                         firstName + " " + lastName,
                         date,
-                        startTime + " - " + endTime,
+                        startTime + ":00 - " + endTime+ ":00",
                         vehicleType,
                         problemDescription,
                         uploadedFiles.stream().map(FileUploadData::fileName).toList()

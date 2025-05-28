@@ -23,8 +23,6 @@ public class DatabaseInitializer {
             //role_id 1 = client
             //role_id 2 = employee
             //role_id 3 = admin
-
-
             stmt.execute("""
                         CREATE TABLE IF NOT EXISTS users (
                             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -47,24 +45,6 @@ public class DatabaseInitializer {
                     """);
 
             // Appointments
-//            stmt.execute("""
-//                        CREATE TABLE IF NOT EXISTS appointments (
-//                            id INTEGER PRIMARY KEY AUTOINCREMENT,
-//                            client_id INTEGER NOT NULL,
-//                            date TEXT NOT NULL,
-//                            hour TEXT NOT NULL,
-//                            vehicle_brand TEXT ,
-//                            vehicle_model TEXT ,
-//                            vehicle_type TEXT NOT NULL,
-//                            description TEXT NOT NULL,
-//                            status TEXT DEFAULT 'pending',
-//                            admin_message TEXT,
-//                            estimated_price REAL,
-//                            warranty_months INTEGER,
-//                            FOREIGN KEY(client_id) REFERENCES users(id)
-//                        );
-//                    """);
-
                         stmt.execute("""
                 CREATE TABLE IF NOT EXISTS appointments (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -76,7 +56,7 @@ public class DatabaseInitializer {
                     vehicle_model TEXT,
                     vehicle_type TEXT NOT NULL,
                     description TEXT NOT NULL,
-                    status TEXT DEFAULT 'pending',
+                    status TEXT DEFAULT 'pending', --canceled(clientul anuleaza), pending,approved,rejected,completed(treb gandit daca mai treb)
                     admin_message TEXT,
                     estimated_price REAL,
                     warranty_months INTEGER,
@@ -99,14 +79,77 @@ public class DatabaseInitializer {
             // Inventory
 
             //pk id nume_furnizor nume_produs
+//            stmt.execute("""
+//                        CREATE TABLE IF NOT EXISTS inventory (
+//                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+//                            name TEXT NOT NULL,
+//                            category TEXT NOT NULL,
+//                            quantity INTEGER NOT NULL,
+//                            price REAL NOT NULL,
+//                            supplier TEXT NOT NULL,
+//                            status TEXT DEFAULT '' --in-stock , out-of-stock, low-stock,ordered
+//                        );
+//                    """);
             stmt.execute("""
-                        CREATE TABLE IF NOT EXISTS inventory (
-                            id INTEGER PRIMARY KEY AUTOINCREMENT,
-                            name TEXT NOT NULL,
-                            quantity INTEGER NOT NULL,
-                            supplier TEXT
-                        );
-                    """);
+                    CREATE TABLE IF NOT EXISTS inventory (
+                        id        INTEGER      NOT NULL,
+                        name      TEXT         NOT NULL,
+                        category  INTEGER         NOT NULL,
+                        quantity  INTEGER      NOT NULL,
+                        price     REAL         NOT NULL,
+                        supplier  TEXT         NOT NULL,
+                        status    TEXT    DEFAULT '' , -- in-stock, out-of-stock, low-stock, ordered
+                        PRIMARY KEY (id, supplier, name)
+                        FOREIGN KEY (category) REFERENCES category(id)
+                    );
+                """);
+
+            stmt.execute("""
+                CREATE TABLE IF NOT EXISTS category (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name TEXT NOT NULL UNIQUE
+                );
+            """);
+
+            stmt.execute("""
+                INSERT INTO category (name) VALUES
+                -- Sistem de frânare: plăcuțe, discuri, saboți, lichid de frână, manete
+                ('Brake System'),
+                
+                -- Sistem de transmisie: lanțuri, pinioane, foi, curele, casete, deraioare
+                ('Transmission System'),
+                
+                -- Roți și anvelope: cauciucuri, camere, jante, valve
+                ('Wheels and Tires'),
+                
+                -- Suspensie și furcă: furcă față, amortizoare spate, arcuri
+                ('Suspension and Fork'),
+                
+                -- Componente electrice: fire, senzori, leduri, mufe, panou de control, accelerometru
+                ('Electrical Components'),
+                
+                -- Baterii și încărcare: acumulatori Li-Ion, încărcătoare, conectori, adaptoare
+                ('Battery and Charging'),
+                
+                -- Iluminat: faruri, stopuri, semnalizatoare, becuri LED
+                ('Lighting'),
+                
+                -- Motor și ambreiaj: bujii, ambreiaj, cilindri, pistoane, filtre de aer/ulei (pentru motociclete)
+                ('Engine and Clutch'),
+                
+                -- Cabluri și cămăși: cabluri de frână, schimbător, accelerație, ambreiaj
+                ('Cables and Housings'),
+                
+                -- Consumabile: ulei lanț, spray curățare frâne, lichid frână, vaselină
+                ('Consumables'),
+                
+                -- Rulmenți, garnituri și simeringuri: rulmenți ax, simeringuri, garnituri etanșare
+                ('Bearings and Seals'),
+                
+                -- Elemente de prindere și montaj: șuruburi, piulițe, coliere, cleme, distanțiere
+                ('Fasteners and Mounts');
+            """);
+
 
             // Orders
             stmt.execute("""

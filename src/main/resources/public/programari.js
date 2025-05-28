@@ -162,7 +162,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const hour = selectedTime.textContent.trim().substring(0, 2);
             data.append("vehicleType", selectedVehicleType);
-            data.append("appointmentHour", hour);
+            data.append("appointmentStartTime", hour);
+            data.append("appointmentEndTime", String(Number(hour)+1));
             data.append("idClient", JSON.parse(localStorage.getItem("userData")).id);
 
             // Simulate form submission
