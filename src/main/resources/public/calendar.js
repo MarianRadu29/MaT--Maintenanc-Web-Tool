@@ -3,10 +3,14 @@ document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("currentYear").innerText = new Date().getFullYear();
 
   // Initialize UI elements
-  document.getElementById("user-account").style.display = "none";
-  document.getElementById("admin-link").style.display = "none";
+  const userAccount = document.getElementById("user-account");
+  const adminLink = document.getElementById("admin-link");
+  const authLinks = document.querySelector(".auth-links");
 
-  // Calendar functionality
+  if (userAccount) userAccount.style.display = "none";
+  if (adminLink) adminLink.style.display = "none";
+
+  // Calendar functionality (rămâne neschimbat)
   const calendarDays = document.getElementById("calendarDays");
   const currentMonthYearElement = document.getElementById("currentMonthYear");
   const prevMonthButton = document.getElementById("prevMonth");
@@ -153,31 +157,39 @@ document.addEventListener("DOMContentLoaded", function () {
         })
         .catch((error) => {
           console.error("Error fetching appointments:", error);
-          // Show fallback message in case of error
           noAppointments.style.display = "block";
           appointmentsList.style.display = "none";
-          noAppointments.textContent = "Eroare la încărcarea programărilor pentru această zi.";
+          noAppointments.textContent =
+              "Eroare la încărcarea programărilor pentru această zi.";
         });
   }
 
   function showAppointmentsForDay(dateString, appointments) {
     appointmentsList.innerHTML = "";
-    
+
     const dateObj = new Date(dateString);
     const year = dateObj.getFullYear();
     const month = dateObj.getMonth();
     const day = dateObj.getDate();
 
     const timeSlots = [
-      "09:00", "10:00", "11:00", "12:00",
-      "13:00", "14:00", "15:00", "16:00", "17:00"
+      "09:00",
+      "10:00",
+      "11:00",
+      "12:00",
+      "13:00",
+      "14:00",
+      "15:00",
+      "16:00",
+      "17:00",
     ];
 
-    // if (appointments.length === 0) {
-    //   noAppointments.style.display = "block";
-    //   appointmentsList.style.display = "none";
-    //   noAppointments.textContent = "Toate intervalele orare sunt disponibile pentru această zi.";
-    // } else {
+    if (appointments.length === 0) {
+      noAppointments.style.display = "block";
+      appointmentsList.style.display = "none";
+      noAppointments.textContent =
+          "Toate intervalele orare sunt disponibile pentru această zi.";
+    } else {
       noAppointments.style.display = "none";
       appointmentsList.style.display = "block";
 
@@ -185,7 +197,9 @@ document.addEventListener("DOMContentLoaded", function () {
         const isBooked = appointments.includes(time.substring(0, 2));
 
         const appointmentCard = document.createElement("div");
-        appointmentCard.className = `appointment-card ${isBooked ? "booked" : "available"}`;
+        appointmentCard.className = `appointment-card ${
+            isBooked ? "booked" : "available"
+        }`;
 
         const appointmentInfo = document.createElement("div");
         appointmentInfo.className = "appointment-info";
@@ -210,9 +224,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (!isBooked) {
           const bookButton = document.createElement("a");
-          const appointmentDate = `${year}-${String(month + 1).padStart(2, "0")}-${String(
-              day
-          ).padStart(2, "0")}`;
+          const appointmentDate = `${year}-${String(month + 1).padStart(
+              2,
+              "0"
+          )}-${String(day).padStart(2, "0")}`;
 
           // Check if user is logged in
           const userData = JSON.parse(
@@ -234,7 +249,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         appointmentsList.appendChild(appointmentCard);
       });
-    // }
+    }
   }
 
   // Mobile menu toggle functionality
@@ -247,76 +262,45 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Check if user is already logged in and update UI accordingly
+  // *** User authentication check and UI update ***
   function checkLoggedInUser() {
     const userData = JSON.parse(
         localStorage.getItem("userData") ||
         sessionStorage.getItem("userData") ||
-        "null"
+        null
     );
-
-    if (userData && userData.isLoggedIn) {
+    if (userData) {
+      // Update UI for logged in user
       const authLinks = document.querySelector(".auth-links");
       const adminLink = document.getElementById("admin-link");
-      const userAccount = document.getElementById("user-account");
+      if (authLinks && adminLink) {
+        document.getElementById("user-account").style.display = "block";
 
-      if (authLinks) {
-        // Show user account link
-        if (userAccount) {
-          userAccount.style.display = "block";
-        }
-
-        // Show admin link if user has admin role
-        if (adminLink && userData.roleID == 2) {
-          adminLink.style.display = "block";
-        }
-
-        // Update auth links to show welcome message and logout button
         authLinks.innerHTML = `
-          <span class="welcome-user">Bine ai venit, ${userData.firstName || userData.email}</span>
           <a href="#" id="logoutButton" class="btn btn-secondary">Deconectare</a>
         `;
-
-        // Add logout functionality
-        const logoutButton = document.getElementById("logoutButton");
-        if (logoutButton) {
-          logoutButton.addEventListener("click", function (e) {
-            e.preventDefault();
-
-            // Clear all user data from storage
-            localStorage.removeItem("userData");
-            localStorage.removeItem("accessToken");
-            localStorage.removeItem("refreshToken");
-            sessionStorage.removeItem("userData");
-
-            // Reload page to reset UI
-            window.location.reload();
-          });
+        if (userData.roleID == 2) {
+          adminLink.style.display = "block";
         }
-      }
-    } else {
-      // User is not logged in, ensure proper UI state
-      const authLinks = document.querySelector(".auth-links");
-      const adminLink = document.getElementById("admin-link");
-      const userAccount = document.getElementById("user-account");
+        // Add logout functionality
+        document
+            .getElementById("logoutButton")
+            .addEventListener("click", function (e) {
+              e.preventDefault();
+              localStorage.removeItem("userData");
+              localStorage.removeItem("accessToken");
+              localStorage.removeItem("refreshToken");
 
-      if (userAccount) {
-        userAccount.style.display = "none";
-      }
-
-      if (adminLink) {
-        adminLink.style.display = "none";
-      }
-
-      if (authLinks) {
-        authLinks.innerHTML = `
-          <a href="login.html" class="btn btn-primary">Conectare</a>
-          <a href="register.html" class="btn btn-secondary">Înregistrare</a>
-        `;
+              window.location.reload();
+              authLinks.innerHTML = `
+                        <a href="login.html" class="btn btn-primary">Conectare</a>
+                        <a href="register.html" class="btn btn-secondary">Înregistrare</a>
+                    `;
+            });
       }
     }
   }
 
-  // Initialize user authentication state
+  // Initialize user authentication state on page load
   checkLoggedInUser();
 });
