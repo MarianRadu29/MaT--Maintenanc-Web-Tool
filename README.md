@@ -18,19 +18,21 @@
 --- 
 ## Chestii de implementat:
 
-- ar trebui generat in singur `token jwt` ,daca apas pe `tine ma minte` sa fie de 7 zile altfel sa fie de doar o zii
-- ar trebui un nou rol de employee care sa aiba acces la programari si inventar
-- la programare la `vezi detalii` ar trebui sa punem si un fel de select multiplu care sa pot alege ce din inventarul service ului ce se foloseste la aceea programare si sa se faca un fel de total,dar campul de pret sa l se poatea modifica separat(pret piese + manopera + garantie + etc) 
+- SA FOLOSIM COOKIE URI IN LOC DE LOCALSTORAGE 
+- ar trebui un nou rol de `employee` care sa aiba acces la programari si inventar
 - adminu sau mecanicul pot schimba ora unei programari(sau sa o prelungeasca)
--clientul poate sa schimbe ora programarii daca nu a fost inca aprobata
+- clientul poate sa schimbe ora programarii daca nu a fost inca aprobata
 - clientul poate sa anuleze programarea daca nu a fost inca aprobata
 - la lista de programari la admin sa se vada numai programarile din ziua respectiva si din zilele urmatoare
 - daca o programare este aprobata,se poate adauga un buton de `order` sau `completed` care ar face un order al programarii respective(pretul garantia + piese utilizate)
--mecanicul poate avea acces numai la sectiunea de programari si inventar(asta ar treb discutat)
+- mecanicul poate avea acces numai la sectiunea de programari si inventar(asta ar treb discutat)
 - la programari sa se vada si piesele utilizate la acea programare
 - la programari sa se vada si garantia oferita la acea programare
 - la operatiuni unde se foloseste tokenul daca nu este valid sa se verifice si daca este inca valid, daca nu sa se dea un mesaj de eroare si sa se redirectioneze la login
-- la profil sa apara comenzile utilizatorului (acum sunt mock)
+- ar trebui trimis si emailul userului si nr de telefon la pagina de admin la programari la detalii
+- trigger la baza de date pentru a trimite emailul de confirmare a programarii
+- trigger cand se face un order sa se scada din stocul pieselor respective
+- trigger cand se face o programare sa se adauge in baza de date si piesele utilizate la acea programare
 ---
 
 ## Chestii de modificat pe front
@@ -50,6 +52,7 @@
 - de facut meniurile dropdown sa arate mai frumos
 - de facut calendarul responsive pe ecrane f mici (cand e ecranul mic sa apara prescurtarile zilelor saptamanii)
 - de modificat fisierele sa nu mai am css in fisierele js
+- la o programare la sectiunea de admin cand dau modifica sa apara iar=)) un pop up ceva care sa editez intervalele orare ale acelei programari(check urile le fac la backend si iti trimit raspunsul daca e ok sau nu)
 
 
 

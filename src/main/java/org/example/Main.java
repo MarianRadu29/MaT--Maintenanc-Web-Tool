@@ -37,3 +37,6 @@ public class Main {
 }
 
 // www.autocenteriasi.ro/ MODEL de front pt proiect
+// `dotenv` pentru a nu mai avea hardcodate datele de conectare la baza de date sau alte date sensibile
+// securizare pentru XSS, CSRF, CORS
+
