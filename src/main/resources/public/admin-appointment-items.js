@@ -57,17 +57,26 @@ function initializeInventorySearch() {
 
     if (!searchInput || !resultsContainer) return;
 
-    searchInput.addEventListener('input', function () {
-        const normalizeText = text => text.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
-        const searchTerm = normalizeText(this.value);
+    const normalizeText = text => text.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
 
-        if (searchTerm === '') {
-            resultsContainer.innerHTML = '';
+    searchInput.addEventListener('focus', function () {
+        if (inventoryItems.length === 0) {
+            resultsContainer.innerHTML = '<div class="no-results">Inventarul nu este încărcat. Vă rugăm să reîmprospătați pagina.</div>';
             return;
         }
+        displaySearchResults(inventoryItems);
+    });
+
+    searchInput.addEventListener('input', function () {
+        const searchTerm = normalizeText(this.value);
 
         if (inventoryItems.length === 0) {
             resultsContainer.innerHTML = '<div class="no-results">Inventarul nu este încărcat. Vă rugăm să reîmprospătați pagina.</div>';
+            return;
+        }
+
+        if (searchTerm === '') {
+            displaySearchResults(inventoryItems);
             return;
         }
 
@@ -80,7 +89,6 @@ function initializeInventorySearch() {
         displaySearchResults(filteredItems);
     });
 }
-
 
 function displaySearchResults(items) {
     const resultsContainer = document.getElementById('inventoryResults');
@@ -99,6 +107,10 @@ function displaySearchResults(items) {
         const isAvailable = item.status !== 'out-of-stock' && item.quantity > 0;
         const isSelected = selectedInventoryItems.some(selected => selected.id === item.id);
 
+        if (isSelected) {
+            itemElement.classList.add('selected');
+        }
+
         itemElement.innerHTML = `
             <div class="inventory-item-info">
                 <div class="inventory-item-name">${item.name}</div>
@@ -111,23 +123,20 @@ function displaySearchResults(items) {
 
         itemElement.style.cursor = isAvailable ? 'pointer' : 'not-allowed';
         itemElement.style.opacity = isAvailable ? '1' : '0.6';
-        itemElement.style.border = isSelected ? '2px solid #4CAF50' : '1px solid #ccc';
-        itemElement.style.backgroundColor = '#fff';
-        itemElement.style.margin = '5px';
-        itemElement.style.borderRadius = '5px';
-        itemElement.style.padding = '10px';
 
         if (isAvailable) {
             itemElement.addEventListener('click', function () {
                 const index = selectedInventoryItems.findIndex(selected => selected.id === item.id);
                 if (index >= 0) {
                     selectedInventoryItems.splice(index, 1);
+                    itemElement.classList.remove('selected');
                 } else {
                     selectedInventoryItems.push({ ...item, selectedQuantity: 1 });
+                    itemElement.classList.add('selected');
                 }
 
                 updateSelectedItemsDisplay();
-                calculateTotalPrice(); // <-- MODIFICARE AICI
+                calculateTotalPrice();
 
                 const searchInput = document.getElementById('inventorySearchModal');
                 if (searchInput.value.trim() !== '') {
@@ -163,16 +172,25 @@ function updateSelectedItemsDisplay() {
         const itemElement = document.createElement('div');
         itemElement.className = 'selected-item';
         itemElement.innerHTML = `
-            <div><strong>${item.name}</strong> (${translateCategory(item.category)}) - ${item.selectedQuantity} x ${item.price.toFixed(2)} RON</div>
-            <div style="margin-top: 5px;">
-                <button onclick="decreaseQuantity(${index})">-</button>
-                <input type="number" value="${item.selectedQuantity}" onchange="updateQuantity(${index}, this.value)" min="1" max="${item.quantity}" style="width: 40px;">
-                <button onclick="increaseQuantity(${index})">+</button>
-                <button onclick="removeSelectedItem(${index})" style="margin-left: 10px; color: red;">Sterge</button>
+            <div class="selected-item-info">
+                <div><strong>${item.name}</strong></div>
+                <div style="font-size: 0.9em; color: #666;">
+                    ${translateCategory(item.category)} • ${item.supplier}
+                </div>
+                <div style="font-size: 0.9em; color: #007bff;">
+                    ${item.selectedQuantity} x ${item.price.toFixed(2)} RON
+                </div>
+            </div>
+            <div class="selected-item-controls">
+                <button onclick="decreaseQuantity(${index})" ${item.selectedQuantity <= 1 ? 'disabled' : ''}>-</button>
+                <input type="number" value="${item.selectedQuantity}" onchange="updateQuantity(${index}, this.value)" min="1" max="${item.quantity}">
+                <button onclick="increaseQuantity(${index})" ${item.selectedQuantity >= item.quantity ? 'disabled' : ''}>+</button>
+                <button class="action-btn action-btn-delete" onclick="removeSelectedItem(${index})">Șterge</button>
             </div>
         `;
         selectedItemsList.appendChild(itemElement);
     });
+
     calculateTotalPrice();
 }
 
@@ -203,6 +221,19 @@ function updateQuantity(index, newQuantity) {
 function removeSelectedItem(index) {
     selectedInventoryItems.splice(index, 1);
     updateSelectedItemsDisplay();
+    calculateTotalPrice();
+
+    const searchInput = document.getElementById('inventorySearchModal');
+    if (searchInput && searchInput.value.trim() !== '') {
+        const normalizeText = text => text.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
+        const searchTerm = normalizeText(searchInput.value);
+        const filteredItems = inventoryItems.filter(item =>
+            normalizeText(item.name).includes(searchTerm) ||
+            normalizeText(item.supplier).includes(searchTerm) ||
+            normalizeText(translateCategory(item.category)).includes(searchTerm)
+        );
+        displaySearchResults(filteredItems);
+    }
 }
 
 function calculateTotalPrice() {
@@ -223,23 +254,9 @@ function resetInventorySelection() {
     if (resultsContainer) resultsContainer.innerHTML = '';
 }
 
-function initializeInventoryComponent() {
+document.addEventListener('DOMContentLoaded', function() {
     initInventoryLoad().then(() => {
-        const container = document.createElement('div');
-        container.innerHTML = `
-            <input id="inventorySearchModal" placeholder="Caută produse..." type="text">
-            <div id="inventoryResults" style="border: 1px solid #ccc; margin: 10px 0; padding: 10px;"></div>
-            <h4>Produse Selectate:</h4>
-            <div id="selectedItemsList"></div>
-            <div>Total: <span id="totalPrice">0.00</span> RON</div>
-        `;
-        document.body.appendChild(container);
         initializeInventorySearch();
+        console.log('Inventory system initialized');
     });
-}
-
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeInventoryComponent);
-} else {
-    initializeInventoryComponent();
-}
+});
