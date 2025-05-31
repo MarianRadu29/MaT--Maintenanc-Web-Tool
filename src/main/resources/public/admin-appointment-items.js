@@ -104,6 +104,11 @@ function displaySearchResults(items) {
         const itemElement = document.createElement('div');
         itemElement.className = 'inventory-item-result';
 
+        // Setăm atributele cu ID-ul real al obiectului din inventar
+        itemElement.setAttribute('data-id', item.id);
+        // Opțional: un id unic pe element (în caz că ai nevoie să-l găsești prin getElementById)
+        itemElement.setAttribute('id', `inventory-item-${item.id}`);
+
         const isAvailable = item.status !== 'out-of-stock' && item.quantity > 0;
         const isSelected = selectedInventoryItems.some(selected => selected.id === item.id);
 
@@ -128,9 +133,11 @@ function displaySearchResults(items) {
             itemElement.addEventListener('click', function () {
                 const index = selectedInventoryItems.findIndex(selected => selected.id === item.id);
                 if (index >= 0) {
+                    // deja selectat → deselectare
                     selectedInventoryItems.splice(index, 1);
                     itemElement.classList.remove('selected');
                 } else {
+                    // adăugăm la listă
                     selectedInventoryItems.push({ ...item, selectedQuantity: 1 });
                     itemElement.classList.add('selected');
                 }
@@ -138,6 +145,7 @@ function displaySearchResults(items) {
                 updateSelectedItemsDisplay();
                 calculateTotalPrice();
 
+                // Dacă există un text în search, reafișăm lista filtrată
                 const searchInput = document.getElementById('inventorySearchModal');
                 if (searchInput.value.trim() !== '') {
                     const normalizeText = text => text.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
@@ -171,6 +179,12 @@ function updateSelectedItemsDisplay() {
     selectedInventoryItems.forEach((item, index) => {
         const itemElement = document.createElement('div');
         itemElement.className = 'selected-item';
+
+        // Setăm atributele pe div-ul „selected-item” cu ID-ul real din inventar
+        itemElement.setAttribute('data-id', item.id);
+        // Opțional: dacă vrei chiar un id unic
+        itemElement.setAttribute('id', `selected-item-${item.id}`);
+
         itemElement.innerHTML = `
             <div class="selected-item-info">
                 <div><strong>${item.name}</strong></div>
@@ -183,7 +197,13 @@ function updateSelectedItemsDisplay() {
             </div>
             <div class="selected-item-controls">
                 <button onclick="decreaseQuantity(${index})" ${item.selectedQuantity <= 1 ? 'disabled' : ''}>-</button>
-                <input type="number" value="${item.selectedQuantity}" onchange="updateQuantity(${index}, this.value)" min="1" max="${item.quantity}">
+                <input 
+                    type="number" 
+                    value="${item.selectedQuantity}" 
+                    onchange="updateQuantity(${index}, this.value)" 
+                    min="1" 
+                    max="${item.quantity}"
+                >
                 <button onclick="increaseQuantity(${index})" ${item.selectedQuantity >= item.quantity ? 'disabled' : ''}>+</button>
                 <button class="action-btn action-btn-delete" onclick="removeSelectedItem(${index})">Șterge</button>
             </div>
@@ -223,6 +243,7 @@ function removeSelectedItem(index) {
     updateSelectedItemsDisplay();
     calculateTotalPrice();
 
+    // După ștergerea din listă, reafișăm și lista filtrată (dacă era vreun search activ)
     const searchInput = document.getElementById('inventorySearchModal');
     if (searchInput && searchInput.value.trim() !== '') {
         const normalizeText = text => text.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
@@ -253,6 +274,8 @@ function resetInventorySelection() {
     if (searchInput) searchInput.value = '';
     if (resultsContainer) resultsContainer.innerHTML = '';
 }
+
+
 
 document.addEventListener('DOMContentLoaded', function() {
     initInventoryLoad().then(() => {

@@ -497,4 +497,235 @@ public class AppointmentController {
             }
         }
     }
+
+    public static class UpdateAppointment implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            if (!"PUT".equalsIgnoreCase(exchange.getRequestMethod())) {
+                exchange.sendResponseHeaders(405, -1);
+                return;
+            }
+
+//            String authHeader = exchange.getRequestHeaders().getFirst("Authorization");
+//
+//            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+//                JsonView.send(exchange, 401, "{\"message\":\"Missing or invalid token\"}");
+//                return;
+//            }
+//
+//            String token = authHeader.substring(7); // Remove "Bearer "
+//            Map<String, Object> claims = JwtUtil.validateAndExtractClaims(token);
+//
+//            if (claims == null) {
+//                JsonView.send(exchange, 401, "{\"message\":\"Invalid or expired token\"}");
+//                return;
+//            }
+//
+//            int userId = (int) claims.get("id");
+            String body = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
+            JSONObject jsonBody = new JSONObject(body);
+            System.out.println(jsonBody);
+
+            int appointmentId = jsonBody.getInt("appointmentId");
+            String status = jsonBody.getString("status");
+
+            String adminMessage = jsonBody.optString("adminMessage", null);
+
+            // Validate status
+            switch (status) {
+                case "rejected":{
+                    String sql = "UPDATE appointments SET status = ?, admin_message = ? WHERE id = ?";
+                    try (Connection conn = DriverManager.getConnection("jdbc:sqlite:service_booking.db");
+                         PreparedStatement ps = conn.prepareStatement(sql)) {
+                        ps.setString(1, status);
+                        ps.setString(2, adminMessage);
+                        ps.setInt(3, appointmentId);
+                        ps.executeUpdate();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                        JsonView.send(exchange, 500, new JSONObject().put("message","Internal server error").toString());
+                        return;
+                    }
+                }
+                break;
+                case "approved":{
+                    double estimatedPrice = jsonBody.optDouble("estimatedPrice", 0.0);
+                    int warrantyMonths = jsonBody.optInt("warrantyMonths", 0);
+                    JSONArray inventoryIds = jsonBody.optJSONArray("inventoryIds");
+
+                    try (Connection conn = DriverManager.getConnection(DB_URL)) {
+                        conn.setAutoCommit(false);
+
+                        // 1. Update appointment
+                        String sqlUpdate = "UPDATE appointments SET status = ?, admin_message = ?, estimated_price = ?, warranty_months = ? WHERE id = ?";
+                        try (PreparedStatement ps = conn.prepareStatement(sqlUpdate)) {
+                            ps.setString(1, status);
+                            ps.setString(2, adminMessage);
+                            ps.setDouble(3, estimatedPrice);
+                            ps.setInt(4, warrantyMonths);
+                            ps.setInt(5, appointmentId);
+                            ps.executeUpdate();
+                        }
+
+                        // 1) Inserarea comenzii în tabela orders fără RETURN_GENERATED_KEYS
+                        String sqlOrder = "INSERT INTO orders (appointment_id, estimated_total) VALUES (?, ?)";
+                        int orderId;
+
+                        // 2) Pregătim statement-ul fără Statement.RETURN_GENERATED_KEYS
+                        try (PreparedStatement ps = conn.prepareStatement(sqlOrder)) {
+                            ps.setInt(1, appointmentId);
+                            ps.setDouble(2, estimatedPrice);
+                            ps.executeUpdate();
+                        }
+
+                        // 3) După ce am făcut INSERT-ul, rulăm SELECT last_insert_rowid()
+                        String sqlGetId = "SELECT last_insert_rowid()";
+                        try (Statement stmt = conn.createStatement();
+                             ResultSet rs = stmt.executeQuery(sqlGetId)) {
+                            if (rs.next()) {
+                                orderId = rs.getInt(1);
+                            } else {
+                                throw new SQLException("Failed to retrieve order ID from SQLite.");
+                            }
+                        }
+
+
+                        // 3. Insert order items
+                        String sqlOrderItem = "INSERT INTO order_items (order_id, inventory_id, quantity, unit_price) VALUES (?, ?, ?, ?)";
+                        try (PreparedStatement ps = conn.prepareStatement(sqlOrderItem)) {
+                            for (int i = 0; i < inventoryIds.length(); i++) {
+                                int inventoryId = inventoryIds.getInt(i);
+                                // You may want to get quantity and price from the request or DB
+                                int quantity = 1; // default, or get from request
+                                double unitPrice = 0.0;
+                                // Get price from inventory
+                                try (PreparedStatement psInv = conn.prepareStatement("SELECT price FROM inventory WHERE id = ?")) {
+                                    psInv.setInt(1, inventoryId);
+                                    try (ResultSet rs = psInv.executeQuery()) {
+                                        if (rs.next()) unitPrice = rs.getDouble("price");
+                                    }
+                                }
+                                ps.setInt(1, orderId);
+                                ps.setInt(2, inventoryId);
+                                ps.setInt(3, quantity);
+                                ps.setDouble(4, unitPrice);
+                                ps.addBatch();
+                            }
+                            ps.executeBatch();
+                        }
+                        conn.commit();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                        JsonView.send(exchange, 500, new JSONObject().put("message", "Internal server error").toString());
+                        return;
+                    }
+                }
+                break;
+                case "modified":{
+                    double estimatedPrice = jsonBody.optDouble("estimatedPrice", 0.0);
+                    int warrantyMonths = jsonBody.optInt("warrantyMonths", 0);
+                    String newStartTime = jsonBody.optString("startTime");
+                    String newEndTime = jsonBody.optString("endTime");
+                    JSONArray inventoryIds = jsonBody.optJSONArray("inventoryIds");
+
+                    try (Connection conn = DriverManager.getConnection(DB_URL)) {
+                        conn.setAutoCommit(false);
+
+                        // 1. Update appointment with new time and details
+                        String sqlUpdate = "UPDATE appointments SET status = ?, admin_message = ?, estimated_price = ?, warranty_months = ?, start_time = ?, end_time = ? WHERE id = ?";
+                        try (PreparedStatement ps = conn.prepareStatement(sqlUpdate)) {
+                            ps.setString(1, "modified");
+                            ps.setString(2, adminMessage);
+                            ps.setDouble(3, estimatedPrice);
+                            ps.setInt(4, warrantyMonths);
+                            ps.setString(5, newStartTime);
+                            ps.setString(6, newEndTime);
+                            ps.setInt(7, appointmentId);
+                            ps.executeUpdate();
+                        }
+
+                        String sqlOrder = "INSERT INTO orders (appointment_id, estimated_total) VALUES (?, ?)";
+                        int orderId;
+                        try (PreparedStatement ps = conn.prepareStatement(sqlOrder, Statement.RETURN_GENERATED_KEYS)) {
+                            ps.setInt(1, appointmentId);
+                            ps.setDouble(3, estimatedPrice);
+                            ps.executeUpdate();
+                            try (ResultSet rs = ps.getGeneratedKeys()) {
+                                if (!rs.next()) throw new SQLException("Failed to get order ID");
+                                orderId = rs.getInt(1);
+                            }
+                        }
+
+                        // 3. Insert order items
+                        String sqlOrderItem = "INSERT INTO order_items (order_id, inventory_id, quantity, unit_price) VALUES (?, ?, ?, ?)";
+                        try (PreparedStatement ps = conn.prepareStatement(sqlOrderItem)) {
+                            for (int i = 0; i < inventoryIds.length(); i++) {
+                                int inventoryId = inventoryIds.getInt(i);
+                                // You may want to get quantity and price from the request or DB
+                                int quantity = 1; // default, or get from request
+                                double unitPrice = 0.0;
+                                // Get price from inventory
+                                try (PreparedStatement psInv = conn.prepareStatement("SELECT price FROM inventory WHERE id = ?")) {
+                                    psInv.setInt(1, inventoryId);
+                                    try (ResultSet rs = psInv.executeQuery()) {
+                                        if (rs.next()) unitPrice = rs.getDouble("price");
+                                    }
+                                }
+                                ps.setInt(1, orderId);
+                                ps.setInt(2, inventoryId);
+                                ps.setInt(3, quantity);
+                                ps.setDouble(4, unitPrice);
+                                ps.addBatch();
+                            }
+                            ps.executeBatch();
+                        }
+
+                        conn.commit();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                        JsonView.send(exchange, 500, new JSONObject().put("message", "Internal server error").toString());
+                        return;
+                    }
+                }
+                break;
+                case "canceled":{
+                    String sql = "UPDATE appointments SET status = ?, admin_message = ? WHERE id = ?";
+                    try (Connection conn = DriverManager.getConnection("jdbc:sqlite:service_booking.db");
+                         PreparedStatement ps = conn.prepareStatement(sql)) {
+                        ps.setString(1, status);
+                        ps.setInt(3, appointmentId);
+                        ps.executeUpdate();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                        JsonView.send(exchange, 500, new JSONObject().put("message","Internal server error").toString());
+                        return;
+                    }
+                }
+                break;
+                case "accepted":{
+                    String sql = "UPDATE appointments SET status = ? WHERE id = ?";
+                    try (Connection conn = DriverManager.getConnection("jdbc:sqlite:service_booking.db");
+                         PreparedStatement ps = conn.prepareStatement(sql)) {
+                        ps.setString(1, "approved");
+                        ps.setInt(2, appointmentId);
+                        ps.executeUpdate();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                        JsonView.send(exchange, 500, new JSONObject().put("message","Internal server error").toString());
+                        return;
+                    }
+                }
+                break;
+                //completed
+                default: {
+                    JsonView.send(exchange, 400, new JSONObject().put("message","Invalid status").toString());
+                    return;
+                }
+            }
+
+            JsonView.send(exchange, 200, "{\"message\":\"Appointment updated successfully\"}");
+
+        }
+    }
+
 }

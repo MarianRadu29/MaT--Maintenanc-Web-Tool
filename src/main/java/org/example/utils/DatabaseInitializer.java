@@ -56,7 +56,7 @@ public class DatabaseInitializer {
                     vehicle_model TEXT,
                     vehicle_type TEXT NOT NULL,
                     description TEXT NOT NULL,
-                    status TEXT DEFAULT 'pending', --canceled(clientul anuleaza), pending,approved,rejected,completed(treb gandit daca mai treb)
+                    status TEXT DEFAULT 'pending', --canceled(clientul anuleaza),modified, pending,approved,rejected,completed(treb gandit daca mai treb)
                     admin_message TEXT,
                     estimated_price REAL,
                     warranty_months INTEGER,
@@ -151,6 +151,32 @@ public class DatabaseInitializer {
                             FOREIGN KEY(inventory_id) REFERENCES inventory(id)
                         );
                     """);
+
+
+            // Tabela de comenzi (orders)
+            stmt.execute("""
+                CREATE TABLE IF NOT EXISTS orders (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    appointment_id INTEGER NOT NULL,
+                    order_date TEXT NOT NULL DEFAULT (datetime('now','localtime')),
+                    status TEXT NOT NULL DEFAULT 'pending',
+                    estimated_total REAL,
+                    FOREIGN KEY(appointment_id) REFERENCES appointments(id)
+                );
+            """);
+
+            // Tabela care leagă comanda de articole din inventar (order_items)
+            stmt.execute("""
+                CREATE TABLE IF NOT EXISTS order_items (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    order_id INTEGER NOT NULL,
+                    inventory_id INTEGER NOT NULL,
+                    quantity INTEGER NOT NULL,
+                    unit_price REAL NOT NULL,
+                    FOREIGN KEY(order_id) REFERENCES orders(id),
+                    FOREIGN KEY(inventory_id) REFERENCES inventory(id)
+                );
+            """);
 
             System.out.println("Database initialized successfully.");
 

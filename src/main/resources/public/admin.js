@@ -444,6 +444,86 @@ document.addEventListener('DOMContentLoaded', function () {
                     alert('Vă rugăm să completați toate câmpurile.');
                     return;
                 }
+                
+                function getSelectedInventoryIds() {
+                    const selectedElements = document.querySelectorAll('.selected-item');
+                    const ids = [];
+                
+                    selectedElements.forEach(el => {
+                        const dataId = el.getAttribute('data-id');
+                        if (dataId !== null) {
+                            ids.push(parseInt(dataId, 10));
+                        }
+                    });
+                
+                    return ids;
+                }
+                
+
+                // const index = appointments.find(app => app.id === currentAppointment.id);
+                // if (index !== -1) {
+                //     appointments[index].status = 'approved';
+                //     appointments[index].responseMessage = responseMessage;
+                //     appointments[index].estimatedPrice = estimatedPrice;
+                //     appointments[index].warranty = warranty;
+
+                //     loadAppointments(appointments);
+                //     appointmentModal.style.display = 'none';
+                //     alert('Programare aprobată cu succes!');
+                // }
+                const bodySend = {
+                    status:"approved",
+                    appointmentId:currentAppointment.id,
+                    estimatedPrice:Number.parseInt(estimatedPrice),
+                    warrantyMonths:Number.parseInt(warranty),
+                    adminMessage:responseMessage,
+                    inventoryIds:getSelectedInventoryIds()
+                }
+
+                fetch("/api/appointment/update", {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(bodySend)
+                })
+                .then(res => {
+                    switch (res.status) {
+                        case 200:
+                        case 201:
+                            return res.json().then(data => {
+                                console.log("Comanda trimisă cu succes:", data);
+                            });
+            
+                        case 400:
+                            // 400 Bad Request → corpul conține, probabil, detalii despre eroare
+                            return res.json()
+                                .then(errorBody => {
+                                    console.error("Bad Request (400):", errorBody);
+                                })
+                                .catch(() => {
+                                    console.error("Bad Request (400): nu s-a putut parsa JSON-ul din răspuns.");
+                                });
+            
+                        case 404:
+                            // 404 Not Found → res text, nu JSON (de obicei)
+                            return res.text().then(textBody => {
+                                console.error("Not Found (404):", textBody);
+                            });
+            
+                        case 500:
+                            return res.text().then(textBody => {
+                                console.error("Internal Server Error (500):", textBody);
+                            });
+            
+                        default:
+                            // Orice alt cod de status
+                            return res.text().then(textBody => {
+                                console.error(`Eroare neașteptată (${res.status}):`, textBody);
+                            });
+                    }
+                })
+                .catch(networkErr => {
+                    console.error("Eroare neasteptata:", networkErr);
+                });
 
                 const index = appointments.findIndex(app => app.id === currentAppointment.id);
                 if (index !== -1) {
@@ -467,6 +547,58 @@ document.addEventListener('DOMContentLoaded', function () {
                     alert('Vă rugăm să adăugați un motiv pentru respingere.');
                     return;
                 }
+                
+                const bodySend = {
+                    status:"rejected",
+                    appointmentId:currentAppointment.id,
+                    adminMessage:responseMessage,
+                }
+                fetch("/api/appointment/update", {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(bodySend)
+                })
+                .then(res => {
+                    switch (res.status) {
+                        case 200:
+                        case 201:
+                            return res.json().then(data => {
+                                console.log("Comanda trimisă cu succes:", data);
+                            });
+            
+                        case 400:
+                            // 400 Bad Request → corpul conține, probabil, detalii despre eroare
+                            return res.json()
+                                .then(errorBody => {
+                                    console.error("Bad Request (400):", errorBody);
+                                })
+                                .catch(() => {
+                                    console.error("Bad Request (400): nu s-a putut parsa JSON-ul din răspuns.");
+                                });
+            
+                        case 404:
+                            // 404 Not Found → res text, nu JSON (de obicei)
+                            return res.text().then(textBody => {
+                                console.error("Not Found (404):", textBody);
+                            });
+            
+                        case 500:
+                            return res.text().then(textBody => {
+                                console.error("Internal Server Error (500):", textBody);
+                            });
+            
+                        default:
+                            // Orice alt cod de status
+                            return res.text().then(textBody => {
+                                console.error(`Eroare neașteptată (${res.status}):`, textBody);
+                            });
+                    }
+                })
+                .catch(networkErr => {
+                    console.error("Eroare neasteptata:", networkErr);
+                });
+
+
 
                 const index = appointments.findIndex(app => app.id === currentAppointment.id);
                 if (index !== -1) {
