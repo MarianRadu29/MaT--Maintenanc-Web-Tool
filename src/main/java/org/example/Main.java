@@ -2,14 +2,12 @@ package org.example;
 
 import com.sun.net.httpserver.HttpServer;
 import org.example.controller.*;
-import org.example.utils.DatabaseInitializer;
 import org.example.utils.StaticFileHandler;
 
 import java.net.InetSocketAddress;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        DatabaseInitializer.initialize();
         HttpServer server = HttpServer.create(new InetSocketAddress(8001), 0);
 
         server.createContext("/api/register", new AuthController.Register());

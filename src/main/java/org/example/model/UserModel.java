@@ -6,17 +6,21 @@ import org.example.utils.BCrypt;
 import java.sql.*;
 
 public class UserModel {
-    private static final String DB_URL = "jdbc:sqlite:service_booking.db";
+    // JDBC URL pentru PostgreSQL:
+    private static final String DB_URL      = "jdbc:postgresql://localhost:5432/postgres";
+    private static final String DB_USER     = "postgres";
+    private static final String DB_PASSWORD = "student";
 
     public static boolean createUser(User data) {
-        String sql = "INSERT INTO users(first_name,last_name, password, email,role_id,phone_number) VALUES (?,?, ?, ?,?,?)";
-        try (Connection conn = DriverManager.getConnection(DB_URL);
+        String sql = "INSERT INTO users(first_name, last_name, password, email, role_id, phone_number) VALUES (?, ?, ?, ?, ?, ?)";
+        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
             pstmt.setString(1, data.getFirstName());
             pstmt.setString(2, data.getLastName());
             pstmt.setString(3, BCrypt.hashPassword(data.getPassword()));
             pstmt.setString(4, data.getEmail());
-            pstmt.setInt(5, 1);
+            pstmt.setInt(5, 1);  // rol implicit = 1 (client)
             pstmt.setString(6, data.getPhoneNumber());
 
             pstmt.executeUpdate();
@@ -27,10 +31,11 @@ public class UserModel {
         }
     }
 
-    public static User updateUser(User user){
+    public static User updateUser(User user) {
         String sql = "UPDATE users SET first_name = ?, last_name = ?, email = ?, phone_number = ? WHERE id = ?";
-        try (Connection conn = DriverManager.getConnection(DB_URL);
+        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
             pstmt.setString(1, user.getFirstName());
             pstmt.setString(2, user.getLastName());
             pstmt.setString(3, user.getEmail());
@@ -41,14 +46,15 @@ public class UserModel {
             return user;
         } catch (SQLException e) {
             System.out.println("[UPDATE USER ERROR] " + e.getMessage());
+            return null;
         }
-        return null;
     }
 
     public static User getUserByEmail(String email) {
         String sql = "SELECT * FROM users WHERE email = ?";
-        try (Connection conn = DriverManager.getConnection(DB_URL);
+        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
             pstmt.setString(1, email);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
@@ -66,12 +72,12 @@ public class UserModel {
         return null;
     }
 
-
     public static User getUserById(int id) {
         String sql = "SELECT * FROM users WHERE id = ?";
-        try (Connection conn = DriverManager.getConnection(DB_URL);
+        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1,id);
+
+            pstmt.setInt(1, id);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
                 int roleId = rs.getInt("role_id");
@@ -83,7 +89,7 @@ public class UserModel {
                 return new User(firstName, lastName, password, email, id, phoneNumber, roleId);
             }
         } catch (SQLException e) {
-            System.out.println("[GET USER BY EMAIL ERROR] " + e.getMessage());
+            System.out.println("[GET USER BY ID ERROR] " + e.getMessage());
         }
         return null;
     }

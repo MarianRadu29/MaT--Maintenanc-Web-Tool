@@ -27,7 +27,9 @@ import java.util.*;
 
 public class AppointmentController {
 
-    private static final String DB_URL = "jdbc:sqlite:service_booking.db";
+    private static final String DB_URL      = "jdbc:postgresql://localhost:5432/postgres";
+    private static final String DB_USER     = "postgres";
+    private static final String DB_PASSWORD = "student";
 
     /** Handler GET /api/appointments/day/{yyyy-MM-dd} */
     public static class GetDayAppointments implements HttpHandler {
@@ -131,16 +133,18 @@ public class AppointmentController {
 
                 int appointmentId;
                 String sqlA = """
-                    INSERT INTO appointments
-                      (client_id, vehicle_brand, vehicle_model,
-                       description, date,
-                       start_time,end_time,vehicle_type)
-                    VALUES (?, ?, ?, ?, ?, ?,?,?)
-                """;
-                try (Connection conn = DriverManager.getConnection(DB_URL);
+    INSERT INTO appointments
+      (client_id, vehicle_brand, vehicle_model,
+       description, date,
+       start_time, end_time, vehicle_type)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    RETURNING id;
+""";
+
+                try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
                      PreparedStatement ps = conn.prepareStatement(sqlA)) {
 
-                    ps.setInt   (1, clientId);
+                    ps.setInt(1, clientId);
                     ps.setString(2, brand);
                     ps.setString(3, model);
                     ps.setString(4, problemDescription);
@@ -148,13 +152,12 @@ public class AppointmentController {
                     ps.setString(6, startTime);
                     ps.setString(7, endTime);
                     ps.setString(8, vehicleType);
-                    ps.executeUpdate();
-                    try (Statement stmt = conn.createStatement();
-                         ResultSet rs = stmt.executeQuery("SELECT last_insert_rowid()")) {
+
+                    try (ResultSet rs = ps.executeQuery()) {
                         if (!rs.next()) {
-                            throw new SQLException("Nu pot obtine last_insert_rowid()");
+                            throw new SQLException("Nu pot obține id-ul programării");
                         }
-                        appointmentId = rs.getInt(1);
+                        appointmentId = rs.getInt("id");
                     }
 
                     String sqlM = """
@@ -167,19 +170,20 @@ public class AppointmentController {
                                     "application/octet-stream".equalsIgnoreCase(f.contentType)) {
                                 continue;
                             }
-                            ps2.setInt   (1, appointmentId);
+                            ps2.setInt(1, appointmentId);
                             ps2.setString(2, f.fileName);
                             ps2.setString(3, f.contentType);
-                            ps2.setBytes (4, f.content);
+                            ps2.setBytes(4, f.content);
                             ps2.addBatch();
                         }
                         ps2.executeBatch();
                     }
                 }
+
                 String firstName = null;
                 String lastName = null;
                 String userSQL = "SELECT  first_name,last_name FROM users WHERE id = ?";
-                try (Connection conn = DriverManager.getConnection(DB_URL);
+                try (Connection conn = DriverManager.getConnection(DB_URL,DB_USER,DB_PASSWORD);
                      PreparedStatement stmt = conn.prepareStatement(userSQL)) {
                     stmt.setInt(1, clientId);
 
@@ -247,7 +251,7 @@ public class AppointmentController {
 
             String sqlMedia = "SELECT * FROM media WHERE appointment_id = ?";
 
-            try (Connection conn = DriverManager.getConnection(DB_URL);
+            try (Connection conn = DriverManager.getConnection(DB_URL,DB_USER, DB_PASSWORD);
                  PreparedStatement psAppt = conn.prepareStatement(sqlAppointments);
                  PreparedStatement psMedia = conn.prepareStatement(sqlMedia);
                  ResultSet rsAppt = psAppt.executeQuery()) {
@@ -359,7 +363,7 @@ public class AppointmentController {
 
             String sqlMedia = "SELECT * FROM media WHERE appointment_id = ?";
 
-            try (Connection conn = DriverManager.getConnection(DB_URL);
+            try (Connection conn = DriverManager.getConnection(DB_URL,DB_USER, DB_PASSWORD);
                  PreparedStatement psAppt = conn.prepareStatement(sqlAppointments);
                  PreparedStatement psMedia = conn.prepareStatement(sqlMedia);
                  ) {
@@ -449,7 +453,7 @@ public class AppointmentController {
             String sql = "SELECT file_name, type, file_data FROM media WHERE appointment_id = ?";
 
             List<FileUploadData> files = new ArrayList<>();
-            try (Connection conn = DriverManager.getConnection(DB_URL);
+            try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
                  PreparedStatement ps = conn.prepareStatement(sql)) {
 
                 ps.setInt(1, appointmentId);
@@ -535,7 +539,7 @@ public class AppointmentController {
             switch (status) {
                 case "rejected":{
                     String sql = "UPDATE appointments SET status = ?, admin_message = ? WHERE id = ?";
-                    try (Connection conn = DriverManager.getConnection("jdbc:sqlite:service_booking.db");
+                    try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
                          PreparedStatement ps = conn.prepareStatement(sql)) {
                         ps.setString(1, status);
                         ps.setString(2, adminMessage);
@@ -553,7 +557,7 @@ public class AppointmentController {
                     int warrantyMonths = jsonBody.optInt("warrantyMonths", 0);
                     JSONArray inventoryIds = jsonBody.optJSONArray("inventoryIds");
 
-                    try (Connection conn = DriverManager.getConnection(DB_URL)) {
+                    try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
                         conn.setAutoCommit(false);
 
                         // 1. Update appointment
@@ -567,27 +571,24 @@ public class AppointmentController {
                             ps.executeUpdate();
                         }
 
-                        // 1) Inserarea comenzii în tabela orders fără RETURN_GENERATED_KEYS
-                        String sqlOrder = "INSERT INTO orders (appointment_id, estimated_total) VALUES (?, ?)";
+                        // 1) Inserarea comenzii în tabela orders, folosind RETURNING id
+                        String sqlOrder = "INSERT INTO orders (appointment_id, estimated_total) VALUES (?, ?) RETURNING id";
                         int orderId;
 
-                        // 2) Pregătim statement-ul fără Statement.RETURN_GENERATED_KEYS
                         try (PreparedStatement ps = conn.prepareStatement(sqlOrder)) {
                             ps.setInt(1, appointmentId);
                             ps.setDouble(2, estimatedPrice);
-                            ps.executeUpdate();
-                        }
 
-                        // 3) După ce am făcut INSERT-ul, rulăm SELECT last_insert_rowid()
-                        String sqlGetId = "SELECT last_insert_rowid()";
-                        try (Statement stmt = conn.createStatement();
-                             ResultSet rs = stmt.executeQuery(sqlGetId)) {
-                            if (rs.next()) {
-                                orderId = rs.getInt(1);
-                            } else {
-                                throw new SQLException("Failed to retrieve order ID from SQLite.");
+                            // executăm și citim rezultatul RETURNING
+                            try (ResultSet rs = ps.executeQuery()) {
+                                if (rs.next()) {
+                                    orderId = rs.getInt("id");
+                                } else {
+                                    throw new SQLException("Nu pot obține ID-ul comenzii");
+                                }
                             }
                         }
+
 
 
                         // 3. Insert order items
@@ -622,13 +623,16 @@ public class AppointmentController {
                 }
                 break;
                 case "modified":{
+
+                    //AICI CRED CA AR TREBUI SA PRIMESC DOAR START TIME SI END TIME,pe langa status
+
                     double estimatedPrice = jsonBody.optDouble("estimatedPrice", 0.0);
                     int warrantyMonths = jsonBody.optInt("warrantyMonths", 0);
                     String newStartTime = jsonBody.optString("startTime");
                     String newEndTime = jsonBody.optString("endTime");
                     JSONArray inventoryIds = jsonBody.optJSONArray("inventoryIds");
 
-                    try (Connection conn = DriverManager.getConnection(DB_URL)) {
+                    try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
                         conn.setAutoCommit(false);
 
                         // 1. Update appointment with new time and details
@@ -690,7 +694,7 @@ public class AppointmentController {
                 break;
                 case "canceled":{
                     String sql = "UPDATE appointments SET status = ?, admin_message = ? WHERE id = ?";
-                    try (Connection conn = DriverManager.getConnection("jdbc:sqlite:service_booking.db");
+                    try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
                          PreparedStatement ps = conn.prepareStatement(sql)) {
                         ps.setString(1, status);
                         ps.setInt(3, appointmentId);
@@ -704,7 +708,7 @@ public class AppointmentController {
                 break;
                 case "accepted":{
                     String sql = "UPDATE appointments SET status = ? WHERE id = ?";
-                    try (Connection conn = DriverManager.getConnection("jdbc:sqlite:service_booking.db");
+                    try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
                          PreparedStatement ps = conn.prepareStatement(sql)) {
                         ps.setString(1, "approved");
                         ps.setInt(2, appointmentId);

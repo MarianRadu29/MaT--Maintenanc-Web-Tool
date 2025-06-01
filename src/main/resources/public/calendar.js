@@ -10,7 +10,6 @@ document.addEventListener("DOMContentLoaded", function () {
   if (userAccount) userAccount.style.display = "none";
   if (adminLink) adminLink.style.display = "none";
 
-  // Calendar functionality (rămâne neschimbat)
   const calendarDays = document.getElementById("calendarDays");
   const currentMonthYearElement = document.getElementById("currentMonthYear");
   const prevMonthButton = document.getElementById("prevMonth");
@@ -184,12 +183,7 @@ document.addEventListener("DOMContentLoaded", function () {
       "17:00",
     ];
 
-    if (appointments.length === 0) {
-      noAppointments.style.display = "block";
-      appointmentsList.style.display = "none";
-      noAppointments.textContent =
-          "Toate intervalele orare sunt disponibile pentru această zi.";
-    } else {
+   
       noAppointments.style.display = "none";
       appointmentsList.style.display = "block";
 
@@ -249,7 +243,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         appointmentsList.appendChild(appointmentCard);
       });
-    }
+    
   }
 
   // Mobile menu toggle functionality
