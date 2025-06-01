@@ -158,7 +158,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (sessionStorage.getItem('userData')) {
                 sessionStorage.setItem('userData', JSON.stringify(userData));
             }
-           
+
             // Actualizează afișarea
             populateUserData();
 
@@ -184,7 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Suport pentru Enter și Escape în câmpurile de editare
-    
+
     document.addEventListener('keydown', (e) => {
         if (e.target.closest('.edit-inputs')) {
             const editContainer = e.target.closest('.info-edit');
@@ -300,12 +300,20 @@ document.addEventListener("DOMContentLoaded", () => {
                     dateTimeDisplay = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]} ${timePart}`;
                 }
 
+                // Verificăm dacă programarea poate fi ștearsă (doar pending și rejected)
+                const canDelete = a.status === 'pending' || a.status === 'rejected';
+
                 tr.innerHTML = `
                     <td>${dateTimeDisplay}</td>
                     <td>${translateVehicleType(a.vehicleType)}</td>
                     <td>${a.problem}</td>
                     <td>${translateStatus(a.status)}</td>
-                    <td><button class="btn btn-primary btn-sm view-details" data-id="${a.id}">Vezi</button></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-primary btn-sm view-details" data-id="${a.id}">Vezi</button>
+                            ${canDelete ? `<button class="btn btn-danger btn-sm delete-appointment" data-id="${a.id}">Șterge</button>` : ''}
+                        </div>
+                    </td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -327,7 +335,8 @@ document.addEventListener("DOMContentLoaded", () => {
             "pending": "În așteptare",
             "approved": "Aprobat",
             "rejected": "Refuzat",
-            "completed": "Finalizat"
+            "completed": "Finalizat",
+            "modified": "Modificat"
         };
         return translations[status] || capitalize(status);
     }
@@ -363,14 +372,347 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // Event listener pentru butoanele "Vezi"
+    // Funcții pentru gestionarea scroll-ului
+    function disableBodyScroll() {
+        document.body.style.overflow = 'hidden';
+    }
+
+    function enableBodyScroll() {
+        document.body.style.overflow = '';
+    }
+
+    // Funcție pentru afișarea modalului de confirmare ștergere
+    function showDeleteConfirmationModal(appointmentId) {
+        const appointment = appointments.find(a => a.id == appointmentId);
+        if (!appointment) return;
+
+        // Verifică dacă modalul există deja, dacă da îl șterge
+        const existingModal = document.getElementById('deleteConfirmationModal');
+        if (existingModal) {
+            existingModal.remove();
+        }
+
+        // Blochează scroll-ul pe body
+        disableBodyScroll();
+
+        // Formatare dată pentru afișare
+        let dateTimeDisplay = '';
+        if (appointment.date && appointment.startTime && appointment.endTime) {
+            const dateParts = appointment.date.split("-");
+            dateTimeDisplay = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]} ${appointment.startTime}:00 - ${appointment.endTime}:00`;
+        } else if (appointment.dateTime) {
+            const [datePart, timePart] = appointment.dateTime.split(" ");
+            const dateParts = datePart.split("-");
+            dateTimeDisplay = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]} ${timePart}`;
+        }
+
+        // Creează modalul
+        const modal = document.createElement('div');
+        modal.id = 'deleteConfirmationModal';
+        modal.className = 'modal-overlay';
+
+        const modalContent = document.createElement('div');
+        modalContent.className = 'modal-content modal-small';
+
+        modalContent.innerHTML = `
+            <div class="modal-header">
+                <h3>Confirmă ștergerea</h3>
+                <button class="modal-close">
+                    <i class="ri-close-line"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="delete-confirmation-content">
+                    <p>Ești sigur că vrei să ștergi această programare?<br> Această acțiune nu poate fi anulată.</p>
+                    
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-danger confirm-delete" data-id="${appointmentId}">
+                        <i class="ri-delete-bin-line"></i>
+                        Șterge
+                    </button>
+                    <button class="btn btn-secondary cancel-delete">
+                        <i class="ri-close-line"></i>
+                        Anulează
+                    </button>
+                </div>
+            </div>
+        `;
+
+        modal.appendChild(modalContent);
+        document.body.appendChild(modal);
+
+        // Funcție pentru închiderea modalului
+        function closeModal() {
+            modal.remove();
+            enableBodyScroll();
+        }
+
+        // Event listeners pentru închiderea modalului
+        const closeButtons = modal.querySelectorAll('.modal-close, .cancel-delete');
+        closeButtons.forEach(btn => {
+            btn.addEventListener('click', closeModal);
+        });
+
+        // Închide modalul când se dă click pe overlay
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        // Închide modalul cu tasta Escape
+        const handleEscape = (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+                document.removeEventListener('keydown', handleEscape);
+            }
+        };
+        document.addEventListener('keydown', handleEscape);
+
+        // Event listener pentru butonul de confirmare ștergere
+        const confirmBtn = modal.querySelector('.confirm-delete');
+        confirmBtn.addEventListener('click', async () => {
+            await deleteAppointment(appointmentId);
+            closeModal();
+        });
+    }
+
+    // Funcție pentru ștergerea programării
+    async function deleteAppointment(appointmentId) {
+        try {
+            const response = await fetch(`/api/appointments/${appointmentId}`, {
+                method: "DELETE",
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
+                    "Content-Type": "application/json"
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP status ${response.status}`);
+            }
+
+            // Elimină programarea din array-ul local
+            appointments = appointments.filter(a => a.id != appointmentId);
+
+            // Re-renderează tabelul
+            renderAppointments({
+                search: document.getElementById("searchAppointments").value,
+                vehicleType: document.getElementById("vehicleTypeFilter").value,
+                status: document.getElementById("statusFilter").value
+            });
+
+            // Afișează mesaj de succes (opțional)
+            showSuccessMessage("Programarea a fost ștearsă cu succes!");
+
+        } catch (error) {
+            console.error("Error deleting appointment:", error);
+            showErrorMessage("A apărut o eroare la ștergerea programării. Vă rugăm să încercați din nou.");
+        }
+    }
+
+    // Funcții pentru afișarea mesajelor de succes/eroare (opționale)
+    function showSuccessMessage(message) {
+        // Poți implementa un toast notification sau alt sistem de mesaje
+        alert(message); // Soluție temporară
+    }
+
+    function showErrorMessage(message) {
+        // Poți implementa un toast notification sau alt sistem de mesaje
+        alert(message); // Soluție temporară
+    }
+
+    // Funcție pentru crearea și afișarea modalului
+    // Funcție pentru crearea și afișarea modalului
+    function showAppointmentModal(appointment) {
+        // Verifică dacă modalul există deja, dacă da îl șterge
+        const existingModal = document.getElementById('appointmentModal');
+        if (existingModal) {
+            existingModal.remove();
+        }
+
+        // Blochează scroll-ul pe body
+        disableBodyScroll();
+
+        // Formatare dată pentru modal
+        let dateTimeDisplay = '';
+        let timeDisplay = '';
+
+        if (appointment.date && appointment.startTime && appointment.endTime) {
+            const dateParts = appointment.date.split("-");
+            dateTimeDisplay = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+            timeDisplay = `${appointment.startTime}:00 - ${appointment.endTime}:00`;
+        } else if (appointment.dateTime) {
+            const [datePart, timePart] = appointment.dateTime.split(" ");
+            const dateParts = datePart.split("-");
+            dateTimeDisplay = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+            timeDisplay = timePart;
+        }
+
+        // Verifică dacă programarea are status "modified" sau "pending"
+        const isModified = appointment.status === 'modified';
+        const isPending = appointment.status === 'pending';
+
+        // Creează modalul
+        const modal = document.createElement('div');
+        modal.id = 'appointmentModal';
+        modal.className = 'modal-overlay';
+
+        const modalContent = document.createElement('div');
+        modalContent.className = 'modal-content';
+
+        modalContent.innerHTML = `
+<div class="modal-header">
+    <h3>Detalii Programare</h3>
+    <button class="modal-close">
+        <i class="ri-close-line"></i>
+    </button>
+</div>
+<div class="modal-body">
+    <div class="appointment-details">
+        <div class="detail-item">
+            <i class="ri-calendar-line"></i>
+            <div>
+                <strong>Data:</strong>
+                <span>${dateTimeDisplay}</span>
+            </div>
+        </div>
+        <div class="detail-item">
+            <i class="ri-time-line"></i>
+            <div>
+                <strong>Ora:</strong>
+                <span>${timeDisplay || 'N/A'}</span>
+            </div>
+        </div>
+        <div class="detail-item">
+            <i class="ri-motorbike-line"></i>
+            <div>
+                <strong>Tip vehicul:</strong>
+                <span>${translateVehicleType(appointment.vehicleType)}</span>
+            </div>
+        </div>
+        <div class="detail-item">
+            <i class="ri-tools-line"></i>
+            <div>
+                <strong>Problemă:</strong>
+                <span class="problem-text">${appointment.problem}</span>
+            </div>
+        </div>
+        <div class="detail-item">
+            <i class="ri-information-line"></i>
+            <div>
+                <strong>Status:</strong>
+                <span>${translateStatus(appointment.status)}</span>
+            </div>
+        </div>
+        ${appointment.notes ? `
+        <div class="detail-item">
+            <i class="ri-sticky-note-line"></i>
+            <div>
+                <strong>Note:</strong>
+                <span class="notes-text">${appointment.notes}</span>
+            </div>
+        </div>
+        ` : ''}
+    </div>
+    ${isModified ? `
+    <div class="modification-notice">
+        <div class="modification-message">
+            <p>Programarea a fost modificată de către administrator. Acceptați modificările?</p>
+        </div>
+        <div class="modification-actions">
+            <button class="btn btn-primary accept-modification" data-id="${appointment.id}">
+                <i class="ri-check-line"></i>
+                Acceptă
+            </button>
+            <button class="btn btn-secondary reject-modification" data-id="${appointment.id}">
+                <i class="ri-close-line"></i>
+                Respinge
+            </button>
+        </div>
+    </div>
+    ` : ''}
+    ${isPending ? `
+    <div class="cancel-appointment-section">
+        <button class="btn btn-danger cancel-appointment" data-id="${appointment.id}">
+            <i class="ri-close-circle-line"></i>
+            Anulează programarea
+        </button>
+    </div>
+    ` : ''}
+</div>
+`;
+
+        modal.appendChild(modalContent);
+        document.body.appendChild(modal);
+
+        // Funcție pentru închiderea modalului
+        function closeModal() {
+            modal.remove();
+            enableBodyScroll(); // Reactivează scroll-ul
+        }
+
+        // Event listeners pentru închiderea modalului
+        const closeButtons = modal.querySelectorAll('.modal-close');
+        closeButtons.forEach(btn => {
+            btn.addEventListener('click', closeModal);
+        });
+
+        // Închide modalul când se dă click pe overlay
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        // Închide modalul cu tasta Escape
+        const handleEscape = (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+                document.removeEventListener('keydown', handleEscape);
+            }
+        };
+        document.addEventListener('keydown', handleEscape);
+
+        // Event listeners pentru butoanele de acceptare/respingere modificări
+        if (isModified) {
+            const acceptBtn = modal.querySelector('.accept-modification');
+            const rejectBtn = modal.querySelector('.reject-modification');
+
+            acceptBtn.addEventListener('click', async () => {
+                await handleModificationResponse(appointment.id, 'accepted');
+                closeModal();
+            });
+
+            rejectBtn.addEventListener('click', async () => {
+                await handleModificationResponse(appointment.id, 'rejected');
+                closeModal();
+            });
+        }
+    }
+
     document.addEventListener("click", (e) => {
         if (e.target.classList.contains("view-details")) {
             const appointmentId = e.target.getAttribute("data-id");
             const appointment = appointments.find(a => a.id == appointmentId);
             if (appointment) {
-                alert(`Detalii programare:\nData: ${appointment.date || appointment.dateTime}\nVehicul: ${translateVehicleType(appointment.vehicleType)}\nProblemă: ${appointment.problem}\nStatus: ${translateStatus(appointment.status)}`);
+                showAppointmentModal(appointment);
             }
+        }
+    });
+
+    // Event listener pentru butoanele "Vezi" și "Șterge"
+    document.addEventListener("click", (e) => {
+        if (e.target.classList.contains("view-details")) {
+            const appointmentId = e.target.getAttribute("data-id");
+            const appointment = appointments.find(a => a.id == appointmentId);
+            if (appointment) {
+                showAppointmentModal(appointment);
+            }
+        } else if (e.target.classList.contains("delete-appointment")) {
+            const appointmentId = e.target.getAttribute("data-id");
+            showDeleteConfirmationModal(appointmentId);
         }
     });
 

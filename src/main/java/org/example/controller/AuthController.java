@@ -65,7 +65,7 @@ public class AuthController {
                 UserModel.createUser(newUser);
 
                 user = UserModel.getUserByEmail(email);
-                String accessToken = JwtUtil.generateToken(user.getId(), email, 15); // 15 minute
+                String accessToken = JwtUtil.generateToken(user.getId(), email, 60 * 24); // 15 minute
                 String refreshToken = JwtUtil.generateToken(user.getId(), email, 60 * 24 * 7); // 7 zile
 
                 String json = String.format("{\"message\":\"User registered successfully\", \"accessToken\":\"%s\", \"refreshToken\":\"%s\"}", accessToken, refreshToken);
@@ -96,7 +96,7 @@ public class AuthController {
             User user = UserModel.getUserByEmail(email);
             System.out.println(BCrypt.checkPassword(password, user.getPassword()));
             if (user != null && BCrypt.checkPassword(password, user.getPassword())) {
-                String accessToken = JwtUtil.generateToken(user.getId(), email, 15);
+                String accessToken = JwtUtil.generateToken(user.getId(), email, 60 * 24);
                 String refreshToken = JwtUtil.generateToken(user.getId(), email, 60 * 24 * 7);
                 String json = String.format("{\"message\":\"Login successful\", \"accessToken\":\"%s\", \"refreshToken\":\"%s\"}", accessToken, refreshToken);
                 JsonView.send(exchange, 200, json);

@@ -686,6 +686,7 @@ document.addEventListener('DOMContentLoaded', function () {
             <td>${appointment.hasAttachments ? '📎 Da' : 'Nu'}</td>
             <td class="table-actions">
                 <button class="action-btn action-btn-view" data-id="${appointment.id}">Vezi</button>
+                <button class="action-btn action-btn-edit" data-id="${appointment.id}">Modifică</button>
             </td>
         `;
 
@@ -800,25 +801,17 @@ document.addEventListener('DOMContentLoaded', function () {
                     appointmentModal.style.display = 'block';
                 }
             });
+
+            row.querySelector('.action-btn-edit').addEventListener('click', function () {
+                const appId = this.getAttribute('data-id');
+                const app = futureAppointments.find(a => a.id == appId);
+
+                if (app) {
+                    openEditTimeModal(app);
+                }
+            });
         });
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     
@@ -947,3 +940,130 @@ document.addEventListener('DOMContentLoaded', function () {
         return csvRows.join('\n');
     }
 });
+
+
+function openEditTimeModal(appointment) {
+
+    // Creează modalul dacă nu există
+    let editModal = document.getElementById('editTimeModal');
+    if (!editModal) {
+        editModal = document.createElement('div');
+        editModal.id = 'editTimeModal';
+        editModal.className = 'modal';
+        editModal.innerHTML = `
+            <div class="modal-content">
+                <span class="close" id="closeEditTimeModal">&times;</span>
+                <h2>Modifică Ora Programării</h2>
+                
+                <div class="edit-time-section">
+                    <form id="editTimeForm">
+                        <div class="time-inputs">
+                            <div class="form-group">
+                                <label for="editStartTime">Ora de început:</label>
+                                <select id="editStartTime" class="time-select" required>
+                                    <option value="08">08:00</option>
+                                    <option value="09">09:00</option>
+                                    <option value="10">10:00</option>
+                                    <option value="11">11:00</option>
+                                    <option value="12">12:00</option>
+                                    <option value="13">13:00</option>
+                                    <option value="14">14:00</option>
+                                    <option value="15">15:00</option>
+                                    <option value="16">16:00</option>
+                                    <option value="17">17:00</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="editEndTime">Ora de sfârșit:</label>
+                                <select id="editEndTime" class="time-select" required>
+                                    <option value="09">09:00</option>
+                                    <option value="10">10:00</option>
+                                    <option value="11">11:00</option>
+                                    <option value="12">12:00</option>
+                                    <option value="13">13:00</option>
+                                    <option value="14">14:00</option>
+                                    <option value="15">15:00</option>
+                                    <option value="16">16:00</option>
+                                    <option value="17">17:00</option>
+                                    <option value="18">18:00</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="modal-actions">
+                            <button type="submit" class="btn btn-primary">Salvează</button>
+                            <button type="button" class="btn btn-secondary" id="cancelEditTime">Anulează</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(editModal);
+
+        // Adaugă event listeners pentru închiderea modalului
+        document.getElementById('closeEditTimeModal').addEventListener('click', function() {
+            editModal.style.display = 'none';
+        });
+
+        document.getElementById('cancelEditTime').addEventListener('click', function() {
+            editModal.style.display = 'none';
+        });
+
+        // Închide modalul când se dă click în afara lui
+        window.addEventListener('click', function(event) {
+            if (event.target === editModal) {
+                editModal.style.display = 'none';
+            }
+        });
+
+        // Form submit handler
+        document.getElementById('editTimeForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const startTime = document.getElementById('editStartTime').value;
+            const endTime = document.getElementById('editEndTime').value;
+
+            if (parseInt(startTime) >= parseInt(endTime)) {
+                alert('Ora de sfârșit trebuie să fie după ora de început!');
+                return;
+            }
+
+            console.log('Noua oră:', startTime + ':00 - ' + endTime + ':00');
+            alert('Ora a fost modificată cu succes!');
+
+            editModal.style.display = 'none';
+        });
+    }
+
+    // FIX: Convertește valorile la string și asigură-te că sunt setate corect
+    const startTimeValue = String(appointment.startTime);
+    const endTimeValue = String(appointment.endTime);
+
+    console.log('Setting start time to:', startTimeValue);
+    console.log('Setting end time to:', endTimeValue);
+
+    // Setează valorile curente în select-uri
+    const startTimeSelect = document.getElementById('editStartTime');
+    const endTimeSelect = document.getElementById('editEndTime');
+
+    // Verifică dacă valorile există în opțiuni înainte de a le seta
+    if (startTimeSelect) {
+        startTimeSelect.value = startTimeValue;
+        // Verifică dacă valoarea a fost setată corect
+        if (startTimeSelect.value !== startTimeValue) {
+            console.warn(`Start time ${startTimeValue} not found in options`);
+        }
+    }
+
+    if (endTimeSelect) {
+        endTimeSelect.value = endTimeValue;
+        // Verifică dacă valoarea a fost setată corect
+        if (endTimeSelect.value !== endTimeValue) {
+            console.warn(`End time ${endTimeValue} not found in options`);
+        }
+    }
+
+    // Afișează modalul
+    editModal.style.display = 'block';
+}
