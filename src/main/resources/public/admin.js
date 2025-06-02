@@ -382,13 +382,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
         function filterInventory() {
             const searchValue = searchInventory.value.toLowerCase();
-            const categoryValue = categoryFilter.value;
+            const categoryValue = categoryFilter.value; // acesta este categoryID numeric
             const statusValue = statusFilter.value;
 
             const filteredItems = inventoryItems.filter(item => {
                 const matchesSearch = item.name.toLowerCase().includes(searchValue) ||
                     item.supplier.toLowerCase().includes(searchValue);
-                const matchesCategory = !categoryValue || item.category === categoryValue;
+
+                const matchesCategory = !categoryValue || item.categoryID == categoryValue;
+
                 const matchesStatus = !statusValue || item.status === statusValue;
 
                 return matchesSearch && matchesCategory && matchesStatus;
@@ -652,6 +654,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 case 'rejected':
                     statusText = 'Respinsă';
                     statusClass = 'status-rejected';
+                    break;
+                case 'modified':
+                    statusText = 'Modificată';
+                    statusClass = 'status-modified';
                     break;
                 default:
                     statusText = appointment.status || 'Necunoscut';
