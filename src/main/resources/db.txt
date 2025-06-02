@@ -125,3 +125,38 @@ CREATE TABLE IF NOT EXISTS order_items (
                                            FOREIGN KEY(order_id) REFERENCES orders(id),
     FOREIGN KEY(inventory_id) REFERENCES inventory(id)
     );
+
+
+INSERT INTO inventory (name, category, quantity, price, supplier, status) VALUES
+    (
+        'Ulei Motor 10W40',
+        (SELECT id FROM category WHERE name = 'Consumables'),
+        25,
+        45.99,
+        'MotorOil SRL',
+        'in-stock'
+    ),
+    (
+        'Filtru ulei Honda',
+        (SELECT id FROM category WHERE name = 'Engine and Clutch'),
+        12,
+        29.99,
+        'AutoParts SRL',
+        'in-stock'
+    ),
+    (
+        'Plăcuțe frână Shimano',
+        (SELECT id FROM category WHERE name = 'Brake System'),
+        5,
+        79.99,
+        'BikeZone',
+        'low-stock'
+    ),
+    (
+        'Baterie trotinetă Xiaomi',
+        (SELECT id FROM category WHERE name = 'Battery and Charging'),
+        0,
+        349.99,
+        'TechParts',
+        'out-of-stock'
+    );

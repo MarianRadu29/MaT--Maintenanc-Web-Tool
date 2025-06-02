@@ -1030,9 +1030,23 @@ function openEditTimeModal(appointment) {
             }
 
             console.log('Noua oră:', startTime + ':00 - ' + endTime + ':00');
-            alert('Ora a fost modificată cu succes!');
+            const data = {
+                appointmentId:appointment.id,
+                status:"modified",
+                startTime:startTime,
+                endTime:endTime
+            }
+            fetch("api/appointment/update",{
+                method:"PUT",
+                headers: { "Content-Type": "application/json" },
+                body:JSON.stringify(data)
+            }).then(res=>res.json()).then( obj=> 
+                {
+                    alert('Ora a fost modificată cu succes!');
 
             editModal.style.display = 'none';
+                })
+            
         });
     }
 

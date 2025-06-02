@@ -215,41 +215,9 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!response.ok) throw new Error(`HTTP status ${response.status}`);
 
             appointments = await response.json();
+            console.log(appointments);
         } catch (error) {
             console.error("Error fetching appointments:", error);
-            // // Fallback - folosim date demo cu structura corectă
-            // if (!localStorage.getItem("userAppointments")) {
-            //     appointments = [
-            //         {
-            //             id: 1,
-            //             date: "2025-05-22",
-            //             time: "14:00",
-            //             vehicleType: "motorcycle",
-            //             problem: "Schimb ulei",
-            //             status: "pending"
-            //         },
-            //         {
-            //             id: 2,
-            //             date: "2025-05-25",
-            //             time: "10:00",
-            //             vehicleType: "bicycle",
-            //             problem: "Revizie frâne",
-            //             status: "approved"
-            //         },
-            //         {
-            //             id: 3,
-            //             date: "2025-06-01",
-            //             time: "16:00",
-            //             vehicleType: "scooter",
-            //             problem: "Înlocuire baterie",
-            //             status: "completed"
-            //         }
-            //     ];
-            //     // Salvăm datele demo pentru utilizare ulterioară
-            //     localStorage.setItem("userAppointments", JSON.stringify(appointments));
-            // } else {
-            //     appointments = JSON.parse(localStorage.getItem("userAppointments"));
-            // }
         }
         renderAppointments();
     }
@@ -336,7 +304,8 @@ document.addEventListener("DOMContentLoaded", () => {
             "approved": "Aprobat",
             "rejected": "Refuzat",
             "completed": "Finalizat",
-            "modified": "Modificat"
+            "modified": "Modificat",
+            "canceled":"Anulat"
         };
         return translations[status] || capitalize(status);
     }
@@ -606,12 +575,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 <span>${translateStatus(appointment.status)}</span>
             </div>
         </div>
-        ${appointment.notes ? `
+        ${appointment.adminMessage ? `
         <div class="detail-item">
             <i class="ri-sticky-note-line"></i>
             <div>
                 <strong>Note:</strong>
-                <span class="notes-text">${appointment.notes}</span>
+                <span class="notes-text">${appointment.adminMessage}</span>
             </div>
         </div>
         ` : ''}
@@ -679,17 +648,51 @@ document.addEventListener("DOMContentLoaded", () => {
         if (isModified) {
             const acceptBtn = modal.querySelector('.accept-modification');
             const rejectBtn = modal.querySelector('.reject-modification');
-
             acceptBtn.addEventListener('click', async () => {
-                await handleModificationResponse(appointment.id, 'accepted');
+                // await handleModificationResponse(appointment.id, 'accepted');
+                await fetch("api/appointment/update",{
+                    method:"PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body:JSON.stringify({
+                        appointmentId:appointment.id,
+                        adminMessage:appointment.adminMessage,
+                        status:"pending",
+                    })
+                })
                 closeModal();
             });
 
             rejectBtn.addEventListener('click', async () => {
-                await handleModificationResponse(appointment.id, 'rejected');
+                // await handleModificationResponse(appointment.id, 'rejected');
+                await fetch("api/appointment/update",{
+                    method:"PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body:JSON.stringify({
+                        appointmentId:appointment.id,
+                        adminMessage:appointment.adminMessage,
+                        status:"canceled",
+                    })
+                })
                 closeModal();
             });
+            
         }
+
+        const cancelBtn = modal.querySelector('.cancel-appointment');
+        cancelBtn.addEventListener('click',async ()=>{
+            // await handleModificationResponse(appointment.id, 'rejected');
+            console.log("ssiiiiii");
+        await fetch("api/appointment/update",{
+            method:"PUT",
+            headers: { "Content-Type": "application/json" },
+            body:JSON.stringify({
+                appointmentId:appointment.id,
+                adminMessage:appointment.adminMessage,
+                status:"canceled",
+            })
+        })
+        closeModal();
+    })
     }
 
     document.addEventListener("click", (e) => {
