@@ -279,7 +279,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     <td>
                         <div class="action-buttons">
                             <button class="btn btn-primary btn-sm view-details" data-id="${a.id}">Vezi</button>
-                            ${canDelete ? `<button class="btn btn-danger btn-sm delete-appointment" data-id="${a.id}">Șterge</button>` : ''}
                         </div>
                     </td>
                 `;
@@ -350,13 +349,11 @@ document.addEventListener("DOMContentLoaded", () => {
         document.body.style.overflow = '';
     }
 
-    // Funcție pentru afișarea modalului de confirmare ștergere
-    function showDeleteConfirmationModal(appointmentId) {
-        const appointment = appointments.find(a => a.id == appointmentId);
-        if (!appointment) return;
-
+    // Funcție pentru afișarea modal
+    // Funcție pentru afișarea modal
+    function showAppointmentModal(appointment) {
         // Verifică dacă modalul există deja, dacă da îl șterge
-        const existingModal = document.getElementById('deleteConfirmationModal');
+        const existingModal = document.getElementById('appointmentModal');
         if (existingModal) {
             existingModal.remove();
         }
@@ -364,49 +361,196 @@ document.addEventListener("DOMContentLoaded", () => {
         // Blochează scroll-ul pe body
         disableBodyScroll();
 
-        // Formatare dată pentru afișare
+        // Formatare dată pentru modal
         let dateTimeDisplay = '';
+        let timeDisplay = '';
+
         if (appointment.date && appointment.startTime && appointment.endTime) {
             const dateParts = appointment.date.split("-");
-            dateTimeDisplay = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]} ${appointment.startTime}:00 - ${appointment.endTime}:00`;
+            dateTimeDisplay = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+            timeDisplay = `${appointment.startTime}:00 - ${appointment.endTime}:00`;
         } else if (appointment.dateTime) {
             const [datePart, timePart] = appointment.dateTime.split(" ");
             const dateParts = datePart.split("-");
-            dateTimeDisplay = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]} ${timePart}`;
+            dateTimeDisplay = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+            timeDisplay = timePart;
         }
+
+        // Verifică statusul programării
+        const isModified = appointment.status === 'modified';
+        const isPending = appointment.status === 'pending';
+        const isApproved = appointment.status === 'approved';
+        const isCompleted = appointment.status === 'completed';
+        // Modificat: permite anularea pentru pending și approved
+        const canCancel = isPending;
+
+        console.log('Appointment status:', appointment.status); // Debug log
+        console.log('Can cancel:', canCancel); // Debug log
 
         // Creează modalul
         const modal = document.createElement('div');
-        modal.id = 'deleteConfirmationModal';
+        modal.id = 'appointmentModal';
         modal.className = 'modal-overlay';
 
         const modalContent = document.createElement('div');
-        modalContent.className = 'modal-content modal-small';
+        modalContent.className = 'modal-content';
+
+        // Calculează prețul total pentru echipamente (dacă există)
+        let totalEquipmentPrice = 0;
+        let equipmentListHTML = '';
+
+        if ((isApproved || isCompleted) && appointment.orderItems && appointment.orderItems.length > 0) {
+            totalEquipmentPrice = appointment.orderItems.reduce((total, item) => {
+                return total + (item.unitPrice * item.quantity);
+            }, 0);
+
+            equipmentListHTML = appointment.orderItems.map(item => `
+    <div class="equipment-item">
+        <span class="equipment-name">Produs:</span>
+        <span class="equipment-details">Cantitate: ${item.quantity} x ${item.unitPrice.toFixed(2)} RON</span>
+        <span class="equipment-total">${(item.unitPrice * item.quantity).toFixed(2)} RON</span>
+    </div>
+`).join('');
+        }
 
         modalContent.innerHTML = `
-            <div class="modal-header">
-                <h3>Confirmă ștergerea</h3>
-                <button class="modal-close">
-                    <i class="ri-close-line"></i>
-                </button>
+<div class="modal-header">
+<h3>Detalii Programare</h3>
+<button class="modal-close">
+    <i class="ri-close-line"></i>
+</button>
+</div>
+<div class="modal-body">
+<div class="appointment-details">
+    <div class="detail-item">
+        <i class="ri-calendar-line"></i>
+        <div>
+            <strong>Data:</strong>
+            <span>${dateTimeDisplay}</span>
+        </div>
+    </div>
+    <div class="detail-item">
+        <i class="ri-time-line"></i>
+        <div>
+            <strong>Ora:</strong>
+            <span>${timeDisplay || 'N/A'}</span>
+        </div>
+    </div>
+    <div class="detail-item">
+        <i class="ri-motorbike-line"></i>
+        <div>
+            <strong>Tip vehicul:</strong>
+            <span>${translateVehicleType(appointment.vehicleType)}</span>
+        </div>
+    </div>
+    ${appointment.vehicleBrand ? `
+    <div class="detail-item">
+        <i class="ri-car-line"></i>
+        <div>
+            <strong>Marca vehicul:</strong>
+            <span>${appointment.vehicleBrand}</span>
+        </div>
+    </div>
+    ` : ''}
+    <div class="detail-item">
+        <i class="ri-tools-line"></i>
+        <div>
+            <strong>Problemă:</strong>
+            <span class="problem-text">${appointment.problem}</span>
+        </div>
+    </div>
+    <div class="detail-item">
+        <i class="ri-information-line"></i>
+        <div>
+            <strong>Status:</strong>
+            <span>${translateStatus(appointment.status)}</span>
+        </div>
+    </div>
+    ${appointment.adminMessage ? `
+    <div class="detail-item">
+        <i class="ri-sticky-note-line"></i>
+        <div>
+            <strong>${isApproved || isCompleted ? 'Mesaj administrator:' : 'Motiv respingere:'}</strong>
+            <span class="notes-text">${appointment.adminMessage}</span>
+        </div>
+    </div>
+    ` : ''}
+    ${(isApproved || isCompleted) ? `
+    <div class="approved-details">
+        <h4><i class="ri-check-circle-line"></i> ${isCompleted ? 'Detalii serviciu finalizat' : 'Detalii serviciu aprobat'}</h4>
+        
+        ${appointment.estimatedPrice ? `
+        <div class="detail-item">
+            <i class="ri-money-dollar-circle-line"></i>
+            <div>
+                <strong>${isCompleted ? 'Preț serviciu:' : 'Preț estimat serviciu:'}</strong>
+                <span>${appointment.estimatedPrice.toFixed(2)} RON</span>
             </div>
-            <div class="modal-body">
-                <div class="delete-confirmation-content">
-                    <p>Ești sigur că vrei să ștergi această programare?<br> Această acțiune nu poate fi anulată.</p>
-                    
-                </div>
-                <div class="modal-actions">
-                    <button class="btn btn-danger confirm-delete" data-id="${appointmentId}">
-                        <i class="ri-delete-bin-line"></i>
-                        Șterge
-                    </button>
-                    <button class="btn btn-secondary cancel-delete">
-                        <i class="ri-close-line"></i>
-                        Anulează
-                    </button>
+        </div>
+        ` : ''}
+        
+        ${appointment.warrantyMonths ? `
+        <div class="detail-item">
+            <i class="ri-shield-check-line"></i>
+            <div>
+                <strong>Garanție:</strong>
+                <span>${appointment.warrantyMonths} ${appointment.warrantyMonths === 1 ? 'lună' : 'luni'}</span>
+            </div>
+        </div>
+        ` : ''}
+        
+        ${appointment.orderItems && appointment.orderItems.length > 0 ? `
+        <div class="equipment-section">
+            <div class="equipment-list">
+                ${equipmentListHTML}
+                <div class="equipment-total-section">
+                    <strong>Total echipamente: ${totalEquipmentPrice.toFixed(2)} RON</strong>
                 </div>
             </div>
-        `;
+        </div>
+        ` : ''}
+        
+        ${(appointment.estimatedPrice || totalEquipmentPrice) ? `
+        <div class="total-cost">
+            <div class="detail-item total-highlight">
+                <i class="ri-calculator-line"></i>
+                <div>
+                    <strong>${isCompleted ? 'Cost total:' : 'Cost total estimat:'}</strong>
+                    <span class="total-price">${((appointment.estimatedPrice || 0) + totalEquipmentPrice).toFixed(2)} RON</span>
+                </div>
+            </div>
+        </div>
+        ` : ''}
+    </div>
+    ` : ''}
+</div>
+${isModified ? `
+<div class="modification-notice">
+    <div class="modification-message">
+        <p>Programarea a fost modificată de către administrator. Acceptați modificările?</p>
+    </div>
+    <div class="modification-actions">
+        <button class="btn btn-primary accept-modification" data-id="${appointment.id}">
+            <i class="ri-check-line"></i>
+            Acceptă
+        </button>
+        <button class="btn btn-secondary reject-modification" data-id="${appointment.id}">
+            <i class="ri-close-line"></i>
+            Respinge
+        </button>
+    </div>
+</div>
+` : ''}
+${canCancel ? `
+<div class="cancel-appointment-section">
+    <button class="btn btn-danger cancel-appointment" data-id="${appointment.id}">
+        <i class="ri-close-circle-line"></i>
+        Anulează programarea
+    </button>
+</div>
+` : ''}
+</div>
+`;
 
         modal.appendChild(modalContent);
         document.body.appendChild(modal);
@@ -414,11 +558,11 @@ document.addEventListener("DOMContentLoaded", () => {
         // Funcție pentru închiderea modalului
         function closeModal() {
             modal.remove();
-            enableBodyScroll();
+            enableBodyScroll(); // Reactivează scroll-ul
         }
 
         // Event listeners pentru închiderea modalului
-        const closeButtons = modal.querySelectorAll('.modal-close, .cancel-delete');
+        const closeButtons = modal.querySelectorAll('.modal-close');
         closeButtons.forEach(btn => {
             btn.addEventListener('click', closeModal);
         });
@@ -439,12 +583,69 @@ document.addEventListener("DOMContentLoaded", () => {
         };
         document.addEventListener('keydown', handleEscape);
 
-        // Event listener pentru butonul de confirmare ștergere
-        const confirmBtn = modal.querySelector('.confirm-delete');
-        confirmBtn.addEventListener('click', async () => {
-            await deleteAppointment(appointmentId);
-            closeModal();
-        });
+        // Event listeners pentru butoanele de acceptare/respingere modificări
+        if (isModified) {
+            const acceptBtn = modal.querySelector('.accept-modification');
+            const rejectBtn = modal.querySelector('.reject-modification');
+            acceptBtn.addEventListener('click', async () => {
+                await fetch("api/appointment/update",{
+                    method:"PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body:JSON.stringify({
+                        appointmentId:appointment.id,
+                        adminMessage:appointment.adminMessage,
+                        status:"pending",
+                    })
+                })
+                closeModal();
+                // Reîncarcă programările pentru a reflecta schimbarea
+                loadAppointments();
+            });
+
+            rejectBtn.addEventListener('click', async () => {
+                await fetch("api/appointment/update",{
+                    method:"PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body:JSON.stringify({
+                        appointmentId:appointment.id,
+                        adminMessage:appointment.adminMessage,
+                        status:"canceled",
+                    })
+                })
+                closeModal();
+                // Reîncarcă programările pentru a reflecta schimbarea
+                loadAppointments();
+            });
+        }
+
+        // Event listener pentru butonul de anulare
+        if (canCancel) {
+            const cancelBtn = modal.querySelector('.cancel-appointment');
+            if (cancelBtn) {
+                cancelBtn.addEventListener('click', async () => {
+                    // Confirmă anularea
+                    if (confirm('Sunteți sigur că doriți să anulați această programare?')) {
+                        try {
+                            await fetch("api/appointment/update", {
+                                method: "PUT",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({
+                                    appointmentId: appointment.id,
+                                    adminMessage: appointment.adminMessage,
+                                    status: "canceled",
+                                })
+                            });
+                            closeModal();
+                            // Reîncarcă programările pentru a reflecta schimbarea
+                            loadAppointments();
+                        } catch (error) {
+                            console.error('Eroare la anularea programării:', error);
+                            alert('A apărut o eroare la anularea programării. Vă rugăm să încercați din nou.');
+                        }
+                    }
+                });
+            }
+        }
     }
 
     // Funcție pentru ștergerea programării
@@ -494,206 +695,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Funcție pentru crearea și afișarea modalului
     // Funcție pentru crearea și afișarea modalului
-    function showAppointmentModal(appointment) {
-        // Verifică dacă modalul există deja, dacă da îl șterge
-        const existingModal = document.getElementById('appointmentModal');
-        if (existingModal) {
-            existingModal.remove();
-        }
+    // Funcție pentru crearea și afișarea modalului - VERSIUNEA MODIFICATĂ
 
-        // Blochează scroll-ul pe body
-        disableBodyScroll();
-
-        // Formatare dată pentru modal
-        let dateTimeDisplay = '';
-        let timeDisplay = '';
-
-        if (appointment.date && appointment.startTime && appointment.endTime) {
-            const dateParts = appointment.date.split("-");
-            dateTimeDisplay = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
-            timeDisplay = `${appointment.startTime}:00 - ${appointment.endTime}:00`;
-        } else if (appointment.dateTime) {
-            const [datePart, timePart] = appointment.dateTime.split(" ");
-            const dateParts = datePart.split("-");
-            dateTimeDisplay = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
-            timeDisplay = timePart;
-        }
-
-        // Verifică dacă programarea are status "modified" sau "pending"
-        const isModified = appointment.status === 'modified';
-        const isPending = appointment.status === 'pending';
-
-        // Creează modalul
-        const modal = document.createElement('div');
-        modal.id = 'appointmentModal';
-        modal.className = 'modal-overlay';
-
-        const modalContent = document.createElement('div');
-        modalContent.className = 'modal-content';
-
-        modalContent.innerHTML = `
-<div class="modal-header">
-    <h3>Detalii Programare</h3>
-    <button class="modal-close">
-        <i class="ri-close-line"></i>
-    </button>
-</div>
-<div class="modal-body">
-    <div class="appointment-details">
-        <div class="detail-item">
-            <i class="ri-calendar-line"></i>
-            <div>
-                <strong>Data:</strong>
-                <span>${dateTimeDisplay}</span>
-            </div>
-        </div>
-        <div class="detail-item">
-            <i class="ri-time-line"></i>
-            <div>
-                <strong>Ora:</strong>
-                <span>${timeDisplay || 'N/A'}</span>
-            </div>
-        </div>
-        <div class="detail-item">
-            <i class="ri-motorbike-line"></i>
-            <div>
-                <strong>Tip vehicul:</strong>
-                <span>${translateVehicleType(appointment.vehicleType)}</span>
-            </div>
-        </div>
-        <div class="detail-item">
-            <i class="ri-tools-line"></i>
-            <div>
-                <strong>Problemă:</strong>
-                <span class="problem-text">${appointment.problem}</span>
-            </div>
-        </div>
-        <div class="detail-item">
-            <i class="ri-information-line"></i>
-            <div>
-                <strong>Status:</strong>
-                <span>${translateStatus(appointment.status)}</span>
-            </div>
-        </div>
-        ${appointment.adminMessage ? `
-        <div class="detail-item">
-            <i class="ri-sticky-note-line"></i>
-            <div>
-                <strong>Note:</strong>
-                <span class="notes-text">${appointment.adminMessage}</span>
-            </div>
-        </div>
-        ` : ''}
-    </div>
-    ${isModified ? `
-    <div class="modification-notice">
-        <div class="modification-message">
-            <p>Programarea a fost modificată de către administrator. Acceptați modificările?</p>
-        </div>
-        <div class="modification-actions">
-            <button class="btn btn-primary accept-modification" data-id="${appointment.id}">
-                <i class="ri-check-line"></i>
-                Acceptă
-            </button>
-            <button class="btn btn-secondary reject-modification" data-id="${appointment.id}">
-                <i class="ri-close-line"></i>
-                Respinge
-            </button>
-        </div>
-    </div>
-    ` : ''}
-    ${isPending ? `
-    <div class="cancel-appointment-section">
-        <button class="btn btn-danger cancel-appointment" data-id="${appointment.id}">
-            <i class="ri-close-circle-line"></i>
-            Anulează programarea
-        </button>
-    </div>
-    ` : ''}
-</div>
-`;
-
-        modal.appendChild(modalContent);
-        document.body.appendChild(modal);
-
-        // Funcție pentru închiderea modalului
-        function closeModal() {
-            modal.remove();
-            enableBodyScroll(); // Reactivează scroll-ul
-        }
-
-        // Event listeners pentru închiderea modalului
-        const closeButtons = modal.querySelectorAll('.modal-close');
-        closeButtons.forEach(btn => {
-            btn.addEventListener('click', closeModal);
-        });
-
-        // Închide modalul când se dă click pe overlay
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                closeModal();
-            }
-        });
-
-        // Închide modalul cu tasta Escape
-        const handleEscape = (e) => {
-            if (e.key === 'Escape') {
-                closeModal();
-                document.removeEventListener('keydown', handleEscape);
-            }
-        };
-        document.addEventListener('keydown', handleEscape);
-
-        // Event listeners pentru butoanele de acceptare/respingere modificări
-        if (isModified) {
-            const acceptBtn = modal.querySelector('.accept-modification');
-            const rejectBtn = modal.querySelector('.reject-modification');
-            acceptBtn.addEventListener('click', async () => {
-                // await handleModificationResponse(appointment.id, 'accepted');
-                await fetch("api/appointment/update",{
-                    method:"PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body:JSON.stringify({
-                        appointmentId:appointment.id,
-                        adminMessage:appointment.adminMessage,
-                        status:"pending",
-                    })
-                })
-                closeModal();
-            });
-
-            rejectBtn.addEventListener('click', async () => {
-                // await handleModificationResponse(appointment.id, 'rejected');
-                await fetch("api/appointment/update",{
-                    method:"PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body:JSON.stringify({
-                        appointmentId:appointment.id,
-                        adminMessage:appointment.adminMessage,
-                        status:"canceled",
-                    })
-                })
-                closeModal();
-            });
-            
-        }
-
-        const cancelBtn = modal.querySelector('.cancel-appointment');
-        cancelBtn.addEventListener('click',async ()=>{
-            // await handleModificationResponse(appointment.id, 'rejected');
-            console.log("ssiiiiii");
-        await fetch("api/appointment/update",{
-            method:"PUT",
-            headers: { "Content-Type": "application/json" },
-            body:JSON.stringify({
-                appointmentId:appointment.id,
-                adminMessage:appointment.adminMessage,
-                status:"canceled",
-            })
-        })
-        closeModal();
-    })
-    }
 
     document.addEventListener("click", (e) => {
         if (e.target.classList.contains("view-details")) {

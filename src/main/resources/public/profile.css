@@ -959,3 +959,120 @@ select:hover {
     background-color: var(--danger-color);
     color: white;
 }
+
+/* Stiluri pentru secțiunea de detalii aprobate */
+.approved-details {
+    margin-top: 20px;
+    padding: 20px;
+    background: linear-gradient(135deg, #f0f9f0 0%, #e8f5e8 100%);
+    border: 1px solid #d4edda;
+    border-radius: 8px;
+}
+
+.approved-details h4 {
+    color: var(--dark-text);
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.approved-details h4 i {
+    color: #28a745;
+}
+
+/* Adăugăm spațiere între elementele din detalii aprobate */
+.approved-details .detail-item {
+    margin-bottom: 15px;
+}
+
+/* Stiluri pentru lista de echipamente */
+.equipment-section {
+    margin-top: 15px;
+}
+
+.equipment-list {
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 15px;
+    margin-top: 10px;
+}
+
+.equipment-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.equipment-item:last-child {
+    border-bottom: none;
+}
+
+.equipment-name {
+    font-weight: 500;
+    color: #495057;
+    flex: 1;
+}
+
+.equipment-details {
+    color: #6c757d;
+    font-size: 0.9em;
+    margin: 0 15px;
+}
+
+
+.equipment-total-section {
+    margin-top: 5px;
+    padding-top: 5px;
+    text-align: right;
+    color: var(--dark-text);
+    font-size: 1rem;
+}
+
+/* Stiluri pentru costul total */
+.total-cost {
+    margin-top: 20px;
+}
+
+.total-highlight {
+    margin: 0;
+}
+
+.total-highlight strong {
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.total-price {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--dark-text);
+}
+
+/* Îmbunătățiri pentru modalul mai mare */
+.modal-content {
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+/* Responsive pentru dispozitive mobile */
+@media (max-width: 768px) {
+    .equipment-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+
+    .equipment-details,
+    .equipment-total {
+        margin: 0;
+        text-align: left;
+    }
+
+    .total-price {
+        font-size: 1.2em;
+    }
+}
