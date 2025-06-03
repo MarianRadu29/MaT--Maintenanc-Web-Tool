@@ -470,7 +470,7 @@ document.addEventListener("DOMContentLoaded", () => {
     <div class="detail-item">
         <i class="ri-sticky-note-line"></i>
         <div>
-            <strong>${isApproved || isCompleted ? 'Mesaj administrator:' : 'Motiv respingere:'}</strong>
+            <strong>${isApproved || isCompleted ||  appointment.status === 'canceled'? 'Mesaj administrator:' : 'Motiv respingere:'}</strong>
             <span class="notes-text">${appointment.adminMessage}</span>
         </div>
     </div>
