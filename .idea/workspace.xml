@@ -6,9 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="a1a27d4e-17cb-4261-b221-8c0b2f038ddc" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/public/admin.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/public/admin.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/profile.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/public/profile.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/public/admin.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/public/admin.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/public/profile.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/public/profile.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -107,8 +106,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-a94e463ab2e7-intellij.indexing.shared.core-IU-243.26053.27" />
-        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-IU-243.26053.27" />
+        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-WS-243.26053.12" />
       </set>
     </attachedChunks>
   </component>
@@ -174,7 +172,8 @@
       <workItem from="1748581595825" duration="145000" />
       <workItem from="1748582815236" duration="2864000" />
       <workItem from="1748684969272" duration="26984000" />
-      <workItem from="1748895294170" duration="1658000" />
+      <workItem from="1748895294170" duration="2569000" />
+      <workItem from="1748942950495" duration="741000" />
     </task>
     <servers />
   </component>

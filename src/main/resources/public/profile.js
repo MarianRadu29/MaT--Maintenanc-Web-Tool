@@ -382,7 +382,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const isApproved = appointment.status === 'approved';
         const isCompleted = appointment.status === 'completed';
         // Modificat: permite anularea pentru pending și approved
-        const canCancel = isPending;
+        const canCancel = isPending || isApproved;
 
         console.log('Appointment status:', appointment.status); // Debug log
         console.log('Can cancel:', canCancel); // Debug log

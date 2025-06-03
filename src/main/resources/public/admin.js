@@ -684,17 +684,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 : appointment.problem || 'N/A';
 
             row.innerHTML = `
-            <td>${appointment.clientName || 'N/A'}</td>
-            <td>${formattedDate} / ${appointment.startTime+":00-"+appointment.endTime+":00" || 'N/A'}</td>
-            <td>${appointment.vehicleBrand || ''} ${appointment.vehicleModel || ''} (${vehicleTypeText})</td>
-            <td>${problemText}</td>
-            <td><span class="status ${statusClass}">${statusText}</span></td>
-            <td>${appointment.hasAttachments ? '📎 Da' : 'Nu'}</td>
-            <td class="table-actions">
-                <button class="action-btn action-btn-view" data-id="${appointment.id}">Vezi</button>
-                <button class="action-btn action-btn-edit" data-id="${appointment.id}">Modifică</button>
-            </td>
-        `;
+        <td>${appointment.clientName || 'N/A'}</td>
+        <td>${formattedDate} / ${appointment.startTime+":00-"+appointment.endTime+":00" || 'N/A'}</td>
+        <td>${appointment.vehicleBrand || ''} ${appointment.vehicleModel || ''} (${vehicleTypeText})</td>
+        <td>${problemText}</td>
+        <td><span class="status ${statusClass}">${statusText}</span></td>
+        <td>${appointment.hasAttachments ? '📎 Da' : 'Nu'}</td>
+        <td class="table-actions">
+            <button class="action-btn action-btn-view" data-id="${appointment.id}">Vezi</button>
+            <button class="action-btn action-btn-edit" data-id="${appointment.id}">Modifică</button>
+        </td>
+    `;
 
             tableBody.appendChild(row);
 
@@ -708,41 +708,41 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     const detailsContainer = document.getElementById('appointmentDetails');
                     detailsContainer.innerHTML = `
-                    <div class="appointment-detail-section">
-                        <div class="detail-row">
-                            <span class="detail-label">Client:</span>
-                            <span>${app.clientName}</span>
-                        </div>
-                        <div class="detail-row">
-                            <span class="detail-label">Programare:</span>
-                            <span>${app.date ? app.date.split("-").reverse().join("-") : 'N/A'} / ${app.startTime+":00-"+app.endTime+":00" || 'N/A'}</span>
-                        </div>
+                <div class="appointment-detail-section">
+                    <div class="detail-row">
+                        <span class="detail-label">Client:</span>
+                        <span>${app.clientName}</span>
                     </div>
-                    
-                    <div class="appointment-detail-section">
-                        <div class="detail-row">
-                            <span class="detail-label">Vehicul:</span>
-                            <span>${app.vehicleBrand || ''} ${app.vehicleModel || ''} 
-                                (${app.vehicleType === 'motorcycle' ? 'Motocicletă' :
+                    <div class="detail-row">
+                        <span class="detail-label">Programare:</span>
+                        <span>${app.date ? app.date.split("-").reverse().join("-") : 'N/A'} / ${app.startTime+":00-"+app.endTime+":00" || 'N/A'}</span>
+                    </div>
+                </div>
+                
+                <div class="appointment-detail-section">
+                    <div class="detail-row">
+                        <span class="detail-label">Vehicul:</span>
+                        <span>${app.vehicleBrand || ''} ${app.vehicleModel || ''} 
+                            (${app.vehicleType === 'motorcycle' ? 'Motocicletă' :
                         app.vehicleType === 'bicycle' ? 'Bicicletă' :
                             app.vehicleType === 'scooter' ? 'Trotinetă' : 'Necunoscut'})
-                            </span>
-                        </div>
-                        
-                        <div class="detail-row">
-                            <span class="detail-label">Problemă:</span>
-                            <span>${app.problem || 'N/A'}</span>
-                        </div>
-                        
-                        ${app.hasAttachments ? `
-                            <div class="attachments-box">
-                                <p class="font-medium">Atașamente</p>
-                                <p class="text-xs">Clientul a încărcat imagini și/sau videoclipuri.</p>
-                                <div id="attachmentsContainer" class="attachments-content" style="margin-top:1rem;"></div>
-                            </div>
-                        ` : ''}
+                        </span>
                     </div>
-                `;
+                    
+                    <div class="detail-row">
+                        <span class="detail-label">Problemă:</span>
+                        <span>${app.problem || 'N/A'}</span>
+                    </div>
+                    
+                    ${app.hasAttachments ? `
+                        <div class="attachments-box">
+                            <p class="font-medium">Atașamente</p>
+                            <p class="text-xs">Clientul a încărcat imagini și/sau videoclipuri.</p>
+                            <div id="attachmentsContainer" class="attachments-content" style="margin-top:1rem;"></div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
 
                     if (app.hasAttachments) {
                         const container = detailsContainer.querySelector('#attachmentsContainer');
@@ -800,8 +800,25 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     const approveButton = document.getElementById('approveAppointment');
                     const rejectButton = document.getElementById('rejectAppointment');
-                    approveButton.style.display = app.status === 'rejected' ? 'none' : 'block';
-                    rejectButton.style.display = app.status === 'approved' ? 'none' : 'block';
+                    const finalizeButton = document.getElementById('finalizeAppointment');
+
+                    if (app.status === 'approved' || app.status === 'rejected') {
+                        approveButton.style.display = 'none';
+                    } else {
+                        approveButton.style.display = 'block';
+                    }
+
+                    if (app.status === 'approved' || app.status === 'rejected') {
+                        rejectButton.style.display = 'none';
+                    } else {
+                        rejectButton.style.display = 'block';
+                    }
+
+                    if (app.status === 'approved') {
+                        finalizeButton.style.display = 'block';
+                    } else {
+                        finalizeButton.style.display = 'none';
+                    }
 
                     const appointmentModal = document.getElementById('appointmentModal');
                     appointmentModal.style.display = 'block';
@@ -819,8 +836,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-
-    
     // Import/Export functionality
     const importButtons = document.querySelectorAll('button[data-import]');
     const exportButtons = document.querySelectorAll('button[data-export]');
