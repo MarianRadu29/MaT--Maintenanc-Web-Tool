@@ -454,7 +454,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     selectedElements.forEach(el => {
                         const dataId = el.getAttribute('data-id');
                         if (dataId !== null) {
-                            ids.push(parseInt(dataId, 10));
+                            const obj ={
+                                id:parseInt(dataId, 10),
+                                quantity:el.querySelector('.selected-item-controls input').value
+                            }
+                            console.log(JSON.stringify(obj,null,4));
+                            ids.push(obj);
                         }
                     });
                 
@@ -467,9 +472,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     estimatedPrice:Number.parseInt(estimatedPrice),
                     warrantyMonths:Number.parseInt(warranty),
                     adminMessage:responseMessage,
-                    inventoryIds:getSelectedInventoryIds()
+                    inventoryPieces:getSelectedInventoryIds()
                 }
 
+                alert(JSON.stringify(bodySend,null,4));
                 fetch("/api/appointment/update", {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
@@ -804,7 +810,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     const approveButton = document.getElementById('approveAppointment');
                     const rejectButton = document.getElementById('rejectAppointment');
                     const finalizeButton = document.getElementById('finalizeAppointment');
-
+                    
                     if (app.status === 'approved' || app.status === 'rejected') {
                         approveButton.style.display = 'none';
                     } else {
@@ -822,6 +828,22 @@ document.addEventListener('DOMContentLoaded', function () {
                     } else {
                         finalizeButton.style.display = 'none';
                     }
+
+                    finalizeButton.addEventListener('click',()=>{
+                        const data = {
+                            appointmentId:appointment.id,
+                            status:"completed",
+                        }
+                        fetch("api/appointment/update",{
+                            method:"PUT",
+                            headers: { "Content-Type": "application/json" },
+                            body:JSON.stringify(data)
+                        }).then(res=>res.json()).then( obj=> 
+                            {
+                                alert('Programarea a fost terminata!!');
+                                editModal.style.display = 'none';
+                            })
+                    })
 
                     const appointmentModal = document.getElementById('appointmentModal');
                     appointmentModal.style.display = 'block';
@@ -1067,8 +1089,7 @@ function openEditTimeModal(appointment) {
             }).then(res=>res.json()).then( obj=> 
                 {
                     alert('Ora a fost modificată cu succes!');
-
-            editModal.style.display = 'none';
+                    editModal.style.display = 'none';
                 })
             
         });

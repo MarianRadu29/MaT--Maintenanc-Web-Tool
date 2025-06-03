@@ -160,3 +160,101 @@ INSERT INTO inventory (name, category, quantity, price, supplier, status) VALUES
         'TechParts',
         'out-of-stock'
     );
+
+
+
+   CREATE OR REPLACE FUNCTION trg_update_inventory_stock()
+   RETURNS TRIGGER AS $$
+   DECLARE
+     current_quantity  INTEGER;
+     new_quantity      INTEGER;
+     new_status   TEXT;
+   BEGIN
+     SELECT quantity
+       INTO current_quantity
+       FROM inventory
+      WHERE id = NEW.inventory_id
+      FOR UPDATE;  -- blocchez randul ca să nu apara conditii de concurenta
+
+     new_quantity := current_quantity - NEW.quantity;
+
+     IF new_quantity < 0 THEN
+       RAISE EXCEPTION 'Nu pot scadea % bucati din produsul #% – stoc insuficient (stoc curent: %).',
+                       NEW.quantity, NEW.inventory_id, current_quantity;
+     END IF;
+
+     IF new_quantity = 0 THEN
+       new_status := 'out-of-stock';
+     ELSIF new_quantity < 5 THEN
+       new_status := 'low-stock';
+     ELSE
+       new_status := 'in-stock';
+     END IF;
+
+     UPDATE inventory
+     SET
+       quantity = new_quantity,
+       status   = new_status
+     WHERE id = NEW.inventory_id;
+
+     RETURN NEW;
+   END;
+   $$ LANGUAGE plpgsql;
+
+   CREATE TRIGGER trg_order_items_after_insert
+   AFTER INSERT ON order_items
+   FOR EACH ROW
+   EXECUTE FUNCTION trg_update_inventory_stock();
+
+
+
+   CREATE OR REPLACE FUNCTION trg_restore_inventory_on_order_cancel()
+   RETURNS TRIGGER AS $$
+   DECLARE
+     rec_item        RECORD;
+     current_qty     INTEGER;
+     restored_qty    INTEGER;
+     new_inv_status  TEXT;
+   BEGIN
+     IF OLD.status IS DISTINCT FROM 'canceled'
+        AND NEW.status = 'canceled'
+     THEN
+       FOR rec_item IN
+         SELECT inventory_id, quantity
+           FROM order_items
+          WHERE order_id = NEW.id
+       LOOP
+         SELECT quantity
+           INTO current_qty
+           FROM inventory
+          WHERE id = rec_item.inventory_id
+          FOR UPDATE;
+
+         restored_qty := current_qty + rec_item.quantity;
+
+         IF restored_qty = 0 THEN
+           new_inv_status := 'out-of-stock';
+         ELSIF restored_qty < 5 THEN
+           new_inv_status := 'low-stock';
+         ELSE
+           new_inv_status := 'in-stock';
+         END IF;
+
+         UPDATE inventory
+         SET
+           quantity = restored_qty,
+           status   = new_inv_status
+         WHERE id = rec_item.inventory_id;
+       END LOOP;
+
+     END IF;
+
+     RETURN NEW;
+   END;
+   $$ LANGUAGE plpgsql;
+
+   CREATE TRIGGER trg_orders_after_update_restore_items
+   AFTER UPDATE ON orders
+   FOR EACH ROW
+   EXECUTE FUNCTION trg_restore_inventory_on_order_cancel();
+

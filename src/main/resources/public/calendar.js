@@ -152,7 +152,8 @@ document.addEventListener("DOMContentLoaded", function () {
     fetch(apiUrl)
         .then((response) => response.json())
         .then((data) => {
-          showAppointmentsForDay(dateString, data);
+          
+          showAppointmentsForDay(dateString, data.map(time=>time.padStart(2,'0')));
         })
         .catch((error) => {
           console.error("Error fetching appointments:", error);
@@ -182,7 +183,6 @@ document.addEventListener("DOMContentLoaded", function () {
       "16:00",
       "17:00",
     ];
-
    
       noAppointments.style.display = "none";
       appointmentsList.style.display = "block";
