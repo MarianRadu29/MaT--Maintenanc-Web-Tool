@@ -445,9 +445,9 @@ document.addEventListener("DOMContentLoaded", () => {
     </div>
     ${appointment.vehicleBrand ? `
     <div class="detail-item">
-        <i class="ri-car-line"></i>
+        <i class="ri-star-line"></i>
         <div>
-            <strong>Marca vehicul:</strong>
+            <strong>Marcă vehicul:</strong>
             <span>${appointment.vehicleBrand}</span>
         </div>
     </div>

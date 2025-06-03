@@ -47,10 +47,8 @@
 - de modificat sa nu mai apara butonul de conectare de fiecare data cand intru pe o pagina noua
 - de modificat cand faci o programare chenarul de la incarcare documente e prea mare
 - de modificat imaginea cu motocicleta de pe home-page✅
-- de modificat cum e responsive la profile 
 - eventual de facut o pagina de servicii unde sa se detalieze mai mult fiecare serviciu in parte
-- de facut meniurile dropdown sa arate mai frumos
-- de facut calendarul responsive pe ecrane f mici (cand e ecranul mic sa apara prescurtarile zilelor saptamanii)
+- de facut calendarul responsive pe ecrane f mici (cand e ecranul mic sa apara prescurtarile zilelor saptamanii)✅
 - de modificat fisierele sa nu mai am css in fisierele js✅
 - la o programare la sectiunea de admin cand dau modifica sa apara iar=)) un pop up ceva care sa editez intervalele orare ale acelei programari(check urile le fac la backend si iti trimit raspunsul daca e ok sau nu)✅
 - de scos scrolul pe toata pagina cand sunt pe modal(pe vezi) ✅
