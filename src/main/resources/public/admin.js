@@ -561,6 +561,8 @@ document.addEventListener('DOMContentLoaded', function () {
                             return res.json().then(data => {
                                 console.log("Comanda trimisă cu succes:", data);
                             });
+
+
             
                         case 400:
                             // 400 Bad Request → corpul conține, probabil, detalii despre eroare
@@ -740,7 +742,38 @@ document.addEventListener('DOMContentLoaded', function () {
                         </div>
                     ` : ''}
                 </div>
+                            ${app.status === 'approved' && app.inventoryPieces ? `
+                <div class="appointment-detail-section">
+                    <div class="detail-row">
+                        <span class="detail-label">Produse folosite:</span>
+                    </div>
+                    <div id="usedProductsContainer" class="used-products-content">
+                        <!-- Produsele vor fi încărcate aici -->
+                    </div>
+                </div>
+` : ''}
             `;
+
+                    if (app.status === 'approved' && app.inventoryPieces) {
+                        const usedProductsContainer = detailsContainer.querySelector('#usedProductsContainer');
+
+                        // Găsește produsele din inventar pe baza ID-urilor
+                        app.inventoryPieces.forEach(usedItem => {
+                            const inventoryItem = inventoryItems.find(item => item.id === usedItem.id);
+                            if (inventoryItem) {
+                                const productElement = document.createElement('div');
+                                productElement.className = 'used-product-item';
+                                productElement.innerHTML = `
+                <div class="used-product-info">
+                    <strong>${inventoryItem.name}</strong><br>
+                    <small>${translateCategory(inventoryItem.category)} • ${inventoryItem.supplier}</small><br>
+                    <span>Cantitate folosită: ${usedItem.quantity} x ${inventoryItem.price.toFixed(2)} RON</span>
+                </div>
+            `;
+                                usedProductsContainer.appendChild(productElement);
+                            }
+                        });
+                    }
 
                     if (app.hasAttachments) {
                         const container = detailsContainer.querySelector('#attachmentsContainer');

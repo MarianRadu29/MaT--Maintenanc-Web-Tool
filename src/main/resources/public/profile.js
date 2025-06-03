@@ -515,7 +515,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="detail-item total-highlight">
                 <i class="ri-calculator-line"></i>
                 <div>
-                    <strong>${isCompleted ? 'Cost total:' : 'Cost total estimat:'}</strong>
+                    <strong>${isCompleted ? 'Cost total:' : 'Cost total :'}</strong>
                     <span class="total-price">${((appointment.estimatedPrice || 0) + totalEquipmentPrice).toFixed(2)} RON</span>
                 </div>
             </div>
