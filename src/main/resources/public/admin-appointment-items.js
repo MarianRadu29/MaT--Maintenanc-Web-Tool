@@ -1,5 +1,3 @@
-// admin-appointment-items.js - Versiunea modificată
-let selectedInventoryItems = [];
 let totalPrice = 0;
 let inventoryItems = [];
 let appointmentStatus = "approved";
@@ -9,7 +7,7 @@ async function loadInventoryAPI() {
     try {
         let res = await fetch("/api/inventory", { method: "GET" });
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-        return res.json();
+        return await res.json();
     } catch (error) {
         console.error("Eroare la încărcarea inventarului:", error);
         throw error;
@@ -62,46 +60,33 @@ function updateInterfaceForStatus() {
     const inventorySearchBox = document.querySelector('.inventory-search-box');
     const inventoryResults = document.getElementById('inventoryResults');
     const selectedItemsSection = document.querySelector('.selected-items-section h4');
+    const selectedItemsContainer = document.getElementById('selectedItemsContainer');
 
     if (appointmentStatus === 'approved') {
         if (inventorySelectionTitle) inventorySelectionTitle.style.display = 'none';
         if (inventorySearchBox) inventorySearchBox.style.display = 'none';
         if (inventoryResults) inventoryResults.style.display = 'none';
         if (selectedItemsSection) selectedItemsSection.textContent = 'Produse folosite în această programare:';
+        if (selectedItemsContainer) selectedItemsContainer.style.display = 'block';
     } else {
         if (inventorySelectionTitle) inventorySelectionTitle.style.display = 'block';
         if (inventorySearchBox) inventorySearchBox.style.display = 'block';
         if (inventoryResults) inventoryResults.style.display = 'block';
         if (selectedItemsSection) selectedItemsSection.textContent = 'Produse Selectate:';
+        if (selectedItemsContainer) selectedItemsContainer.style.display = 'block';
     }
 }
 
-// ✅ MODIFICAT: încarcă echipamentele folosite indiferent de status
 function loadUsedEquipment(appointment) {
-    selectedInventoryItems = [];
+    if (!appointment || !appointment.orderItems) return;
 
-    if (appointment.orderItems && appointment.orderItems.length > 0) {
-        appointment.orderItems.forEach(usedItem => {
-            const inventoryItem = inventoryItems.find(item => item.id === usedItem.id);
-            if (inventoryItem) {
-                selectedInventoryItems.push({
-                    ...inventoryItem,
-                    selectedQuantity: usedItem.quantity
-                });
-            } else {
-                // fallback dacă itemul nu mai exista în inventar
-                selectedInventoryItems.push({
-                    id: usedItem.id,
-                    name: "Produs necunoscut",
-                    category: "Necunoscut",
-                    supplier: "-",
-                    quantity: 0,
-                    price: usedItem.unitPrice,
-                    selectedQuantity: usedItem.quantity
-                });
-            }
-        });
-    }
+    currentAppointment.orderItems = appointment.orderItems.map(usedItem => {
+        const inventoryItem = inventoryItems.find(item => item.id === usedItem.id);
+        return inventoryItem ? {
+            ...inventoryItem,
+            selectedQuantity: usedItem.quantity
+        } : null;
+    }).filter(item => item !== null);
 
     updateSelectedItemsDisplay();
 }
@@ -113,7 +98,7 @@ function initializeInventorySearch() {
     const resultsContainer = document.getElementById('inventoryResults');
     if (!searchInput || !resultsContainer) return;
 
-    const normalizeText = text => text.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
+    const normalizeText = text => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
 
     searchInput.addEventListener('focus', () => {
         if (inventoryItems.length === 0) {
@@ -150,7 +135,7 @@ function displaySearchResults(items) {
         itemElement.setAttribute('id', `inventory-item-${item.id}`);
 
         const isAvailable = item.status !== 'out-of-stock' && item.quantity > 0;
-        const isSelected = selectedInventoryItems.some(selected => selected.id === item.id);
+        const isSelected = currentAppointment.orderItems.some(selected => selected.id === item.id);
 
         if (isSelected) itemElement.classList.add('selected');
 
@@ -169,12 +154,12 @@ function displaySearchResults(items) {
 
         if (isAvailable && appointmentStatus !== "approved") {
             itemElement.addEventListener('click', function () {
-                const index = selectedInventoryItems.findIndex(selected => selected.id === item.id);
+                const index = currentAppointment.orderItems.findIndex(selected => selected.id === item.id);
                 if (index >= 0) {
-                    selectedInventoryItems.splice(index, 1);
+                    currentAppointment.orderItems.splice(index, 1);
                     itemElement.classList.remove('selected');
                 } else {
-                    selectedInventoryItems.push({ ...item, selectedQuantity: 1 });
+                    currentAppointment.orderItems.push({ ...item, selectedQuantity: 1 });
                     itemElement.classList.add('selected');
                 }
 
@@ -191,14 +176,14 @@ function updateSelectedItemsDisplay() {
     const selectedItemsList = document.getElementById('selectedItemsList');
     if (!selectedItemsList) return;
 
-    if (selectedInventoryItems.length === 0) {
+    if (!currentAppointment || !currentAppointment.orderItems || currentAppointment.orderItems.length === 0) {
         selectedItemsList.innerHTML = '<div class="no-results">Nu aveți produse selectate</div>';
         return;
     }
 
     selectedItemsList.innerHTML = '';
 
-    selectedInventoryItems.forEach((item, index) => {
+    currentAppointment.orderItems.forEach((item, index) => {
         const itemElement = document.createElement('div');
         itemElement.className = 'selected-item';
         itemElement.setAttribute('data-id', item.id);
@@ -236,7 +221,7 @@ function updateSelectedItemsDisplay() {
 
 function increaseQuantity(index) {
     if (appointmentStatus === "approved") return;
-    const item = selectedInventoryItems[index];
+    const item = currentAppointment.orderItems[index];
     if (item.selectedQuantity < item.quantity) {
         item.selectedQuantity++;
         updateSelectedItemsDisplay();
@@ -245,7 +230,7 @@ function increaseQuantity(index) {
 
 function decreaseQuantity(index) {
     if (appointmentStatus === "approved") return;
-    const item = selectedInventoryItems[index];
+    const item = currentAppointment.orderItems[index];
     if (item.selectedQuantity > 1) {
         item.selectedQuantity--;
         updateSelectedItemsDisplay();
@@ -255,28 +240,29 @@ function decreaseQuantity(index) {
 function updateQuantity(index, newQuantity) {
     if (appointmentStatus === "approved") return;
     const qty = parseInt(newQuantity);
-    if (qty >= 1 && qty <= selectedInventoryItems[index].quantity) {
-        selectedInventoryItems[index].selectedQuantity = qty;
+    const item = currentAppointment.orderItems[index];
+    if (qty >= 1 && qty <= item.quantity) {
+        item.selectedQuantity = qty;
         updateSelectedItemsDisplay();
     }
 }
 
 function removeSelectedItem(index) {
     if (appointmentStatus === "approved") return;
-    selectedInventoryItems.splice(index, 1);
+    currentAppointment.orderItems.splice(index, 1);
     updateSelectedItemsDisplay();
     calculateTotalPrice();
 }
 
 function calculateTotalPrice() {
-    totalPrice = selectedInventoryItems.reduce((sum, item) => sum + item.selectedQuantity * item.price, 0);
+    totalPrice = currentAppointment.orderItems.reduce((sum, item) => sum + item.selectedQuantity * item.price, 0);
     const totalPriceElement = document.getElementById('totalPrice');
     if (totalPriceElement) totalPriceElement.textContent = totalPrice.toFixed(2);
 }
 
 function resetInventorySelection() {
     if (appointmentStatus === "approved") return;
-    selectedInventoryItems = [];
+    currentAppointment.orderItems = [];
     totalPrice = 0;
     const selectedItemsList = document.getElementById('selectedItemsList');
     if (selectedItemsList) selectedItemsList.innerHTML = '<div class="no-results">Nu aveți produse selectate</div>';
@@ -288,7 +274,7 @@ async function approveAppointment(appointmentId) {
         const response = await fetch(`/api/appointments/${appointmentId}/approve`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ inventoryUsed: selectedInventoryItems })
+            body: JSON.stringify({ inventoryUsed: currentAppointment.orderItems })
         });
 
         if (!response.ok) throw new Error("Eroare la aprobare");
@@ -309,8 +295,12 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-// ✅ MODIFICAT: încarcă echipamentele pentru orice status
 async function handleAppointmentView(appointment) {
+    if (!appointment) {
+        console.error("Appointment object lipsă!");
+        return;
+    }
+
     if (inventoryItems.length === 0) {
         try {
             await initInventoryLoad();

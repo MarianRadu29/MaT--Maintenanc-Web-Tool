@@ -333,7 +333,7 @@ document.addEventListener('DOMContentLoaded', function () {
             inventoryModal.style.display = 'none';
         });
     }
-
+``
     // Filter and search inventory
     const searchInventory = document.getElementById('searchInventory');
     const categoryFilter = document.getElementById('categoryFilter');
@@ -692,7 +692,7 @@ document.addEventListener('DOMContentLoaded', function () {
             <td>${appointment.vehicleBrand || ''} ${appointment.vehicleModel || ''} (${vehicleTypeText})</td>
             <td>${problemText}</td>
             <td><span class="status ${statusClass}">${statusText}</span></td>
-            <td>${appointment.hasAttachments ? '📎 Da' : 'Nu'}</td>
+            <td>${appointment.hasAttachments ? '✅' : '❌'}</td>
             <td class="table-actions">
                 <button class="action-btn action-btn-view" data-id="${appointment.id}">Vezi</button>
                 <button class="action-btn action-btn-edit" data-id="${appointment.id}" ${appointment.status === 'approved' ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''}>Modifică</button>
