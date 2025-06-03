@@ -58,7 +58,8 @@
 - de mofificat la admin sa nu mai apara butonul de aproba atunci cand programarea e deja aprobata ✅
 - de facut sa apara si echipamentele la programariele approved ✅
 - de facut sa apara si programarile anulate si finalizate la admin
-
+- de facut sa se dea refresh dupa ce se face o actiune (aproba , etc)
+- de facut iconita de exit sa fie la fel la ambele modale 
 
 
 
