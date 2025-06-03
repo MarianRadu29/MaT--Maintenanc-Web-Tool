@@ -460,19 +460,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 
                     return ids;
                 }
-                
 
-                // const index = appointments.find(app => app.id === currentAppointment.id);
-                // if (index !== -1) {
-                //     appointments[index].status = 'approved';
-                //     appointments[index].responseMessage = responseMessage;
-                //     appointments[index].estimatedPrice = estimatedPrice;
-                //     appointments[index].warranty = warranty;
-
-                //     loadAppointments(appointments);
-                //     appointmentModal.style.display = 'none';
-                //     alert('Programare aprobată cu succes!');
-                // }
                 const bodySend = {
                     status:"approved",
                     appointmentId:currentAppointment.id,
@@ -605,7 +593,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 const index = appointments.findIndex(app => app.id === currentAppointment.id);
                 if (index !== -1) {
                     appointments[index].status = 'rejected';
-                    appointments[index].responseMessage = responseMessage;
+                    appointments[index].adminMessage = responseMessage;
+
+                    // Actualizează și obiectul currentAppointment
+                    currentAppointment.status = 'rejected';
+                    currentAppointment.adminMessage = responseMessage;
 
                     loadAppointments(appointments);
                     appointmentModal.style.display = 'none';
@@ -794,9 +786,20 @@ document.addEventListener('DOMContentLoaded', function () {
                             });
                     }
 
-                    document.getElementById('responseMessage').value = app.responseMessage || '';
+                    // Populează câmpurile cu datele existente
+                    document.getElementById('responseMessage').value = app.adminMessage || app.responseMessage || '';
                     document.getElementById('estimatedPrice').value = app.estimatedPrice || '';
-                    document.getElementById('warranty').value = app.warranty || '';
+                    document.getElementById('warranty').value = app.warrantyMonths || app.warranty || '';
+
+                    if (app.status === 'approved') {
+                        document.getElementById('responseMessage').readOnly = true;
+                        document.getElementById('estimatedPrice').readOnly = true;
+                        document.getElementById('warranty').readOnly = true;
+                    } else {
+                        document.getElementById('responseMessage').readOnly = false;
+                        document.getElementById('estimatedPrice').readOnly = false;
+                        document.getElementById('warranty').readOnly = false;
+                    }
 
                     const approveButton = document.getElementById('approveAppointment');
                     const rejectButton = document.getElementById('rejectAppointment');
