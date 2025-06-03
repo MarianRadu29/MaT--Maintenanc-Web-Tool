@@ -70,6 +70,7 @@
                             <option value="approved">Aprobate</option>
                             <option value="rejected">Respinse</option>
                             <option value="modified">Modificate</option>
+                            <option value="modified">Finalizate</option>
                         </select>
                         <select id="vehicleFilterAppointments">
                             <option value="">Toate vehiculele</option>
@@ -179,8 +180,8 @@
         <span class="close">&times;</span>
         <h3>Detalii Programare</h3>
         <div id="appointmentDetails"></div>
-        <div class="inventory-selection-section">
-            <h4>Selectează produsele necesare pentru această comandă.</h4>
+        <div class="inventory-selection-section" id="productSelectionSection">
+            <h4 id="inventorySelectionTitle">Selectează produsele necesare pentru această comandă.</h4>
 
             <div class="inventory-search-box">
                 <input id="inventorySearchModal" placeholder="Caută produse în inventar..." type="text" class="inventory-search-input">
@@ -210,7 +211,7 @@
                 <input id="estimatedPrice" placeholder="ex: 350" type="text">
             </div>
             <div class="form-group">
-                <label for="warranty">Garanție</label>
+                <label for="warranty">Garanție (luni)</label>
                 <input id="warranty" placeholder="ex: 12 luni" type="text">
             </div>
         </div>

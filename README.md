@@ -56,8 +56,8 @@
 - de modificat iconita de la marca (din modal)✅
 - de repearat in modal la profil sa preia cantitatea buna de echipamente folosite ✅
 - de mofificat la admin sa nu mai apara butonul de aproba atunci cand programarea e deja aprobata ✅
-- de facut sa apara salvate si echipamentele 
-
+- de facut sa apara si echipamentele la programariele approved ✅
+- de facut sa apara si programarile anulate si finalizate la admin
 
 
 

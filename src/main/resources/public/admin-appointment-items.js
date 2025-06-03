@@ -1,12 +1,13 @@
+// admin-appointment-items.js - Versiunea modificată
 let selectedInventoryItems = [];
 let totalPrice = 0;
 let inventoryItems = [];
+let appointmentStatus = "approved";
+let currentAppointment = null;
 
 async function loadInventoryAPI() {
     try {
-        let res = await fetch("/api/inventory", {
-            method: "GET"
-        });
+        let res = await fetch("/api/inventory", { method: "GET" });
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         return res.json();
     } catch (error) {
@@ -38,7 +39,6 @@ async function initInventoryLoad() {
         inventoryItems = await loadInventoryAPI();
         console.log("Inventar încărcat:", inventoryItems);
     } catch (error) {
-        console.error("Eroare la încărcarea inventarului:", error);
         showInventoryLoadError();
         inventoryItems = [];
     }
@@ -47,21 +47,77 @@ async function initInventoryLoad() {
 function showInventoryLoadError() {
     const resultsContainer = document.getElementById('inventoryResults');
     if (resultsContainer) {
-        resultsContainer.innerHTML = '<div class="error-message" style="color: red; padding: 1rem; text-align: center;">Eroare la încărcarea inventarului. Vă rugăm să încercați din nou.</div>';
+        resultsContainer.innerHTML = '<div class="error-message" style="color: red;">Eroare la încărcarea inventarului.</div>';
     }
 }
 
+function setAppointmentStatus(status, appointment = null) {
+    appointmentStatus = status;
+    currentAppointment = appointment;
+    updateInterfaceForStatus();
+}
+
+function updateInterfaceForStatus() {
+    const inventorySelectionTitle = document.getElementById('inventorySelectionTitle');
+    const inventorySearchBox = document.querySelector('.inventory-search-box');
+    const inventoryResults = document.getElementById('inventoryResults');
+    const selectedItemsSection = document.querySelector('.selected-items-section h4');
+
+    if (appointmentStatus === 'approved') {
+        if (inventorySelectionTitle) inventorySelectionTitle.style.display = 'none';
+        if (inventorySearchBox) inventorySearchBox.style.display = 'none';
+        if (inventoryResults) inventoryResults.style.display = 'none';
+        if (selectedItemsSection) selectedItemsSection.textContent = 'Produse folosite în această programare:';
+    } else {
+        if (inventorySelectionTitle) inventorySelectionTitle.style.display = 'block';
+        if (inventorySearchBox) inventorySearchBox.style.display = 'block';
+        if (inventoryResults) inventoryResults.style.display = 'block';
+        if (selectedItemsSection) selectedItemsSection.textContent = 'Produse Selectate:';
+    }
+}
+
+// ✅ MODIFICAT: încarcă echipamentele folosite indiferent de status
+function loadUsedEquipment(appointment) {
+    selectedInventoryItems = [];
+
+    if (appointment.orderItems && appointment.orderItems.length > 0) {
+        appointment.orderItems.forEach(usedItem => {
+            const inventoryItem = inventoryItems.find(item => item.id === usedItem.id);
+            if (inventoryItem) {
+                selectedInventoryItems.push({
+                    ...inventoryItem,
+                    selectedQuantity: usedItem.quantity
+                });
+            } else {
+                // fallback dacă itemul nu mai exista în inventar
+                selectedInventoryItems.push({
+                    id: usedItem.id,
+                    name: "Produs necunoscut",
+                    category: "Necunoscut",
+                    supplier: "-",
+                    quantity: 0,
+                    price: usedItem.unitPrice,
+                    selectedQuantity: usedItem.quantity
+                });
+            }
+        });
+    }
+
+    updateSelectedItemsDisplay();
+}
+
 function initializeInventorySearch() {
+    if (appointmentStatus === "approved") return;
+
     const searchInput = document.getElementById('inventorySearchModal');
     const resultsContainer = document.getElementById('inventoryResults');
-
     if (!searchInput || !resultsContainer) return;
 
     const normalizeText = text => text.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
 
-    searchInput.addEventListener('focus', function () {
+    searchInput.addEventListener('focus', () => {
         if (inventoryItems.length === 0) {
-            resultsContainer.innerHTML = '<div class="no-results">Inventarul nu este încărcat. Vă rugăm să reîmprospătați pagina.</div>';
+            resultsContainer.innerHTML = '<div class="no-results">Inventarul nu este încărcat.</div>';
             return;
         }
         displaySearchResults(inventoryItems);
@@ -69,52 +125,34 @@ function initializeInventorySearch() {
 
     searchInput.addEventListener('input', function () {
         const searchTerm = normalizeText(this.value);
-
-        if (inventoryItems.length === 0) {
-            resultsContainer.innerHTML = '<div class="no-results">Inventarul nu este încărcat. Vă rugăm să reîmprospătați pagina.</div>';
-            return;
-        }
-
-        if (searchTerm === '') {
-            displaySearchResults(inventoryItems);
-            return;
-        }
-
         const filteredItems = inventoryItems.filter(item =>
             normalizeText(item.name).includes(searchTerm) ||
             normalizeText(item.supplier).includes(searchTerm) ||
             normalizeText(translateCategory(item.category)).includes(searchTerm)
         );
-
         displaySearchResults(filteredItems);
     });
 }
 
 function displaySearchResults(items) {
     const resultsContainer = document.getElementById('inventoryResults');
+    resultsContainer.innerHTML = '';
 
     if (items.length === 0) {
         resultsContainer.innerHTML = '<div class="no-results">Nu s-au găsit produse</div>';
         return;
     }
 
-    resultsContainer.innerHTML = '';
-
     items.forEach(item => {
         const itemElement = document.createElement('div');
         itemElement.className = 'inventory-item-result';
-
-        // Setăm atributele cu ID-ul real al obiectului din inventar
         itemElement.setAttribute('data-id', item.id);
-        // Opțional: un id unic pe element (în caz că ai nevoie să-l găsești prin getElementById)
         itemElement.setAttribute('id', `inventory-item-${item.id}`);
 
         const isAvailable = item.status !== 'out-of-stock' && item.quantity > 0;
         const isSelected = selectedInventoryItems.some(selected => selected.id === item.id);
 
-        if (isSelected) {
-            itemElement.classList.add('selected');
-        }
+        if (isSelected) itemElement.classList.add('selected');
 
         itemElement.innerHTML = `
             <div class="inventory-item-info">
@@ -129,34 +167,19 @@ function displaySearchResults(items) {
         itemElement.style.cursor = isAvailable ? 'pointer' : 'not-allowed';
         itemElement.style.opacity = isAvailable ? '1' : '0.6';
 
-        if (isAvailable) {
+        if (isAvailable && appointmentStatus !== "approved") {
             itemElement.addEventListener('click', function () {
                 const index = selectedInventoryItems.findIndex(selected => selected.id === item.id);
                 if (index >= 0) {
-                    // deja selectat → deselectare
                     selectedInventoryItems.splice(index, 1);
                     itemElement.classList.remove('selected');
                 } else {
-                    // adăugăm la listă
                     selectedInventoryItems.push({ ...item, selectedQuantity: 1 });
                     itemElement.classList.add('selected');
                 }
 
                 updateSelectedItemsDisplay();
                 calculateTotalPrice();
-
-                // Dacă există un text în search, reafișăm lista filtrată
-                const searchInput = document.getElementById('inventorySearchModal');
-                if (searchInput.value.trim() !== '') {
-                    const normalizeText = text => text.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
-                    const searchTerm = normalizeText(searchInput.value);
-                    const filteredItems = inventoryItems.filter(item =>
-                        normalizeText(item.name).includes(searchTerm) ||
-                        normalizeText(item.supplier).includes(searchTerm) ||
-                        normalizeText(translateCategory(item.category)).includes(searchTerm)
-                    );
-                    displaySearchResults(filteredItems);
-                }
             });
         }
 
@@ -166,7 +189,6 @@ function displaySearchResults(items) {
 
 function updateSelectedItemsDisplay() {
     const selectedItemsList = document.getElementById('selectedItemsList');
-
     if (!selectedItemsList) return;
 
     if (selectedInventoryItems.length === 0) {
@@ -179,35 +201,33 @@ function updateSelectedItemsDisplay() {
     selectedInventoryItems.forEach((item, index) => {
         const itemElement = document.createElement('div');
         itemElement.className = 'selected-item';
-
-        // Setăm atributele pe div-ul „selected-item” cu ID-ul real din inventar
         itemElement.setAttribute('data-id', item.id);
-        // Opțional: dacă vrei chiar un id unic
         itemElement.setAttribute('id', `selected-item-${item.id}`);
 
-        itemElement.innerHTML = `
+        let content = `
             <div class="selected-item-info">
                 <div><strong>${item.name}</strong></div>
                 <div style="font-size: 0.9em; color: #666;">
                     ${translateCategory(item.category)} • ${item.supplier}
                 </div>
                 <div style="font-size: 0.9em; color: #007bff;">
-                    ${item.selectedQuantity} x ${item.price.toFixed(2)} RON
+                    ${item.selectedQuantity} x ${item.price.toFixed(2)} RON = ${(item.selectedQuantity * item.price).toFixed(2)} RON
                 </div>
             </div>
-            <div class="selected-item-controls">
-                <button onclick="decreaseQuantity(${index})" ${item.selectedQuantity <= 1 ? 'disabled' : ''}>-</button>
-                <input 
-                    type="number" 
-                    value="${item.selectedQuantity}" 
-                    onchange="updateQuantity(${index}, this.value)" 
-                    min="1" 
-                    max="${item.quantity}"
-                >
-                <button onclick="increaseQuantity(${index})" ${item.selectedQuantity >= item.quantity ? 'disabled' : ''}>+</button>
-                <button class="action-btn action-btn-delete" onclick="removeSelectedItem(${index})">Șterge</button>
-            </div>
         `;
+
+        if (appointmentStatus !== "approved") {
+            content += `
+                <div class="selected-item-controls">
+                    <button onclick="decreaseQuantity(${index})" ${item.selectedQuantity <= 1 ? 'disabled' : ''}>-</button>
+                    <input type="number" value="${item.selectedQuantity}" onchange="updateQuantity(${index}, this.value)" min="1" max="${item.quantity}">
+                    <button onclick="increaseQuantity(${index})" ${item.selectedQuantity >= item.quantity ? 'disabled' : ''}>+</button>
+                    <button class="action-btn action-btn-delete" onclick="removeSelectedItem(${index})">Șterge</button>
+                </div>
+            `;
+        }
+
+        itemElement.innerHTML = content;
         selectedItemsList.appendChild(itemElement);
     });
 
@@ -215,6 +235,7 @@ function updateSelectedItemsDisplay() {
 }
 
 function increaseQuantity(index) {
+    if (appointmentStatus === "approved") return;
     const item = selectedInventoryItems[index];
     if (item.selectedQuantity < item.quantity) {
         item.selectedQuantity++;
@@ -223,6 +244,7 @@ function increaseQuantity(index) {
 }
 
 function decreaseQuantity(index) {
+    if (appointmentStatus === "approved") return;
     const item = selectedInventoryItems[index];
     if (item.selectedQuantity > 1) {
         item.selectedQuantity--;
@@ -231,6 +253,7 @@ function decreaseQuantity(index) {
 }
 
 function updateQuantity(index, newQuantity) {
+    if (appointmentStatus === "approved") return;
     const qty = parseInt(newQuantity);
     if (qty >= 1 && qty <= selectedInventoryItems[index].quantity) {
         selectedInventoryItems[index].selectedQuantity = qty;
@@ -239,22 +262,10 @@ function updateQuantity(index, newQuantity) {
 }
 
 function removeSelectedItem(index) {
+    if (appointmentStatus === "approved") return;
     selectedInventoryItems.splice(index, 1);
     updateSelectedItemsDisplay();
     calculateTotalPrice();
-
-    // După ștergerea din listă, reafișăm și lista filtrată (dacă era vreun search activ)
-    const searchInput = document.getElementById('inventorySearchModal');
-    if (searchInput && searchInput.value.trim() !== '') {
-        const normalizeText = text => text.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
-        const searchTerm = normalizeText(searchInput.value);
-        const filteredItems = inventoryItems.filter(item =>
-            normalizeText(item.name).includes(searchTerm) ||
-            normalizeText(item.supplier).includes(searchTerm) ||
-            normalizeText(translateCategory(item.category)).includes(searchTerm)
-        );
-        displaySearchResults(filteredItems);
-    }
 }
 
 function calculateTotalPrice() {
@@ -264,22 +275,52 @@ function calculateTotalPrice() {
 }
 
 function resetInventorySelection() {
+    if (appointmentStatus === "approved") return;
     selectedInventoryItems = [];
     totalPrice = 0;
     const selectedItemsList = document.getElementById('selectedItemsList');
     if (selectedItemsList) selectedItemsList.innerHTML = '<div class="no-results">Nu aveți produse selectate</div>';
     calculateTotalPrice();
-    const searchInput = document.getElementById('inventorySearchModal');
-    const resultsContainer = document.getElementById('inventoryResults');
-    if (searchInput) searchInput.value = '';
-    if (resultsContainer) resultsContainer.innerHTML = '';
 }
 
+async function approveAppointment(appointmentId) {
+    try {
+        const response = await fetch(`/api/appointments/${appointmentId}/approve`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ inventoryUsed: selectedInventoryItems })
+        });
 
+        if (!response.ok) throw new Error("Eroare la aprobare");
+        alert("Programarea a fost aprobată!");
 
-document.addEventListener('DOMContentLoaded', function() {
+        setAppointmentStatus("approved");
+        updateSelectedItemsDisplay();
+    } catch (err) {
+        console.error("Eroare la aprobare:", err);
+        alert("Eroare la aprobarea programării.");
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function () {
     initInventoryLoad().then(() => {
         initializeInventorySearch();
-        console.log('Inventory system initialized');
+        updateSelectedItemsDisplay();
     });
 });
+
+// ✅ MODIFICAT: încarcă echipamentele pentru orice status
+async function handleAppointmentView(appointment) {
+    if (inventoryItems.length === 0) {
+        try {
+            await initInventoryLoad();
+        } catch (err) {
+            console.error("Inventarul nu a putut fi încărcat pentru programare:", err);
+            return;
+        }
+    }
+
+    setAppointmentStatus(appointment.status, appointment);
+    loadUsedEquipment(appointment);
+    initializeInventorySearch();
+}

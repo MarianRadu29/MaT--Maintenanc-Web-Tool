@@ -89,15 +89,15 @@ document.addEventListener('DOMContentLoaded', function () {
     function initInventoryLoad() {
         loadInventoryAPI().then(list => {
             inventoryItems = list;
-           
+
             loadInventoryItems(inventoryItems);
         }).catch(error => {
             console.error("Eroare la încărcarea inventarului:", error);
         });
     }
     initInventoryLoad();
-    
-   
+
+
     function loadInventoryItems(items) {
         const tableBody = document.getElementById('inventoryTableBody');
         if (!tableBody) return;
@@ -158,13 +158,13 @@ document.addEventListener('DOMContentLoaded', function () {
             row.querySelector('.action-btn-edit').addEventListener('click', function () {
                 const itemId = this.getAttribute('data-id');
                 const item = inventoryItems.find(i => i.id == itemId);
-            
+
                 if (item) {
                     const selectCategories = document.getElementById("itemCategory");
-            
+
                     // mai întâi curăță selectul
                     selectCategories.innerHTML = "<option value=\"\">Selectează categoria</option>";
-            
+
                     // încarcă opțiunile și abia apoi setează valoarea
                     fetch("api/inventory/categories", {
                         method: "GET"
@@ -177,14 +177,13 @@ document.addEventListener('DOMContentLoaded', function () {
                             option.text = translateCategory(category.name);
                             selectCategories.appendChild(option);
                         });
-            
-                        // ⬅️ acum e safe să setezi
+
                         selectCategories.value = item.categoryID;
                     })
                     .catch(e => {
                         console.log(e);
                     });
-            
+
                     document.getElementById('inventoryModalTitle').textContent = 'Editează produs';
                     document.getElementById('itemId').value = item.id;
                     document.getElementById('itemName').value = item.name;
@@ -192,7 +191,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     document.getElementById('itemPrice').value = item.price;
                     document.getElementById('itemSupplier').value = item.supplier;
                     document.getElementById('itemStatus').value = item.status;
-            
+
                     inventoryModal.style.display = 'block';
                 }
             });
@@ -266,7 +265,7 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('itemId').value = '';
             inventoryModal.style.display = 'block';
             const selectCategory = document.getElementById("itemCategory");
-            
+
         fetch("api/inventory/categories",{
             method:"GET"
         }).then(res=>{
@@ -356,10 +355,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 "Bearings and Seals": "Rulmenți și simeringuri",
                 "Fasteners and Mounts": "Elemente de prindere și montaj"
             };
-        
+
             return translations[categoryEn] || categoryEn;
         }
-        
+
         fetch("api/inventory/categories",{
             method:"GET"
         }).then(res=>{
@@ -427,7 +426,7 @@ document.addEventListener('DOMContentLoaded', function () {
             loadAppointments(filteredAppointments);
         }
     }
-    
+
     // Add event listeners for appointment management
     const approveButton = document.getElementById('approveAppointment');
     const rejectButton = document.getElementById('rejectAppointment');
@@ -446,11 +445,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     alert('Vă rugăm să completați toate câmpurile.');
                     return;
                 }
-                
+
                 function getSelectedInventoryIds() {
                     const selectedElements = document.querySelectorAll('.selected-item');
                     const ids = [];
-                
+
                     selectedElements.forEach(el => {
                         const dataId = el.getAttribute('data-id');
                         if (dataId !== null) {
@@ -462,7 +461,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             ids.push(obj);
                         }
                     });
-                
+
                     return ids;
                 }
 
@@ -488,7 +487,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             return res.json().then(data => {
                                 console.log("Comanda trimisă cu succes:", data);
                             });
-            
+
                         case 400:
                             // 400 Bad Request → corpul conține, probabil, detalii despre eroare
                             return res.json()
@@ -498,18 +497,18 @@ document.addEventListener('DOMContentLoaded', function () {
                                 .catch(() => {
                                     console.error("Bad Request (400): nu s-a putut parsa JSON-ul din răspuns.");
                                 });
-            
+
                         case 404:
                             // 404 Not Found → res text, nu JSON (de obicei)
                             return res.text().then(textBody => {
                                 console.error("Not Found (404):", textBody);
                             });
-            
+
                         case 500:
                             return res.text().then(textBody => {
                                 console.error("Internal Server Error (500):", textBody);
                             });
-            
+
                         default:
                             // Orice alt cod de status
                             return res.text().then(textBody => {
@@ -543,7 +542,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     alert('Vă rugăm să adăugați un motiv pentru respingere.');
                     return;
                 }
-                
+
                 const bodySend = {
                     status:"rejected",
                     appointmentId:currentAppointment.id,
@@ -563,7 +562,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             });
 
 
-            
+
                         case 400:
                             // 400 Bad Request → corpul conține, probabil, detalii despre eroare
                             return res.json()
@@ -573,18 +572,18 @@ document.addEventListener('DOMContentLoaded', function () {
                                 .catch(() => {
                                     console.error("Bad Request (400): nu s-a putut parsa JSON-ul din răspuns.");
                                 });
-            
+
                         case 404:
                             // 404 Not Found → res text, nu JSON (de obicei)
                             return res.text().then(textBody => {
                                 console.error("Not Found (404):", textBody);
                             });
-            
+
                         case 500:
                             return res.text().then(textBody => {
                                 console.error("Internal Server Error (500):", textBody);
                             });
-            
+
                         default:
                             // Orice alt cod de status
                             return res.text().then(textBody => {
@@ -659,6 +658,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     statusText = 'Modificată';
                     statusClass = 'status-modified';
                     break;
+                case 'completed':
+                    statusText = 'Finalizată';
+                    statusClass = 'status-completed';
+                    break;
                 default:
                     statusText = appointment.status || 'Necunoscut';
                     statusClass = 'status-unknown';
@@ -684,17 +687,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 : appointment.problem || 'N/A';
 
             row.innerHTML = `
-        <td>${appointment.clientName || 'N/A'}</td>
-        <td>${formattedDate} / ${appointment.startTime+":00-"+appointment.endTime+":00" || 'N/A'}</td>
-        <td>${appointment.vehicleBrand || ''} ${appointment.vehicleModel || ''} (${vehicleTypeText})</td>
-        <td>${problemText}</td>
-        <td><span class="status ${statusClass}">${statusText}</span></td>
-        <td>${appointment.hasAttachments ? '📎 Da' : 'Nu'}</td>
-        <td class="table-actions">
-            <button class="action-btn action-btn-view" data-id="${appointment.id}">Vezi</button>
-            <button class="action-btn action-btn-edit" data-id="${appointment.id}">Modifică</button>
-        </td>
-    `;
+            <td>${appointment.clientName || 'N/A'}</td>
+            <td>${formattedDate} / ${appointment.startTime + ":00-" + appointment.endTime + ":00" || 'N/A'}</td>
+            <td>${appointment.vehicleBrand || ''} ${appointment.vehicleModel || ''} (${vehicleTypeText})</td>
+            <td>${problemText}</td>
+            <td><span class="status ${statusClass}">${statusText}</span></td>
+            <td>${appointment.hasAttachments ? '📎 Da' : 'Nu'}</td>
+            <td class="table-actions">
+                <button class="action-btn action-btn-view" data-id="${appointment.id}">Vezi</button>
+                <button class="action-btn action-btn-edit" data-id="${appointment.id}" ${appointment.status === 'approved' ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''}>Modifică</button>
+            </td>
+        `;
 
             tableBody.appendChild(row);
 
@@ -703,87 +706,105 @@ document.addEventListener('DOMContentLoaded', function () {
                 const app = futureAppointments.find(a => a.id == appId);
 
                 if (app) {
-                    console.log(JSON.stringify(app, null, 4));
                     currentAppointment = app;
-
+                    handleAppointmentView(app);
                     const detailsContainer = document.getElementById('appointmentDetails');
                     detailsContainer.innerHTML = `
-                <div class="appointment-detail-section">
-                    <div class="detail-row">
-                        <span class="detail-label">Client:</span>
-                        <span>${app.clientName}</span>
+                    <div class="appointment-detail-section">
+                        <div class="detail-row">
+                            <i class="ri-user-line modal-icons"></i>
+                            <span class="detail-label">Client:</span>
+                            <span class="info">${app.clientName}</span>
+                        </div>  
                     </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Programare:</span>
-                        <span>${app.date ? app.date.split("-").reverse().join("-") : 'N/A'} / ${app.startTime+":00-"+app.endTime+":00" || 'N/A'}</span>
+                    <div class="appointment-detail-section">
+                        <div class="detail-row">
+                            <i class="ri-calendar-line modal-icons"></i>
+                            <span class="detail-label">Programare:</span>
+                            <span class="info">${app.date.split("-").reverse().join("-")} / ${app.startTime + ":00-" + app.endTime + ":00"}</span>
+                        </div>
                     </div>
-                </div>
-                
-                <div class="appointment-detail-section">
-                    <div class="detail-row">
-                        <span class="detail-label">Vehicul:</span>
-                        <span>${app.vehicleBrand || ''} ${app.vehicleModel || ''} 
-                            (${app.vehicleType === 'motorcycle' ? 'Motocicletă' :
-                        app.vehicleType === 'bicycle' ? 'Bicicletă' :
-                            app.vehicleType === 'scooter' ? 'Trotinetă' : 'Necunoscut'})
-                        </span>
+                    <div class="appointment-detail-section">
+                        <div class="detail-row">
+                            <i class="ri-motorbike-line modal-icons"></i>
+                            <span class="detail-label">Vehicul:</span>
+                            <span class="info">${app.vehicleBrand || ''} ${app.vehicleModel || ''} 
+                                (${vehicleTypeText})
+                            </span>
+                        </div>
                     </div>
-                    
-                    <div class="detail-row">
-                        <span class="detail-label">Problemă:</span>
-                        <span>${app.problem || 'N/A'}</span>
+                    <div class="appointment-detail-section"> 
+                        <div class="detail-row">
+                            <i class="ri-tools-line"></i>
+                            <span class="detail-label">Problemă:</span>
+                            <span class="info">${app.problem || 'N/A'}</span>
+                        </div>
                     </div>
-                    
-                    ${app.hasAttachments ? `
-                        <div class="attachments-box">
-                            <p class="font-medium">Atașamente</p>
+                    <div class="appointment-detail-section"> 
+                        ${app.hasAttachments ? `
                             <p class="text-xs">Clientul a încărcat imagini și/sau videoclipuri.</p>
-                            <div id="attachmentsContainer" class="attachments-content" style="margin-top:1rem;"></div>
+                            <div class="attachments-box">
+                                <div id="attachmentsContainer" class="attachments-content" style="margin-top:1rem;"></div>
+                            </div>
+                        ` : `<p>Nu sunt atașamente pentru această programare.</p>`}
+                    </div>
+                    ${app.status === 'approved' && app.inventoryPieces ? `
+                        <div class="appointment-detail-section">
+                            <div class="detail-row">
+                                <span class="detail-label">Produse folosite:</span>
+                            </div>
+                            <div id="usedProductsContainer" class="used-products-content"></div>
                         </div>
                     ` : ''}
-                </div>
-                            ${app.status === 'approved' && app.inventoryPieces ? `
-                <div class="appointment-detail-section">
-                    <div class="detail-row">
-                        <span class="detail-label">Produse folosite:</span>
-                    </div>
-                    <div id="usedProductsContainer" class="used-products-content">
-                        <!-- Produsele vor fi încărcate aici -->
-                    </div>
-                </div>
-` : ''}
-            `;
+                `;
 
-                    if (app.status === 'approved' && app.inventoryPieces) {
-                        const usedProductsContainer = detailsContainer.querySelector('#usedProductsContainer');
 
-                        // Găsește produsele din inventar pe baza ID-urilor
-                        app.inventoryPieces.forEach(usedItem => {
-                            const inventoryItem = inventoryItems.find(item => item.id === usedItem.id);
-                            if (inventoryItem) {
-                                const productElement = document.createElement('div');
-                                productElement.className = 'used-product-item';
-                                productElement.innerHTML = `
-                <div class="used-product-info">
-                    <strong>${inventoryItem.name}</strong><br>
-                    <small>${translateCategory(inventoryItem.category)} • ${inventoryItem.supplier}</small><br>
-                    <span>Cantitate folosită: ${usedItem.quantity} x ${inventoryItem.price.toFixed(2)} RON</span>
-                </div>
-            `;
-                                usedProductsContainer.appendChild(productElement);
-                            }
-                        });
+                    // Controlează vizibilitatea secțiunii de selecție produse
+                    const inventorySelectionTitle = document.getElementById('inventorySelectionTitle');
+                    const inventorySearchBox = document.querySelector('.inventory-search-box');
+                    const inventoryResults = document.getElementById('inventoryResults');
+                    const selectedItemsSection = document.querySelector('.selected-items-section h4');
+
+                    if (app.status === 'approved' || app.status === 'completed') {
+                        // Ascunde instrucțiunile, căutarea și rezultatele pentru programările aprobate/finalizate
+                        if (inventorySelectionTitle) inventorySelectionTitle.style.display = 'none';
+                        if (inventorySearchBox) inventorySearchBox.style.display = 'none';
+                        if (inventoryResults) inventoryResults.style.display = 'none';
+                        if (selectedItemsSection) selectedItemsSection.textContent = 'Produse folosite în această programare:';
+
+                        // Încărcăm produsele folosite în selectedInventoryItems pentru afișare
+                        selectedInventoryItems = [];
+                        if (app.inventoryPieces && app.inventoryPieces.length > 0) {
+                            app.inventoryPieces.forEach(usedItem => {
+                                const inventoryItem = inventoryItems.find(item => item.id === usedItem.id);
+                                if (inventoryItem) {
+                                    selectedInventoryItems.push({
+                                        ...inventoryItem,
+                                        selectedQuantity: usedItem.quantity
+                                    });
+                                }
+                            });
+                        }
+                        // Actualizăm afișarea cu produsele folosite
+                        updateSelectedItemsDisplay();
+                    } else {
+                        // Afișează toate elementele pentru programările în așteptare
+                        if (inventorySelectionTitle) inventorySelectionTitle.style.display = 'block';
+                        if (inventorySearchBox) inventorySearchBox.style.display = 'block';
+                        if (inventoryResults) inventoryResults.style.display = 'block';
+                        if (selectedItemsSection) selectedItemsSection.textContent = 'Produse Selectate:';
+
+                        // Resetăm selecția pentru programările noi
+                        selectedInventoryItems = [];
+                        updateSelectedItemsDisplay();
                     }
 
+                    // Atașamente
                     if (app.hasAttachments) {
                         const container = detailsContainer.querySelector('#attachmentsContainer');
                         fetch(`/api/appointment/media/${app.id}`)
-                            .then(res => {
-                                if (!res.ok) throw new Error(res.statusText);
-                                return res.json();
-                            })
+                            .then(res => res.ok ? res.json() : Promise.reject(res.statusText))
                             .then(files => {
-                                console.log(JSON.stringify(files, null, 4));
                                 files.forEach(file => {
                                     const { fileName, contentType, content } = file;
                                     let previewEl;
@@ -792,102 +813,69 @@ document.addEventListener('DOMContentLoaded', function () {
                                         previewEl = document.createElement('img');
                                         previewEl.src = `data:${contentType};base64,${content}`;
                                         previewEl.style.maxWidth = '200px';
-                                        previewEl.style.margin = '.5rem';
-                                    }
-                                    else if (contentType.startsWith('video/')) {
+                                    } else if (contentType.startsWith('video/')) {
                                         previewEl = document.createElement('video');
                                         previewEl.src = `data:${contentType};base64,${content}`;
                                         previewEl.controls = true;
                                         previewEl.style.maxWidth = '300px';
-                                        previewEl.style.display = 'block';
-                                        previewEl.style.margin = '.5rem 0';
-                                    }
-                                    else {
+                                    } else {
                                         previewEl = document.createElement('div');
                                         previewEl.textContent = `${fileName} (${contentType})`;
-                                        previewEl.style.margin = '.5rem 0';
                                     }
 
                                     const dlLink = document.createElement('a');
                                     dlLink.href = `data:${contentType};base64,${content}`;
                                     dlLink.download = fileName;
                                     dlLink.textContent = `⬇️ Descarcă ${fileName}`;
-                                    dlLink.style.display = 'block';
-                                    dlLink.style.margin = '0.25rem 0 1rem';
 
                                     container.appendChild(previewEl);
                                     container.appendChild(dlLink);
                                 });
                             })
                             .catch(err => {
-                                console.error('Failed to load attachments', err);
+                                console.error('Eroare atașamente', err);
                                 alert('Eroare la încărcarea atașamentelor.');
                             });
                     }
 
-                    // Populează câmpurile cu datele existente
                     document.getElementById('responseMessage').value = app.adminMessage || app.responseMessage || '';
                     document.getElementById('estimatedPrice').value = app.estimatedPrice || '';
                     document.getElementById('warranty').value = app.warrantyMonths || app.warranty || '';
 
-                    if (app.status === 'approved') {
-                        document.getElementById('responseMessage').readOnly = true;
-                        document.getElementById('estimatedPrice').readOnly = true;
-                        document.getElementById('warranty').readOnly = true;
-                    } else {
-                        document.getElementById('responseMessage').readOnly = false;
-                        document.getElementById('estimatedPrice').readOnly = false;
-                        document.getElementById('warranty').readOnly = false;
-                    }
+                    const readonly = app.status === 'approved' || app.status === 'completed';
+                    document.getElementById('responseMessage').readOnly = readonly;
+                    document.getElementById('estimatedPrice').readOnly = readonly;
+                    document.getElementById('warranty').readOnly = readonly;
 
                     const approveButton = document.getElementById('approveAppointment');
                     const rejectButton = document.getElementById('rejectAppointment');
                     const finalizeButton = document.getElementById('finalizeAppointment');
-                    
-                    if (app.status === 'approved' || app.status === 'rejected') {
-                        approveButton.style.display = 'none';
-                    } else {
-                        approveButton.style.display = 'block';
-                    }
 
-                    if (app.status === 'approved' || app.status === 'rejected') {
-                        rejectButton.style.display = 'none';
-                    } else {
-                        rejectButton.style.display = 'block';
-                    }
+                    approveButton.style.display = (app.status === 'approved' || app.status === 'rejected') ? 'none' : 'block';
+                    rejectButton.style.display = (app.status === 'approved' || app.status === 'rejected') ? 'none' : 'block';
+                    finalizeButton.style.display = (app.status === 'approved') ? 'block' : 'none';
 
-                    if (app.status === 'approved') {
-                        finalizeButton.style.display = 'block';
-                    } else {
-                        finalizeButton.style.display = 'none';
-                    }
-
-                    finalizeButton.addEventListener('click',()=>{
-                        const data = {
-                            appointmentId:appointment.id,
-                            status:"completed",
-                        }
-                        fetch("api/appointment/update",{
-                            method:"PUT",
+                    finalizeButton.onclick = () => {
+                        fetch("api/appointment/update", {
+                            method: "PUT",
                             headers: { "Content-Type": "application/json" },
-                            body:JSON.stringify(data)
-                        }).then(res=>res.json()).then( obj=> 
-                            {
-                                alert('Programarea a fost terminata!!');
+                            body: JSON.stringify({ appointmentId: app.id, status: "completed" })
+                        })
+                            .then(res => res.json())
+                            .then(() => {
+                                alert('Programarea a fost terminată!');
                                 editModal.style.display = 'none';
-                            })
-                    })
+                            });
+                    };
 
-                    const appointmentModal = document.getElementById('appointmentModal');
-                    appointmentModal.style.display = 'block';
+                    document.getElementById('appointmentModal').style.display = 'block';
                 }
             });
 
             row.querySelector('.action-btn-edit').addEventListener('click', function () {
                 const appId = this.getAttribute('data-id');
                 const app = futureAppointments.find(a => a.id == appId);
-
-                if (app) {
+                if (app && app.status !== 'approved') {
                     openEditTimeModal(app);
                 }
             });
@@ -1119,12 +1107,12 @@ function openEditTimeModal(appointment) {
                 method:"PUT",
                 headers: { "Content-Type": "application/json" },
                 body:JSON.stringify(data)
-            }).then(res=>res.json()).then( obj=> 
+            }).then(res=>res.json()).then( obj=>
                 {
                     alert('Ora a fost modificată cu succes!');
                     editModal.style.display = 'none';
                 })
-            
+
         });
     }
 

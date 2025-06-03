@@ -501,14 +501,38 @@ body.modal-actions {
 
 /* Appointment details in modal */
 .appointment-detail-section {
-    margin-bottom: 1rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 0.5rem;
+    border: 1px solid #e2e8f0;
+    background-color: #f8fafc;
+    border-radius: 8px;
+    padding: 1rem;
+    transition: all 0.2s ease;
+    font-size: 1rem;
 }
 
-.detail-row {
-    margin-bottom: 0.5rem;
+.appointment-detail-section:hover{
+    background-color: #f1f5f9;
+    border-color: #cbd5e1;
 }
+
+.appointment-detail-section i{
+    color: var(--primary-color);
+    font-size: 1.25rem;
+}
+
+.appointment-detail-section p {
+    color: #6b7280;
+}
+
+.appointment-detail-section .detail-label {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.appointment-detail-section .info{
+    color: #6b7280;
+}
+
 
 .detail-label {
     font-weight: 500;
@@ -566,13 +590,6 @@ body.modal-actions {
     }
 }
 
-/* Adaugă aceste stiluri la sfârșitul fișierului admin.css */
-
-/* Inventory Selection in Modal */
-.inventory-selection-section {
-    border-top: 1px solid var(--border-color);
-    padding-top: 1.5rem;
-}
 
 .inventory-selection-section h4,
 .inventory-selection-section h5 {
@@ -590,9 +607,6 @@ body.modal-actions {
     box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
 }
 
-.inventory-results {
-    background-color: white;
-}
 
 .inventory-item-result {
     padding: 0.75rem;
