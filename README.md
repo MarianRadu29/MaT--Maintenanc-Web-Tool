@@ -53,9 +53,9 @@
 - la o programare la sectiunea de admin cand dau modifica sa apara iar=)) un pop up ceva care sa editez intervalele orare ale acelei programari(check urile le fac la backend si iti trimit raspunsul daca e ok sau nu)✅
 - de scos scrolul pe toata pagina cand sunt pe modal(pe vezi) ✅
 - de facut cele 2 modale sa arate la fel (de la admin si de la profil) , sa arata ce cel de la profil
-- de modificat iconita de la marca (din modal)
+- de modificat iconita de la marca (din modal)✅
 - de repearat in modal la profil sa preia cantitatea buna de echipamente folosite 
-- de mofificat la admin sa nu mai apara butonul de aproba atunci cand programarea e deja aprobata 
+- de mofificat la admin sa nu mai apara butonul de aproba atunci cand programarea e deja aprobata ✅
 
 
 
