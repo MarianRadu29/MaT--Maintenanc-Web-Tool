@@ -414,6 +414,13 @@ public class AppointmentController {
                 }
                 JsonView.send(exchange, 200, "{\"message\":\"Appointment updated successfully\"}");
             } catch (SQLException e) {
+                if ("P0001".equals(e.getSQLState())) {
+                    JsonView.send(exchange,409, new JSONObject()
+                            .put("message", e.getMessage())
+                            .toString()
+                    );
+                    return;
+                }
                 e.printStackTrace();
                 JsonView.send(exchange, 500, new JSONObject().put("message", "Internal server error").toString());
             }

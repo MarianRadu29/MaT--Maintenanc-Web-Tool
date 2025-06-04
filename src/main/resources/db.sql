@@ -283,3 +283,37 @@ CREATE TRIGGER trg_inventory_before_update_status
 BEFORE UPDATE OF status ON inventory
 FOR EACH ROW
 EXECUTE FUNCTION inventory_prevent_delete_if_active_orders();
+
+
+CREATE OR REPLACE FUNCTION trg_check_appointment_overlap()
+    RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.status NOT IN ('canceled', 'rejected') THEN
+
+        IF EXISTS (
+            SELECT 1
+            FROM appointments a
+            WHERE a.date = NEW.date
+              AND a.id <> COALESCE(NEW.id, 0)
+              AND a.status NOT IN ('canceled', 'rejected')
+              AND NOT (
+                a.end_time::time <= NEW.start_time::time
+                    OR a.start_time::time >= NEW.end_time::time
+                )
+        ) THEN
+            RAISE EXCEPTION
+                'Intervalul [% - %] se suprapune cu o alta programare activa in data %',
+                NEW.start_time, NEW.end_time, NEW.date;
+        END IF;
+    END IF;
+
+    RETURN NEW;
+END;
+$$
+    LANGUAGE plpgsql;
+
+
+CREATE TRIGGER trg_appointments_no_overlap
+    BEFORE INSERT OR UPDATE ON appointments
+    FOR EACH ROW
+EXECUTE FUNCTION trg_check_appointment_overlap();
