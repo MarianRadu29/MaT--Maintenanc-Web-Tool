@@ -211,7 +211,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 method: "POST",
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
-                    "Content-Type": "application/json"
                 },
                 body: data,
             })
