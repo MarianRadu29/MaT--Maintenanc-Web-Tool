@@ -1,3 +1,35 @@
+const customAlert = document.createElement('div');
+customAlert.id = 'customAlert';
+customAlert.style.cssText = `
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #3B82F6;
+        color: white;
+        padding: 12px 24px;
+        font-size: 16px;
+        font-weight: 500;
+        display: none;
+        z-index: 9999;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        transition: opacity 0.3s ease;
+    `;
+document.body.appendChild(customAlert);
+
+function showCustomAlert(message, duration = 3000) {
+    customAlert.textContent = message;
+    customAlert.style.display = 'block';
+    customAlert.style.opacity = '1';
+
+    setTimeout(() => {
+        customAlert.style.opacity = '0';
+        setTimeout(() => {
+            customAlert.style.display = 'none';
+        }, 300);
+    }, duration);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     // Navbar mobil
     const menuToggle = document.getElementById("menuToggle");
@@ -115,7 +147,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const email = document.getElementById('user-email-input').value.trim();
 
             if (email && !isValidEmail(email)) {
-                alert('Vă rugăm să introduceți o adresă de email validă.');
+                showCustomAlert('Vă rugăm să introduceți o adresă de email validă.',3000);
                 return;
             }
 
@@ -640,7 +672,7 @@ ${canCancel ? `
                             loadAppointments();
                         } catch (error) {
                             console.error('Eroare la anularea programării:', error);
-                            alert('A apărut o eroare la anularea programării. Vă rugăm să încercați din nou.');
+                            showCustomAlert('A apărut o eroare la anularea programării. Vă rugăm să încercați din nou.',3000);
                         }
                     }
                 });
@@ -685,7 +717,7 @@ ${canCancel ? `
     // Funcții pentru afișarea mesajelor de succes/eroare (opționale)
     function showSuccessMessage(message) {
         // Poți implementa un toast notification sau alt sistem de mesaje
-        alert(message); // Soluție temporară
+        showCustomAlert(message,3000); // Soluție temporară
     }
 
     function showErrorMessage(message) {

@@ -1,3 +1,35 @@
+const customAlert = document.createElement('div');
+customAlert.id = 'customAlert';
+customAlert.style.cssText = `
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #3B82F6;
+        color: white;
+        padding: 12px 24px;
+        font-size: 16px;
+        font-weight: 500;
+        display: none;
+        z-index: 9999;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        transition: opacity 0.3s ease;
+    `;
+document.body.appendChild(customAlert);
+
+function showCustomAlert(message, duration = 3000) {
+    customAlert.textContent = message;
+    customAlert.style.display = 'block';
+    customAlert.style.opacity = '1';
+
+    setTimeout(() => {
+        customAlert.style.opacity = '0';
+        setTimeout(() => {
+            customAlert.style.display = 'none';
+        }, 300);
+    }, duration);
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     // Check authentication first
     const userData = localStorage.getItem('userData') || sessionStorage.getItem('userData') || null;
@@ -68,11 +100,11 @@ document.addEventListener('DOMContentLoaded', function () {
         function appendFileItem(file) {
             // validare
             if (!file.type.match("image/*") && !file.type.match("video/*")) {
-                alert("Doar imagini și videoclipuri sunt acceptate.");
+                showCustomAlert("Doar imagini și videoclipuri sunt acceptate.",3000);
                 return;
             }
             if (file.size > 10 * 1024 * 1024) {
-                alert("Fișier prea mare (max 10MB).");
+                showCustomAlert("Fișier prea mare (max 10MB).",3000);
                 return;
             }
 
@@ -156,7 +188,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // Get selected time
             const selectedTime = document.querySelector(".time-slot.selected");
             if (!selectedTime) {
-                alert("Vă rugăm să selectați o oră pentru programare.");
+                showCustomAlert("Vă rugăm să selectați o oră pentru programare.",3000);
                 return;
             }
 
@@ -190,21 +222,21 @@ document.addEventListener('DOMContentLoaded', function () {
                     throw { status: res.status, ...err };
                 })
                 .then(json => {
-                    alert("Rezervare creată: " + JSON.stringify(json));
+                    showCustomAlert("Rezervare creată: " + JSON.stringify(json),3000);
                 })
                 .catch(err => {
                     console.error("Eroare la fetch:", err);
                     if (err.status) {
-                        alert(`Server error ${err.status}: ${err.message || ""}`);
+                        showCustomAlert(`Server error ${err.status}: ${err.message || ""}`,3000);
                     } else {
-                        alert(`Network/JS error: ${err.message}`);
+                        showCustomAlert(`Network/JS error: ${err.message}`,3000);
                     }
                 });
 
             setTimeout(() => {
                 //ar trebui facut un pop up frumos elegant cat de cat
-                alert(
-                    "Programare trimisă cu succes! Veți primi un email de confirmare."
+                showCustomAlert(
+                    "Programare trimisă cu succes! Veți primi un email de confirmare.",3000
                 );
 
                 // Reset form

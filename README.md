@@ -60,7 +60,7 @@
 - de facut sa se dea refresh dupa ce se face o actiune (aproba , etc)
 - de facut iconita de exit sa fie la fel la ambele modale 
 - de reparat atunci cand intru pe o programare care nu are produse selectate imi arata pretul de la ultima programare pe care am intrat
-
+- de facut sticky partea de sus la modaluri 
 
 
 
