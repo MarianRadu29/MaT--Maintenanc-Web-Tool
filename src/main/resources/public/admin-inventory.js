@@ -1,33 +1,104 @@
 document.addEventListener('DOMContentLoaded', function () {
 
-    // Modal functionality
+    // === Custom Alert Element ===
+    const customAlert = document.createElement('div');
+    customAlert.id = 'customAlert';
+    customAlert.style.cssText = `
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #3B82F6;
+        color: white;
+        padding: 12px 24px;
+        font-size: 16px;
+        font-weight: 500;
+        display: none;
+        z-index: 9999;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        transition: opacity 0.3s ease;
+    `;
+    document.body.appendChild(customAlert);
+
+    function showCustomAlert(message, duration = 3000) {
+        customAlert.textContent = message;
+        customAlert.style.display = 'block';
+        customAlert.style.opacity = '1';
+
+        setTimeout(() => {
+            customAlert.style.opacity = '0';
+            setTimeout(() => {
+                customAlert.style.display = 'none';
+            }, 300);
+        }, duration);
+    }
+
+    // === Custom Confirm Modal ===
+    const confirmModal = document.createElement('div');
+    confirmModal.id = 'confirmModal';
+    confirmModal.style.cssText = `
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.5);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 99999;
+    `;
+    confirmModal.innerHTML = `
+        <div style="background: white; padding: 24px 32px; border-radius: 8px; max-width: 400px; text-align: center;">
+            <p style="font-size: 18px; margin-bottom: 20px;">Sigur doriți să ștergeți acest produs?</p>
+            <button id="confirmYes" style="margin-right: 10px; padding: 8px 16px; background: #3B82F6; color: white; border: none; border-radius: 5px; cursor: pointer;">Da</button>
+            <button id="confirmNo" style="padding: 8px 16px; background: #e5e7eb; border: none; border-radius: 5px; cursor: pointer;">Nu</button>
+        </div>
+    `;
+    document.body.appendChild(confirmModal);
+
+    function showConfirmDialog(callback) {
+        confirmModal.style.display = 'flex';
+        const yesBtn = document.getElementById('confirmYes');
+        const noBtn = document.getElementById('confirmNo');
+
+        yesBtn.onclick = () => {
+            confirmModal.style.display = 'none';
+            callback(true);
+        };
+        noBtn.onclick = () => {
+            confirmModal.style.display = 'none';
+            callback(false);
+        };
+    }
+
+    // === Modal functionality ===
     const inventoryModal = document.getElementById('inventoryModal');
-    const editInventoryModal = document.getElementById('editInventoryModal'); // Noul modal pentru editare
+    const editInventoryModal = document.getElementById('editInventoryModal');
     const closeBtns = document.querySelectorAll('.close, .close-btn');
 
     closeBtns.forEach(btn => {
         btn.addEventListener('click', function () {
             inventoryModal.style.display = 'none';
-            editInventoryModal.style.display = 'none'; // Închide și modalul de editare
+            editInventoryModal.style.display = 'none';
         });
     });
 
     let inventoryItems = [];
-    async function loadInventoryAPI(){
-        let res = await fetch("/api/inventory",{
-            method:"GET"
+    async function loadInventoryAPI() {
+        let res = await fetch("/api/inventory", {
+            method: "GET"
         });
         return res.json();
     }
+
     function initInventoryLoad() {
         loadInventoryAPI().then(list => {
             inventoryItems = list;
-
             loadInventoryItems(inventoryItems);
         }).catch(error => {
             console.error("Eroare la încărcarea inventarului:", error);
+            showCustomAlert("Eroare la încărcarea inventarului!");
         });
     }
+
     initInventoryLoad();
 
     function translateCategory(categoryEn) {
@@ -45,7 +116,6 @@ document.addEventListener('DOMContentLoaded', function () {
             "Bearings and Seals": "Rulmenți și simeringuri",
             "Fasteners and Mounts": "Elemente de prindere și montaj"
         };
-
         return translations[categoryEn] || categoryEn;
     }
 
@@ -60,31 +130,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
             let statusClass = '';
             switch (item.status) {
-                case 'in-stock':
-                    statusClass = 'status-in-stock';
-                    break;
-                case 'low-stock':
-                    statusClass = 'status-low-stock';
-                    break;
-                case 'out-of-stock':
-                    statusClass = 'status-out-of-stock';
-                    break;
-                case 'ordered':
-                    statusClass = 'status-ordered';
-                    break;
+                case 'in-stock': statusClass = 'status-in-stock'; break;
+                case 'low-stock': statusClass = 'status-low-stock'; break;
+                case 'out-of-stock': statusClass = 'status-out-of-stock'; break;
+                case 'ordered': statusClass = 'status-ordered'; break;
             }
 
             let statusText = '';
             switch (item.status) {
-                case 'in-stock':
-                    statusText = 'În stoc';
-                    break;
-                case 'low-stock':
-                    statusText = 'Stoc limitat';
-                    break;
-                case 'out-of-stock':
-                    statusText = 'Epuizat';
-                    break;
+                case 'in-stock': statusText = 'În stoc'; break;
+                case 'low-stock': statusText = 'Stoc limitat'; break;
+                case 'out-of-stock': statusText = 'Epuizat'; break;
             }
 
             row.innerHTML = `
@@ -102,18 +158,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
             tableBody.appendChild(row);
 
-            // Add event listeners for edit and delete buttons
             row.querySelector('.action-btn-edit').addEventListener('click', function () {
                 const itemId = this.getAttribute('data-id');
                 const item = inventoryItems.find(i => i.id == itemId);
 
                 if (item) {
                     const selectCategories = document.getElementById("editItemCategory");
-
-                    // mai întâi curăță selectul
                     selectCategories.innerHTML = "<option value=\"\">Selectează categoria</option>";
 
-                    // încarcă opțiunile și abia apoi setează valoarea
                     fetch("api/inventory/categories", {
                         method: "GET"
                     })
@@ -130,9 +182,9 @@ document.addEventListener('DOMContentLoaded', function () {
                         })
                         .catch(e => {
                             console.log(e);
+                            showCustomAlert("Eroare la încărcarea categoriilor!");
                         });
 
-                    // Populează modalul de editare cu datele itemului
                     document.getElementById('editInventoryModalTitle').textContent = 'Editează produs';
                     document.getElementById('editItemId').value = item.id;
                     document.getElementById('editItemName').value = item.name;
@@ -141,31 +193,33 @@ document.addEventListener('DOMContentLoaded', function () {
                     document.getElementById('editItemSupplier').value = item.supplier;
                     document.getElementById('editItemStatus').value = item.status;
 
-                    editInventoryModal.style.display = 'block'; // Deschide modalul de editare
+                    editInventoryModal.style.display = 'block';
                 }
             });
 
             row.querySelector('.action-btn-delete').addEventListener('click', function () {
                 const itemId = this.getAttribute('data-id');
 
-                if (confirm('Sigur doriți să ștergeți acest produs?')) {
-                    const index = inventoryItems.findIndex(i => i.id == itemId);
-                    console.log(index);
-                    if (index != -1) {
-                        inventoryItems.splice(index, 1);
-                        fetch(`api/inventory/delete/${itemId}`,{
-                            method:"DELETE",
-                        }).then(res=>res.json()).then(obj=>{
-                            console.log(obj);
-                        }).catch(err=>console.log(err));
-                        loadInventoryItems(inventoryItems);
+                showConfirmDialog((confirmed) => {
+                    if (confirmed) {
+                        const index = inventoryItems.findIndex(i => i.id == itemId);
+                        if (index != -1) {
+                            inventoryItems.splice(index, 1);
+                            fetch(`api/inventory/delete/${itemId}`, {
+                                method: "DELETE",
+                            }).then(res => res.json()).then(obj => {
+                                showCustomAlert("Produsul a fost șters cu succes!");
+                                loadInventoryItems(inventoryItems);
+                            }).catch(err => {
+                                console.log(err);
+                                showCustomAlert("Eroare la ștergere.");
+                            });
+                        }
                     }
-                }
+                });
             });
         });
     }
-
-    loadInventoryItems(inventoryItems);
 
     window.addEventListener('click', function (event) {
         if (event.target === inventoryModal) {
@@ -176,7 +230,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Add inventory item button
     const addItemBtn = document.getElementById('addItemBtn');
     if (addItemBtn) {
         addItemBtn.addEventListener('click', function () {
@@ -184,161 +237,126 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('inventoryForm').reset();
             document.getElementById('itemId').value = '';
             inventoryModal.style.display = 'block';
-            const selectCategory = document.getElementById("itemCategory");
 
-            // Curăță selectul
+            const selectCategory = document.getElementById("itemCategory");
             selectCategory.innerHTML = "<option value=\"\">Selectează categoria</option>";
 
-            fetch("api/inventory/categories",{
-                method:"GET"
-            }).then(res=>{
-                return res.json()
-            })
-                .then(list=>{
-                    list.forEach(category=>{
+            fetch("api/inventory/categories", {
+                method: "GET"
+            }).then(res => res.json())
+                .then(list => {
+                    list.forEach(category => {
                         const option = document.createElement("option");
                         option.value = category.id;
                         option.text = translateCategory(category.name);
                         selectCategory.appendChild(option);
                     })
                 })
-                .catch(e=>{
+                .catch(e => {
                     console.log(e);
-                })
+                    showCustomAlert("Eroare la încărcarea categoriilor.");
+                });
         });
     }
 
-    // Inventory form submission (pentru adăugare)
     const inventoryForm = document.getElementById('inventoryForm');
     if (inventoryForm) {
         inventoryForm.addEventListener('submit', function (e) {
             e.preventDefault();
 
-            const itemName = document.getElementById('itemName').value;
-            const itemCategory = document.getElementById('itemCategory').value;
-            const itemQuantity = document.getElementById('itemQuantity').value;
-            const itemPrice = document.getElementById('itemPrice').value;
-            const itemSupplier = document.getElementById('itemSupplier').value;
-            const itemStatus = document.getElementById('itemStatus').value;
-
             const newItem = {
-                name: itemName,
-                category: itemCategory,
-                quantity: parseInt(itemQuantity),
-                price: parseFloat(itemPrice),
-                supplier: itemSupplier,
-                status: itemStatus
+                name: document.getElementById('itemName').value,
+                category: document.getElementById('itemCategory').value,
+                quantity: parseInt(document.getElementById('itemQuantity').value),
+                price: parseFloat(document.getElementById('itemPrice').value),
+                supplier: document.getElementById('itemSupplier').value,
+                status: document.getElementById('itemStatus').value
             };
 
-            fetch("/api/inventory/add",{
-                method:"POST",
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+            fetch("/api/inventory/add", {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(newItem)
-            }).then(res=>{
-                return res.json();
-            }).then(result => {
-                console.log('Produs adăugat:', result);
-                // Reîncarcă inventarul
-                initInventoryLoad();
-            }).catch(e=>console.log(e))
+            }).then(res => res.json())
+                .then(result => {
+                    initInventoryLoad();
+                    showCustomAlert("Produs adăugat cu succes!");
+                }).catch(e => {
+                console.log(e);
+                showCustomAlert("Eroare la adăugarea produsului!");
+            });
 
-            // Close modal
             inventoryModal.style.display = 'none';
         });
     }
 
-    // Edit inventory form submission (pentru editare) - VERSIUNE CU API REAL
     const editInventoryForm = document.getElementById('editInventoryForm');
     if (editInventoryForm) {
         editInventoryForm.addEventListener('submit', function (e) {
             e.preventDefault();
 
-            const itemId = document.getElementById('editItemId').value;
-            const itemName = document.getElementById('editItemName').value;
-            const itemCategory = document.getElementById('editItemCategory').value;
-            const itemQuantity = document.getElementById('editItemQuantity').value;
-            const itemPrice = document.getElementById('editItemPrice').value;
-            const itemSupplier = document.getElementById('editItemSupplier').value;
-            const itemStatus = document.getElementById('editItemStatus').value;
-
             const updatedItem = {
-                id:parseInt(itemId),
-                name: itemName,
-                category: parseInt(itemCategory),
-                quantity: parseInt(itemQuantity),
-                price: parseFloat(itemPrice),
-                supplier: itemSupplier,
-                status: itemStatus
+                id: parseInt(document.getElementById('editItemId').value),
+                name: document.getElementById('editItemName').value,
+                category: parseInt(document.getElementById('editItemCategory').value),
+                quantity: parseInt(document.getElementById('editItemQuantity').value),
+                price: parseFloat(document.getElementById('editItemPrice').value),
+                supplier: document.getElementById('editItemSupplier').value,
+                status: document.getElementById('editItemStatus').value
             };
 
-            // Folosește endpoint-ul de update
-            fetch(`/api/inventory/update/${itemId}`, {
+            fetch(`/api/inventory/update/${updatedItem.id}`, {
                 method: "PUT",
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updatedItem)
-            }).then(res => {
-                return res.json();
-            }).then(result => {
-                console.log('Produs actualizat:', result);
-                // Reîncarcă inventarul
-                initInventoryLoad();
-                // Close modal
-                editInventoryModal.style.display = 'none';
-            }).catch(e => {
+            }).then(res => res.json())
+                .then(result => {
+                    initInventoryLoad();
+                    editInventoryModal.style.display = 'none';
+                    showCustomAlert("Produs actualizat cu succes!");
+                }).catch(e => {
                 console.log(e);
-                alert('Eroare la actualizarea produsului');
+                showCustomAlert("Eroare la actualizarea produsului!");
             });
         });
     }
 
-    // Filtering functionality
     const searchInventory = document.getElementById('searchInventory');
     const categoryFilter = document.getElementById('categoryFilter');
     const statusFilter = document.getElementById('statusFilter');
 
     if (searchInventory && categoryFilter && statusFilter) {
-        fetch("api/inventory/categories",{
-            method:"GET"
-        }).then(res=>{
-            return res.json()
-        })
-            .then(list=>{
-                list.forEach(category=>{
+        fetch("api/inventory/categories", {
+            method: "GET"
+        }).then(res => res.json())
+            .then(list => {
+                list.forEach(category => {
                     const option = document.createElement("option");
-                    option.value = category.id;
+                    option.value = category.name;
                     option.text = translateCategory(category.name);
                     categoryFilter.appendChild(option);
-                })
-            })
-            .catch(e=>{
-                console.log(e);
-            })
-        searchInventory.addEventListener('input', filterInventory);
-        categoryFilter.addEventListener('change', filterInventory);
-        statusFilter.addEventListener('change', filterInventory);
+                });
+            }).catch(e => {
+            console.log(e);
+            showCustomAlert("Eroare la încărcarea categoriilor.");
+        });
 
-        function filterInventory() {
-            const searchValue = searchInventory.value.toLowerCase();
-            const categoryValue = categoryFilter.value; // acesta este categoryID numeric
-            const statusValue = statusFilter.value;
+        function filterAndLoad() {
+            const searchTerm = searchInventory.value.toLowerCase();
+            const selectedCategory = categoryFilter.value;
+            const selectedStatus = statusFilter.value;
 
-            const filteredItems = inventoryItems.filter(item => {
-                const matchesSearch = item.name.toLowerCase().includes(searchValue) ||
-                    item.supplier.toLowerCase().includes(searchValue);
-
-                const matchesCategory = !categoryValue || item.categoryID == categoryValue;
-
-                const matchesStatus = !statusValue || item.status === statusValue;
-
+            const filtered = inventoryItems.filter(item => {
+                const matchesSearch = item.name.toLowerCase().includes(searchTerm);
+                const matchesCategory = selectedCategory === "" || item.category === selectedCategory;
+                const matchesStatus = selectedStatus === "" || item.status === selectedStatus;
                 return matchesSearch && matchesCategory && matchesStatus;
             });
-
-            loadInventoryItems(filteredItems);
+            loadInventoryItems(filtered);
         }
-    }
 
+        searchInventory.addEventListener('input', filterAndLoad);
+        categoryFilter.addEventListener('change', filterAndLoad);
+        statusFilter.addEventListener('change', filterAndLoad);
+    }
 });

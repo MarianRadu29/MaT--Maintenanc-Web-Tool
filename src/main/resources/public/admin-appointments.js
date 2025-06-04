@@ -1,6 +1,37 @@
+const customAlert = document.createElement('div');
+customAlert.id = 'customAlert';
+customAlert.style.cssText = `
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #3B82F6;
+        color: white;
+        padding: 12px 24px;
+        font-size: 16px;
+        font-weight: 500;
+        display: none;
+        z-index: 9999;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        transition: opacity 0.3s ease;
+    `;
+document.body.appendChild(customAlert);
+
+function showCustomAlert(message, duration = 3000) {
+    customAlert.textContent = message;
+    customAlert.style.display = 'block';
+    customAlert.style.opacity = '1';
+
+    setTimeout(() => {
+        customAlert.style.opacity = '0';
+        setTimeout(() => {
+            customAlert.style.display = 'none';
+        }, 300);
+    }, duration);
+}
+
 document.addEventListener('DOMContentLoaded', function () {
 
-    // Modal functionality
     const appointmentModal = document.getElementById('appointmentModal');
     const closeBtns = document.querySelectorAll('.close, .close-btn');
 
@@ -77,7 +108,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const warranty = document.getElementById('warranty').value;
 
                 if (!responseMessage || !estimatedPrice || !warranty) {
-                    alert('Vă rugăm să completați toate câmpurile.');
+                    showCustomAlert('Vă rugăm să completați toate câmpurile.',3000);
                     return;
                 }
 
@@ -109,7 +140,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     inventoryPieces:getSelectedInventoryIds()
                 }
 
-                alert(JSON.stringify(bodySend,null,4));
+
                 fetch("/api/appointment/update", {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
@@ -164,7 +195,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     loadAppointments(appointments);
                     appointmentModal.style.display = 'none';
-                    alert('Programare aprobată cu succes!');
+                    showCustomAlert('Programare aprobată cu succes!',3000);
                 }
             }
         });
@@ -174,7 +205,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const responseMessage = document.getElementById('responseMessage').value;
 
                 if (!responseMessage) {
-                    alert('Vă rugăm să adăugați un motiv pentru respingere.');
+                    showCustomAlert('Vă rugăm să adăugați un motiv pentru respingere.',3000);
                     return;
                 }
 
@@ -243,7 +274,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     loadAppointments(appointments);
                     appointmentModal.style.display = 'none';
-                    alert('Programare respinsă!');
+                    showCustomAlert('Programare respinsă!',3000);
                 }
             }
         });
@@ -468,7 +499,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             })
                             .catch(err => {
                                 console.error('Eroare atașamente', err);
-                                alert('Eroare la încărcarea atașamentelor.');
+                                showCustomAlert('Eroare la încărcarea atașamentelor.',3000);
                             });
                     }
 
@@ -497,7 +528,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         })
                             .then(res => res.json())
                             .then(() => {
-                                alert('Programarea a fost terminată!');
+                                showCustomAlert('Programarea a fost finalizată!',3000);
                                 editModal.style.display = 'none';
                             });
                     };
@@ -597,7 +628,7 @@ function openEditTimeModal(appointment) {
             const endTime = document.getElementById('editEndTime').value;
 
             if (parseInt(startTime) >= parseInt(endTime)) {
-                alert('Ora de sfârșit trebuie să fie după ora de început!');
+                showCustomAlert('Ora de sfârșit trebuie să fie după ora de început!',3000);
                 return;
             }
 
@@ -614,7 +645,7 @@ function openEditTimeModal(appointment) {
                 body:JSON.stringify(data)
             }).then(res=>res.json()).then( obj=>
             {
-                alert('Ora a fost modificată cu succes!');
+                showCustomAlert('Ora a fost modificată cu succes!',3000);
                 editModal.style.display = 'none';
             })
 
