@@ -264,8 +264,9 @@ document.addEventListener('DOMContentLoaded', function () {
             const itemStatus = document.getElementById('editItemStatus').value;
 
             const updatedItem = {
+                id:parseInt(itemId),
                 name: itemName,
-                category: itemCategory,
+                category: parseInt(itemCategory),
                 quantity: parseInt(itemQuantity),
                 price: parseFloat(itemPrice),
                 supplier: itemSupplier,

@@ -1,3 +1,4 @@
+
 let totalPrice = 0;
 let inventoryItems = [];
 let appointmentStatus = "approved";
@@ -82,14 +83,26 @@ function loadUsedEquipment(appointment) {
 
     currentAppointment.orderItems = appointment.orderItems.map(usedItem => {
         const inventoryItem = inventoryItems.find(item => item.id === usedItem.id);
-        return inventoryItem ? {
+
+        if (!inventoryItem) return null;
+
+        // Verificare explicită pentru cantitate folosită
+        const quantityUsed = usedItem.selectedQuantity ?? usedItem.quantity;
+
+        // Dacă quantityUsed este invalid (null/undefined), folosim 1 ca fallback
+        const selectedQty = (typeof quantityUsed === 'number' && quantityUsed > 0)
+            ? quantityUsed
+            : 1;
+
+        return {
             ...inventoryItem,
-            selectedQuantity: usedItem.quantity
-        } : null;
+            selectedQuantity: selectedQty
+        };
     }).filter(item => item !== null);
 
     updateSelectedItemsDisplay();
 }
+
 
 function initializeInventorySearch() {
     if (appointmentStatus === "approved") return;
@@ -189,6 +202,8 @@ function updateSelectedItemsDisplay() {
         itemElement.setAttribute('data-id', item.id);
         itemElement.setAttribute('id', `selected-item-${item.id}`);
 
+
+        console.log("inainte" , item.selectedQuantity);
         let content = `
             <div class="selected-item-info">
                 <div><strong>${item.name}</strong></div>
@@ -200,7 +215,6 @@ function updateSelectedItemsDisplay() {
                 </div>
             </div>
         `;
-
         if (appointmentStatus !== "approved") {
             content += `
                 <div class="selected-item-controls">
@@ -214,6 +228,7 @@ function updateSelectedItemsDisplay() {
 
         itemElement.innerHTML = content;
         selectedItemsList.appendChild(itemElement);
+
     });
 
     calculateTotalPrice();
@@ -282,6 +297,7 @@ async function approveAppointment(appointmentId) {
 
         setAppointmentStatus("approved");
         updateSelectedItemsDisplay();
+
     } catch (err) {
         console.error("Eroare la aprobare:", err);
         alert("Eroare la aprobarea programării.");

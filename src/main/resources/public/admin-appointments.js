@@ -582,10 +582,6 @@ function openEditTimeModal(appointment) {
             editModal.style.display = 'none';
         });
 
-        document.getElementById('cancelEditTime').addEventListener('click', function() {
-            editModal.style.display = 'none';
-        });
-
         // Închide modalul când se dă click în afara lui
         window.addEventListener('click', function(event) {
             if (event.target === editModal) {
