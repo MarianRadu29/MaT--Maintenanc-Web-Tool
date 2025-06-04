@@ -119,7 +119,6 @@
                             <option value="in-stock">În stoc</option>
                             <option value="low-stock">Stoc limitat</option>
                             <option value="out-of-stock">Epuizat</option>
-                            <option value="ordered">Comandat</option>
                         </select>
                     </div>
                 </div>
@@ -224,7 +223,7 @@
     </div>
 </div>
 
-<!-- Modal for adding/editing inventory item -->
+<!-- Modal for adding inventory item -->
 <div class="modal" id="inventoryModal">
     <div class="modal-content">
         <span class="close">&times;</span>
@@ -240,11 +239,6 @@
                     <label for="itemCategory">Categorie</label>
                     <select id="itemCategory" required>
                         <option value="">Selectează categoria</option>
-                        <!-- <option value="Lichide">Lichide</option>
-                        <option value="Filtre">Filtre</option>
-                        <option value="Frâne">Frâne</option>
-                        <option value="Electrice">Electrice</option>
-                        <option value="Alte">Alte</option> -->
                     </select>
                 </div>
                 <div class="form-group">
@@ -274,6 +268,56 @@
             <div class="modal-actions">
                 <button class="btn btn-secondary close-btn" type="button">Anulează</button>
                 <button class="btn btn-primary" type="submit">Salvează</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal for editing inventory item -->
+<div class="modal" id="editInventoryModal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h3 id="editInventoryModalTitle">Editează produs</h3>
+        <form id="editInventoryForm">
+            <input id="editItemId" type="hidden">
+            <div class="form-group">
+                <label for="editItemName">Nume produs</label>
+                <input id="editItemName" required type="text">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="editItemCategory">Categorie</label>
+                    <select id="editItemCategory" required>
+                        <option value="">Selectează categoria</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editItemQuantity">Cantitate</label>
+                    <input id="editItemQuantity" min="0" required type="number">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="editItemPrice">Preț (RON)</label>
+                    <input id="editItemPrice" min="0" required step="0.01" type="number">
+                </div>
+                <div class="form-group">
+                    <label for="editItemSupplier">Furnizor</label>
+                    <input id="editItemSupplier" required type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="editItemStatus">Status</label>
+                <select id="editItemStatus" required>
+                    <option value="in-stock">În stoc</option>
+                    <option value="low-stock">Stoc limitat</option>
+                    <option value="out-of-stock">Epuizat</option>
+                    <option value="ordered">Comandat</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary close-btn" type="button">Anulează</button>
+                <button class="btn btn-primary" type="submit">Actualizează</button>
             </div>
         </form>
     </div>

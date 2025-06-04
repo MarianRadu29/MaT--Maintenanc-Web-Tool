@@ -2,11 +2,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Modal functionality
     const inventoryModal = document.getElementById('inventoryModal');
+    const editInventoryModal = document.getElementById('editInventoryModal'); // Noul modal pentru editare
     const closeBtns = document.querySelectorAll('.close, .close-btn');
 
     closeBtns.forEach(btn => {
         btn.addEventListener('click', function () {
             inventoryModal.style.display = 'none';
+            editInventoryModal.style.display = 'none'; // Închide și modalul de editare
         });
     });
 
@@ -28,6 +30,24 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     initInventoryLoad();
 
+    function translateCategory(categoryEn) {
+        const translations = {
+            "Brake System": "Sistem de frânare",
+            "Transmission System": "Sistem de transmisie",
+            "Wheels and Tires": "Roți și anvelope",
+            "Suspension and Fork": "Suspensie și furcă",
+            "Electrical Components": "Componente electrice",
+            "Battery and Charging": "Baterii și încărcare",
+            "Lighting": "Iluminat",
+            "Engine and Clutch": "Motor și ambreiaj",
+            "Cables and Housings": "Cabluri și cămăși",
+            "Consumables": "Consumabile",
+            "Bearings and Seals": "Rulmenți și simeringuri",
+            "Fasteners and Mounts": "Elemente de prindere și montaj"
+        };
+
+        return translations[categoryEn] || categoryEn;
+    }
 
     function loadInventoryItems(items) {
         const tableBody = document.getElementById('inventoryTableBody');
@@ -65,9 +85,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 case 'out-of-stock':
                     statusText = 'Epuizat';
                     break;
-                case 'ordered':
-                    statusText = 'Comandat';
-                    break;
             }
 
             row.innerHTML = `
@@ -91,7 +108,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const item = inventoryItems.find(i => i.id == itemId);
 
                 if (item) {
-                    const selectCategories = document.getElementById("itemCategory");
+                    const selectCategories = document.getElementById("editItemCategory");
 
                     // mai întâi curăță selectul
                     selectCategories.innerHTML = "<option value=\"\">Selectează categoria</option>";
@@ -115,15 +132,16 @@ document.addEventListener('DOMContentLoaded', function () {
                             console.log(e);
                         });
 
-                    document.getElementById('inventoryModalTitle').textContent = 'Editează produs';
-                    document.getElementById('itemId').value = item.id;
-                    document.getElementById('itemName').value = item.name;
-                    document.getElementById('itemQuantity').value = item.quantity;
-                    document.getElementById('itemPrice').value = item.price;
-                    document.getElementById('itemSupplier').value = item.supplier;
-                    document.getElementById('itemStatus').value = item.status;
+                    // Populează modalul de editare cu datele itemului
+                    document.getElementById('editInventoryModalTitle').textContent = 'Editează produs';
+                    document.getElementById('editItemId').value = item.id;
+                    document.getElementById('editItemName').value = item.name;
+                    document.getElementById('editItemQuantity').value = item.quantity;
+                    document.getElementById('editItemPrice').value = item.price;
+                    document.getElementById('editItemSupplier').value = item.supplier;
+                    document.getElementById('editItemStatus').value = item.status;
 
-                    inventoryModal.style.display = 'block';
+                    editInventoryModal.style.display = 'block'; // Deschide modalul de editare
                 }
             });
 
@@ -153,6 +171,9 @@ document.addEventListener('DOMContentLoaded', function () {
         if (event.target === inventoryModal) {
             inventoryModal.style.display = 'none';
         }
+        if (event.target === editInventoryModal) {
+            editInventoryModal.style.display = 'none';
+        }
     });
 
     // Add inventory item button
@@ -164,6 +185,9 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('itemId').value = '';
             inventoryModal.style.display = 'block';
             const selectCategory = document.getElementById("itemCategory");
+
+            // Curăță selectul
+            selectCategory.innerHTML = "<option value=\"\">Selectează categoria</option>";
 
             fetch("api/inventory/categories",{
                 method:"GET"
@@ -184,13 +208,12 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Inventory form submission
+    // Inventory form submission (pentru adăugare)
     const inventoryForm = document.getElementById('inventoryForm');
     if (inventoryForm) {
         inventoryForm.addEventListener('submit', function (e) {
             e.preventDefault();
 
-            const itemId = document.getElementById('itemId').value;
             const itemName = document.getElementById('itemName').value;
             const itemCategory = document.getElementById('itemCategory').value;
             const itemQuantity = document.getElementById('itemQuantity').value;
@@ -206,53 +229,77 @@ document.addEventListener('DOMContentLoaded', function () {
                 supplier: itemSupplier,
                 status: itemStatus
             };
-            alert(JSON.stringify(newItem,null,4));
+
             fetch("/api/inventory/add",{
                 method:"POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 body: JSON.stringify(newItem)
             }).then(res=>{
                 return res.json();
+            }).then(result => {
+                console.log('Produs adăugat:', result);
+                // Reîncarcă inventarul
+                initInventoryLoad();
             }).catch(e=>console.log(e))
-
-            if (itemId) {
-                // Update existing item
-                const index = inventoryItems.findIndex(item => item.id === itemId);
-                if (index !== -1) {
-                    inventoryItems[index] = newItem;
-                }
-            } else {
-                // Add new item
-                inventoryItems.push(newItem);
-            }
-
-            // Reload inventory table
-            loadInventoryItems(inventoryItems);
 
             // Close modal
             inventoryModal.style.display = 'none';
         });
     }
 
-    if (searchInventory && categoryFilter && statusFilter) {
-        function translateCategory(categoryEn) {
-            const translations = {
-                "Brake System": "Sistem de frânare",
-                "Transmission System": "Sistem de transmisie",
-                "Wheels and Tires": "Roți și anvelope",
-                "Suspension and Fork": "Suspensie și furcă",
-                "Electrical Components": "Componente electrice",
-                "Battery and Charging": "Baterii și încărcare",
-                "Lighting": "Iluminat",
-                "Engine and Clutch": "Motor și ambreiaj",
-                "Cables and Housings": "Cabluri și cămăși",
-                "Consumables": "Consumabile",
-                "Bearings and Seals": "Rulmenți și simeringuri",
-                "Fasteners and Mounts": "Elemente de prindere și montaj"
+    // Edit inventory form submission (pentru editare) - VERSIUNE CU API REAL
+    const editInventoryForm = document.getElementById('editInventoryForm');
+    if (editInventoryForm) {
+        editInventoryForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const itemId = document.getElementById('editItemId').value;
+            const itemName = document.getElementById('editItemName').value;
+            const itemCategory = document.getElementById('editItemCategory').value;
+            const itemQuantity = document.getElementById('editItemQuantity').value;
+            const itemPrice = document.getElementById('editItemPrice').value;
+            const itemSupplier = document.getElementById('editItemSupplier').value;
+            const itemStatus = document.getElementById('editItemStatus').value;
+
+            const updatedItem = {
+                name: itemName,
+                category: itemCategory,
+                quantity: parseInt(itemQuantity),
+                price: parseFloat(itemPrice),
+                supplier: itemSupplier,
+                status: itemStatus
             };
 
-            return translations[categoryEn] || categoryEn;
-        }
+            // Folosește endpoint-ul de update
+            fetch(`/api/inventory/update/${itemId}`, {
+                method: "PUT",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updatedItem)
+            }).then(res => {
+                return res.json();
+            }).then(result => {
+                console.log('Produs actualizat:', result);
+                // Reîncarcă inventarul
+                initInventoryLoad();
+                // Close modal
+                editInventoryModal.style.display = 'none';
+            }).catch(e => {
+                console.log(e);
+                alert('Eroare la actualizarea produsului');
+            });
+        });
+    }
 
+    // Filtering functionality
+    const searchInventory = document.getElementById('searchInventory');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const statusFilter = document.getElementById('statusFilter');
+
+    if (searchInventory && categoryFilter && statusFilter) {
         fetch("api/inventory/categories",{
             method:"GET"
         }).then(res=>{
