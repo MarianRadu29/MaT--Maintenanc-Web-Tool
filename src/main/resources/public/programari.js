@@ -31,6 +31,9 @@ function showCustomAlert(message, duration = 3000) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+    // Initialize auth links first
+    initializeAuthLinks();
+
     // Check authentication first
     const userData = localStorage.getItem('userData') || sessionStorage.getItem('userData') || null;
     if(!userData){
@@ -270,6 +273,21 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    // Call this on page load
+    checkLoggedInUser();
+
+    // Initialize auth links function
+    function initializeAuthLinks() {
+        const authLinks = document.querySelector(".auth-links");
+        if (authLinks) {
+            // Set default login/register buttons
+            authLinks.innerHTML = `
+                <a class="btn btn-primary" href="login.html">Conectare</a>
+                <a class="btn btn-secondary" href="register.html">Înregistrare</a>
+            `;
+        }
+    }
+
     // Check if user is already logged in
     function checkLoggedInUser() {
         const userData = JSON.parse(
@@ -277,40 +295,55 @@ document.addEventListener('DOMContentLoaded', function () {
             sessionStorage.getItem("userData") ||
             null
         );
-        if (userData) {
+
+        const authLinks = document.querySelector(".auth-links");
+        const adminLink = document.getElementById("admin-link");
+
+        if (userData && authLinks) {
             // Update UI for logged in user
-            const authLinks = document.querySelector(".auth-links");
-            const adminLink = document.getElementById("admin-link");
-            if (authLinks && adminLink) {
-                document.getElementById("user-account").style.display = "block";
+            document.getElementById("user-account").style.display = "block";
 
-                authLinks.innerHTML = `
-                    <a href="#" id="logoutButton" class="btn btn-secondary">Deconectare</a>
-                `;
-                if (userData.roleID == 2) {
-                    adminLink.style.display = "block";
-                }
-                // Add logout functionality
-                document
-                    .getElementById("logoutButton")
-                    .addEventListener("click", function (e) {
-                        e.preventDefault();
-                        localStorage.removeItem("userData");
-                        localStorage.removeItem("accessToken");
-                        localStorage.removeItem("refreshToken");
+            authLinks.innerHTML = `
+                <a href="#" id="logoutButton" class="btn btn-secondary">Deconectare</a>
+            `;
 
-                        window.location.reload();
-                        authLinks.innerHTML = `
-                            <a href="login.html" class="btn btn-primary">Conectare</a>
-                            <a href="register.html" class="btn btn-secondary">Înregistrare</a>
-                        `;
-                    });
+            if (userData.roleID == 2 && adminLink) {
+                adminLink.style.display = "block";
             }
+
+            // Add logout functionality
+            const logoutButton = document.getElementById("logoutButton");
+            if (logoutButton) {
+                logoutButton.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    localStorage.removeItem("userData");
+                    localStorage.removeItem("accessToken");
+                    localStorage.removeItem("refreshToken");
+
+                    // Reset auth links to login/register buttons
+                    authLinks.innerHTML = `
+                        <a href="login.html" class="btn btn-primary">Conectare</a>
+                        <a href="register.html" class="btn btn-secondary">Înregistrare</a>
+                    `;
+
+                    // Hide user-specific elements
+                    document.getElementById("user-account").style.display = "none";
+                    if (adminLink) {
+                        adminLink.style.display = "none";
+                    }
+
+                    // Reload page or redirect
+                    window.location.reload();
+                });
+            }
+        } else if (authLinks) {
+            // Ensure login/register buttons are shown for non-logged users
+            authLinks.innerHTML = `
+                <a href="login.html" class="btn btn-primary">Conectare</a>
+                <a href="register.html" class="btn btn-secondary">Înregistrare</a>
+            `;
         }
     }
-
-    // Call this on page load
-    checkLoggedInUser();
 
     // Generate time slots function
     function generateTimeSlots(selectedDate) {

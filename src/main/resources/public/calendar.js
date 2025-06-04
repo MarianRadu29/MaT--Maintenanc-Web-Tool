@@ -10,6 +10,14 @@ document.addEventListener("DOMContentLoaded", function () {
   if (userAccount) userAccount.style.display = "none";
   if (adminLink) adminLink.style.display = "none";
 
+  // Adaugă butoanele de autentificare inițiale
+  if (authLinks) {
+    authLinks.innerHTML = `
+      <a class="btn btn-primary" href="login.html">Conectare</a>
+      <a class="btn btn-secondary" href="register.html">Înregistrare</a>
+    `;
+  }
+
   const calendarDays = document.getElementById("calendarDays");
   const currentMonthYearElement = document.getElementById("currentMonthYear");
   const prevMonthButton = document.getElementById("prevMonth");
@@ -152,7 +160,7 @@ document.addEventListener("DOMContentLoaded", function () {
     fetch(apiUrl)
         .then((response) => response.json())
         .then((data) => {
-          
+
           showAppointmentsForDay(dateString, data.map(time=>time.padStart(2,'0')));
         })
         .catch((error) => {
@@ -183,67 +191,67 @@ document.addEventListener("DOMContentLoaded", function () {
       "16:00",
       "17:00",
     ];
-   
-      noAppointments.style.display = "none";
-      appointmentsList.style.display = "block";
 
-      timeSlots.forEach((time) => {
-        const isBooked = appointments.includes(time.substring(0, 2));
+    noAppointments.style.display = "none";
+    appointmentsList.style.display = "block";
 
-        const appointmentCard = document.createElement("div");
-        appointmentCard.className = `appointment-card ${
-            isBooked ? "booked" : "available"
-        }`;
+    timeSlots.forEach((time) => {
+      const isBooked = appointments.includes(time.substring(0, 2));
 
-        const appointmentInfo = document.createElement("div");
-        appointmentInfo.className = "appointment-info";
+      const appointmentCard = document.createElement("div");
+      appointmentCard.className = `appointment-card ${
+          isBooked ? "booked" : "available"
+      }`;
 
-        const title = document.createElement("h4");
-        title.textContent = `Programare la ora ${time}`;
+      const appointmentInfo = document.createElement("div");
+      appointmentInfo.className = "appointment-info";
 
-        const details = document.createElement("p");
-        details.textContent = isBooked
-            ? "Acest interval orar este deja ocupat."
-            : "Acest interval orar este disponibil pentru programări.";
+      const title = document.createElement("h4");
+      title.textContent = `Programare la ora ${time}`;
 
-        appointmentInfo.appendChild(title);
-        appointmentInfo.appendChild(details);
+      const details = document.createElement("p");
+      details.textContent = isBooked
+          ? "Acest interval orar este deja ocupat."
+          : "Acest interval orar este disponibil pentru programări.";
 
-        const status = document.createElement("div");
-        status.className = `appointment-status ${isBooked ? "booked" : "available"}`;
-        status.textContent = isBooked ? "Ocupat" : "Disponibil";
+      appointmentInfo.appendChild(title);
+      appointmentInfo.appendChild(details);
 
-        appointmentCard.appendChild(appointmentInfo);
-        appointmentCard.appendChild(status);
+      const status = document.createElement("div");
+      status.className = `appointment-status ${isBooked ? "booked" : "available"}`;
+      status.textContent = isBooked ? "Ocupat" : "Disponibil";
 
-        if (!isBooked) {
-          const bookButton = document.createElement("a");
-          const appointmentDate = `${year}-${String(month + 1).padStart(
-              2,
-              "0"
-          )}-${String(day).padStart(2, "0")}`;
+      appointmentCard.appendChild(appointmentInfo);
+      appointmentCard.appendChild(status);
 
-          // Check if user is logged in
-          const userData = JSON.parse(
-              localStorage.getItem("userData") ||
-              sessionStorage.getItem("userData") ||
-              "null"
-          );
+      if (!isBooked) {
+        const bookButton = document.createElement("a");
+        const appointmentDate = `${year}-${String(month + 1).padStart(
+            2,
+            "0"
+        )}-${String(day).padStart(2, "0")}`;
 
-          bookButton.href = userData ? "programari.html" : "login.html";
-          bookButton.className = "btn btn-primary btn-sm";
-          bookButton.textContent = "Rezervă";
-          bookButton.addEventListener("click", function (e) {
-            localStorage.setItem("selectedAppointmentDate", appointmentDate);
-            localStorage.setItem("selectedAppointmentTime", time);
-          });
+        // Check if user is logged in
+        const userData = JSON.parse(
+            localStorage.getItem("userData") ||
+            sessionStorage.getItem("userData") ||
+            "null"
+        );
 
-          appointmentCard.appendChild(bookButton);
-        }
+        bookButton.href = userData ? "programari.html" : "login.html";
+        bookButton.className = "btn btn-primary btn-sm";
+        bookButton.textContent = "Rezervă";
+        bookButton.addEventListener("click", function (e) {
+          localStorage.setItem("selectedAppointmentDate", appointmentDate);
+          localStorage.setItem("selectedAppointmentTime", time);
+        });
 
-        appointmentsList.appendChild(appointmentCard);
-      });
-    
+        appointmentCard.appendChild(bookButton);
+      }
+
+      appointmentsList.appendChild(appointmentCard);
+    });
+
   }
 
   // Mobile menu toggle functionality
@@ -286,10 +294,6 @@ document.addEventListener("DOMContentLoaded", function () {
               localStorage.removeItem("refreshToken");
 
               window.location.reload();
-              authLinks.innerHTML = `
-                        <a href="login.html" class="btn btn-primary">Conectare</a>
-                        <a href="register.html" class="btn btn-secondary">Înregistrare</a>
-                    `;
             });
       }
     }
