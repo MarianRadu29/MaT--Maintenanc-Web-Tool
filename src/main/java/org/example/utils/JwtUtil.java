@@ -44,17 +44,4 @@ public class JwtUtil {
             return null;
         }
     }
-
-    public static boolean isTokenValid(String token) {
-        try {
-            Jwts.parserBuilder()
-                    .setSigningKey(Keys.hmacShaKeyFor(SECRET_KEY.getBytes()))
-                    .build()
-                    .parseClaimsJws(token);
-            return true;
-        } catch (JwtException e) {
-            System.out.println("[JWT INVALID] " + e.getMessage());
-            return false;
-        }
-    }
 }

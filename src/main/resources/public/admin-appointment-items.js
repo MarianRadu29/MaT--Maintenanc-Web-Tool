@@ -6,7 +6,10 @@ let currentAppointment = null;
 
 async function loadInventoryAPI() {
     try {
-        let res = await fetch("/api/inventory", { method: "GET" });
+        let res = await fetch("/api/inventory", { method: "GET", headers: {
+            "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
+            "Content-Type": "application/json"
+        }, });
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         return await res.json();
     } catch (error) {

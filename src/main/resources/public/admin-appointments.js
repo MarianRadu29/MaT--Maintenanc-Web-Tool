@@ -45,7 +45,13 @@ document.addEventListener('DOMContentLoaded', function () {
     let appointments = [];
 
     // Load appointments
-    fetch("/api/appointments")
+    fetch("/api/appointments",
+    {
+        headers: {
+            "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
+            "Content-Type": "application/json"
+        }
+    })
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -143,7 +149,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 fetch("/api/appointment/update", {
                     method: "PUT",
-                    headers: { "Content-Type": "application/json" },
+                    headers: {
+                        "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
+                        "Content-Type": "application/json"
+                    },
                     body: JSON.stringify(bodySend)
                 })
                     .then(res => {
@@ -216,7 +225,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
                 fetch("/api/appointment/update", {
                     method: "PUT",
-                    headers: { "Content-Type": "application/json" },
+                    headers: {
+                        "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
+                        "Content-Type": "application/json"
+                    },
                     body: JSON.stringify(bodySend)
                 })
                     .then(res => {
@@ -467,7 +479,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     // Atașamente
                     if (app.hasAttachments) {
                         const container = detailsContainer.querySelector('#attachmentsContainer');
-                        fetch(`/api/appointment/media/${app.id}`)
+                        fetch(`/api/appointment/media/${app.id}`,{
+                            headers: {
+                                "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
+                                "Content-Type": "application/json"
+                            }
+                        })
                             .then(res => res.ok ? res.json() : Promise.reject(res.statusText))
                             .then(files => {
                                 files.forEach(file => {
@@ -523,7 +540,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     finalizeButton.onclick = () => {
                         fetch("api/appointment/update", {
                             method: "PUT",
-                            headers: { "Content-Type": "application/json" },
+                            headers: {
+                                "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
+                                "Content-Type": "application/json"
+                            },
                             body: JSON.stringify({ appointmentId: app.id, status: "completed" })
                         })
                             .then(res => res.json())
@@ -641,7 +661,10 @@ function openEditTimeModal(appointment) {
             }
             fetch("api/appointment/update",{
                 method:"PUT",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
+                    "Content-Type": "application/json"
+                },
                 body:JSON.stringify(data)
             }).then(res=>res.json()).then( obj=>
             {

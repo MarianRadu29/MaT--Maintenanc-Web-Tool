@@ -4,18 +4,22 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import org.example.model.UserModel;
 import org.example.objects.User;
-import org.example.utils.BCrypt;
-import org.example.utils.JwtUtil;
+import org.example.utils.*;
 import org.example.view.JsonView;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
 public class AuthController {
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     private static Map<String, String> parseForm(InputStream is) throws IOException {
         StringBuilder sb = new StringBuilder();
@@ -105,4 +109,192 @@ public class AuthController {
             }
         }
     }
+
+    public static class ForgotPassword implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            if (!"POST".equalsIgnoreCase(exchange.getRequestMethod())) {
+                exchange.sendResponseHeaders(405, -1); // Method Not Allowed
+                return;
+            }
+
+            String requestBody = new String(
+                    exchange.getRequestBody().readAllBytes(),
+                    StandardCharsets.UTF_8
+            );
+
+            try {
+                JSONObject json = new JSONObject(requestBody);
+                String email = json.optString("email", null);
+
+                if (email == null || email.isEmpty()) {
+                    JsonView.send(exchange, 400, "{\"message\":\"Email is required\"}");
+                    return;
+                }
+
+                User user = UserModel.getUserByEmail(email);
+                if (user == null) {
+                    // Nu spun daca emailul nu exista exact ca sa nu revelam informatii
+                    JsonView.send(exchange, 200,
+                            "{\"message\":\"Dacă emailul există, vei primi un link de resetare.\"}");
+                    return;
+                }
+
+                String token = ForgetPasswordTokenGenerator.generateToken();
+                LocalDateTime expirationDate = LocalDateTime.now().plusHours(1);
+                String expirationDateStr = expirationDate.format(FORMATTER);
+
+                try {
+                    UserModel.deleteExistingToken(user.getId());
+                    UserModel.insertNewToken(user.getId(), token, expirationDateStr);
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                    JsonView.send(exchange, 500,
+                            "{\"message\":\"Eroare la salvarea tokenului\"}");
+                    return;
+                }
+
+                String bodyEmail = EmailTemplate.createResetPasswordEmailHtml(
+                        user.getFirstName() + " " + user.getLastName(), token
+                );
+                EmailSender.sendEmail(email, "Resetare parola", bodyEmail);
+
+                JsonView.send(exchange, 200,
+                        "{\"message\":\"Dacă emailul există, vei primi un link de resetare.\"}");
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                JsonView.send(exchange, 500,
+                        "{\"message\":\"Invalid JSON format\"}");
+            }
+        }
+    }
+
+    public static class ValidateTokenResetPassword implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            if (!"GET".equalsIgnoreCase(exchange.getRequestMethod())) {
+                exchange.sendResponseHeaders(405, -1); // Method Not Allowed
+                return;
+            }
+
+            try {
+                String query = exchange.getRequestURI().getRawQuery();
+                Map<String, String> map = Utils.parseQuery(query);
+                String token = map.get("token");
+
+                if (token == null || token.isEmpty()) {
+                    JsonView.send(exchange, 400, "{\"message\":\"Token is required\"}");
+                    return;
+                }
+
+                LocalDateTime expirationDate;
+                try {
+                    expirationDate = UserModel.getForgotPasswordExpiration(token);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    JsonView.send(exchange, 500, "{\"message\":\"Eroare la validarea tokenului\"}");
+                    return;
+                }
+
+                if (expirationDate == null) {
+                    JsonView.send(exchange, 401, "{\"message\":\"Invalid token\"}");
+                    return;
+                }
+
+                if (LocalDateTime.now().isAfter(expirationDate)) {
+                    JsonView.send(exchange, 401, "{\"message\":\"Token expired\"}");
+                    return;
+                }
+
+                JsonView.send(exchange, 200, "{\"message\":\"Token valid\"}");
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                JsonView.send(exchange, 500, "{\"message\":\"Invalid request format\"}");
+            }
+        }
+    }
+
+    public static class ResetPassword implements HttpHandler {
+
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            if (!"POST".equalsIgnoreCase(exchange.getRequestMethod())) {
+                exchange.sendResponseHeaders(405, -1); // Method Not Allowed
+                return;
+            }
+
+            String requestBody = new String(
+                    exchange.getRequestBody().readAllBytes(),
+                    StandardCharsets.UTF_8
+            );
+
+            try {
+                JSONObject json = new JSONObject(requestBody);
+                String token       = json.optString("token", null);
+                String newPassword = json.optString("newPassword", null);
+
+                if (token == null || token.isEmpty()) {
+                    JsonView.send(exchange, 400, "{\"message\":\"Token is required\"}");
+                    return;
+                }
+                if (newPassword == null || newPassword.isEmpty()) {
+                    JsonView.send(exchange, 400, "{\"message\":\"New password is required\"}");
+                    return;
+                }
+
+                int userId;
+                try {
+                    userId = UserModel.validateResetPasswordToken(token);
+                } catch (TokenInvalidException ex) {
+                    JsonView.send(exchange, 400, "{\"message\":\"Invalid token\"}");
+                    return;
+                } catch (TokenExpiredException ex) {
+                    JsonView.send(exchange, 400, "{\"message\":\"Token expired\"}");
+                    return;
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    JsonView.send(exchange, 500, "{\"message\":\"Eroare la implementare\"}");
+                    return;
+                }
+
+                try {
+                    String hashed = BCrypt.hashPassword(newPassword);
+                    UserModel.updateUserPassword(userId, hashed);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    JsonView.send(exchange, 500, "{\"message\":\"Eroare la resetarea parolei\"}");
+                    return;
+                }
+
+                try {
+                    UserModel.deleteForgotPasswordTokenByUserId(userId);
+                } catch (Exception ex) {
+                    //chiar daca pica deletu la token este ok
+                    ex.printStackTrace();
+                }
+
+                try {
+                    User user = UserModel.getUserById(userId);
+                    if (user != null) {
+                        String bodyEmail = EmailTemplate.createPasswordResetSuccessEmailHtml(
+                                user.getFirstName() + " " + user.getLastName()
+                        );
+                        EmailSender.sendEmail(user.getEmail(), "Parolă resetată", bodyEmail);
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+
+                JsonView.send(exchange, 200, "{\"message\":\"Parola a fost resetata cu succes!\"}");
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                JsonView.send(exchange, 500, "{\"message\":\"Invalid JSON format\"}");
+            }
+        }
+    }
+
 }

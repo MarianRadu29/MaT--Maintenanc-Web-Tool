@@ -1,6 +1,7 @@
 package org.example.model;
 
 
+import org.example.utils.DatabaseConnection;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -9,19 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InventoryModel {
-    // Într-un caz real, ai putea citi aceste valori dintr-un fișier de configurație sau din variabile de mediu
-    private static final String DB_URL      = "jdbc:postgresql://localhost:5432/postgres";
-    private static final String DB_USER     = "postgres";
-    private static final String DB_PASSWORD = "student";
-
-    /**
-     * Returnează toate categoriile din tabela 'category' sub forma unui JSONArray.
-     */
     public static JSONArray getAllCategories() throws SQLException {
         String sql = "SELECT id, name FROM category";
         JSONArray jsonArray = new JSONArray();
 
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
 
@@ -36,10 +29,6 @@ public class InventoryModel {
         return jsonArray;
     }
 
-    /**
-     * Returnează toate elementele din tabela 'inventory', împreună cu numele categoriei asociate,
-     * sub forma unui JSONArray.
-     */
     public static JSONArray getAllInventory() throws SQLException {
         String sql = """
     SELECT i.id,
@@ -57,7 +46,7 @@ public class InventoryModel {
 
         JSONArray jsonArray = new JSONArray();
 
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
 
@@ -89,7 +78,7 @@ public class InventoryModel {
                 "INSERT INTO inventory (name, category, quantity, price, supplier, status) " +
                         "VALUES (?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, name);
@@ -106,7 +95,7 @@ public class InventoryModel {
 
     public static boolean deleteItem(int itemId) throws SQLException {
         String sql = "UPDATE inventory SET status = 'deleted' WHERE id = ?";
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, itemId);
             int rows = ps.executeUpdate();
@@ -116,7 +105,7 @@ public class InventoryModel {
 
     public static boolean updateItem(int itemId, String name, int categoryID, int quantity, double price, String supplier, String status) throws SQLException {
         String sql = "UPDATE inventory SET name = ?, category = ?, quantity = ?, price = ?, supplier = ?, status = ? WHERE id = ?";
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, name);
             ps.setInt(2, categoryID);

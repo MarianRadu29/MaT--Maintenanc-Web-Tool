@@ -14,9 +14,9 @@ public class Main {
         server.createContext("/api/login", new AuthController.Login());
         server.createContext("/api/user", new UserController.GetUserInfo());
         server.createContext("/api/user/update", new UserController.UpdateUserInfo());
-        server.createContext("/api/forgot-password",new UserController.ForgotPassword());
-        server.createContext("/api/validate-reset-token",new UserController.ValidateTokenResetPassword());
-        server.createContext("/api/reset-password",new UserController.ResetPassword());
+        server.createContext("/api/forgot-password",new AuthController.ForgotPassword());
+        server.createContext("/api/validate-reset-token",new AuthController.ValidateTokenResetPassword());
+        server.createContext("/api/reset-password",new AuthController.ResetPassword());
         server.createContext("/api/refresh", new RefreshController.RefreshToken());
         server.createContext("/api/appointments", new AppointmentController.GetAppointments());
         server.createContext("/api/appointments/self", new AppointmentController.GetAppointmentsSelf());

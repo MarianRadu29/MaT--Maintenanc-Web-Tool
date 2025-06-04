@@ -1,6 +1,7 @@
 package org.example.model;
 
 import org.example.controller.AppointmentController.FileUploadData;
+import org.example.utils.DatabaseConnection;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -9,16 +10,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class AppointmentModel {
-    // JDBC URL pentru PostgreSQL:
-    private static final String DB_URL      = "jdbc:postgresql://localhost:5432/postgres";
-    private static final String DB_USER     = "postgres";
-    private static final String DB_PASSWORD = "student";
-
     public static String getAppointmentsForDate(String dateString) {
         Set<Integer> times = new HashSet<>();
         String sql = "SELECT start_time, end_time FROM appointments WHERE date = ? and status not in ('rejected','canceled')";
 
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, dateString);
@@ -65,7 +61,7 @@ public class AppointmentModel {
             RETURNING id;
         """;
 
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, clientId);
@@ -93,7 +89,7 @@ public class AppointmentModel {
             VALUES (?, ?, ?, ?);
         """;
 
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             for (FileUploadData f : files) {
@@ -115,7 +111,7 @@ public class AppointmentModel {
 
     public static String getUserFullName(int userId) throws SQLException {
         String sql = "SELECT first_name, last_name FROM users WHERE id = ?";
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, userId);
@@ -170,7 +166,7 @@ public class AppointmentModel {
         """;
 
         try (
-                Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+                Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement psAppt = conn.prepareStatement(sqlAppointments);
                 PreparedStatement psMedia = conn.prepareStatement(sqlMedia);
                 PreparedStatement psOrder = conn.prepareStatement(sqlOrder);
@@ -278,7 +274,7 @@ public class AppointmentModel {
         """;
 
         try (
-                Connection conn   = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+                Connection conn   = DatabaseConnection.getConnection();
                 PreparedStatement psAppt = conn.prepareStatement(sqlAppointments);
                 PreparedStatement psMedia = conn.prepareStatement(sqlMedia);
                 PreparedStatement psOrder = conn.prepareStatement(sqlOrder)
@@ -356,7 +352,7 @@ public class AppointmentModel {
         String sql = "SELECT file_name, type, file_data FROM media WHERE appointment_id = ?";
 
         List<FileUploadData> files = new ArrayList<>();
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, appointmentId);
@@ -378,5 +374,129 @@ public class AppointmentModel {
         }
         return files;
     }
+
+    public static boolean setStatusAppointment(int appointmentId, String status) throws SQLException {
+        String sql = "UPDATE appointments SET status = ? WHERE id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, status);
+            ps.setInt(2, appointmentId);
+            int rows = ps.executeUpdate();
+            return rows > 0;
+        }
+    }
+
+    // In AppointmentModel.java
+    public static void updateAppointmentStatusAndMessage(int appointmentId, String status, String adminMessage) throws SQLException {
+        String sql = "UPDATE appointments SET status = ?, admin_message = ? WHERE id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, status);
+            ps.setString(2, adminMessage);
+            ps.setInt(3, appointmentId);
+            ps.executeUpdate();
+        }
+    }
+
+    public static void updateOrderStatusByAppointment(int appointmentId, String orderStatus) throws SQLException {
+        String sql = "UPDATE orders SET status = ? WHERE appointment_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, orderStatus);
+            ps.setInt(2, appointmentId);
+            ps.executeUpdate();
+        }
+    }
+
+
+
+    public static void updateAppointmentApproved(int appointmentId, String status, String adminMessage, double estimatedPrice, int warrantyMonths) throws SQLException {
+        String sql = "UPDATE appointments SET status = ?, admin_message = ?, estimated_price = ?, warranty_months = ? WHERE id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, status);
+            ps.setString(2, adminMessage);
+            ps.setDouble(3, estimatedPrice);
+            ps.setInt(4, warrantyMonths);
+            ps.setInt(5, appointmentId);
+            ps.executeUpdate();
+        }
+    }
+
+    public static int insertOrder(int appointmentId, double estimatedPrice) throws SQLException {
+        String sql = "INSERT INTO orders (appointment_id, estimated_total) VALUES (?, ?) RETURNING id";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, appointmentId);
+            ps.setDouble(2, estimatedPrice);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id");
+                } else {
+                    throw new SQLException("Could not retrieve order ID");
+                }
+            }
+        }
+    }
+
+    public static void insertOrderItems(int orderId, JSONArray inventoryIds) throws SQLException {
+        String sqlOrderItem = "INSERT INTO order_items (order_id, inventory_id, quantity, unit_price) VALUES (?, ?, ?, ?)";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sqlOrderItem)) {
+            for (int i = 0; i < inventoryIds.length(); i++) {
+                int inventoryId = inventoryIds.getJSONObject(i).getInt("id");
+                int quantity = inventoryIds.getJSONObject(i).getInt("quantity");
+                double unitPrice = 0.0;
+                try (PreparedStatement psInv = conn.prepareStatement("SELECT price FROM inventory WHERE id = ?")) {
+                    psInv.setInt(1, inventoryId);
+                    try (ResultSet rs = psInv.executeQuery()) {
+                        if (rs.next()) unitPrice = rs.getDouble("price");
+                    }
+                }
+                ps.setInt(1, orderId);
+                ps.setInt(2, inventoryId);
+                ps.setInt(3, quantity);
+                ps.setDouble(4, unitPrice);
+                ps.addBatch();
+            }
+            ps.executeBatch();
+        }
+    }
+
+    public static void updateAppointmentModified(int appointmentId, String newStartTime, String newEndTime) throws SQLException {
+        String sql = "UPDATE appointments SET status = ?, start_time = ?, end_time = ? WHERE id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, "modified");
+            ps.setString(2, newStartTime);
+            ps.setString(3, newEndTime);
+            ps.setInt(4, appointmentId);
+            ps.executeUpdate();
+        }
+    }
+
+    public static void completeAppointmentAndOrder(int appointmentId, String status) throws SQLException {
+        String sqlUpdateAppointment = "UPDATE appointments SET status = ? WHERE id = ?";
+        String sqlUpdateOrder = "UPDATE orders SET status = ? WHERE appointment_id = ?";
+
+        try (Connection conn =  DatabaseConnection.getConnection()) {
+            conn.setAutoCommit(false);
+
+            try (PreparedStatement psAppointment = conn.prepareStatement(sqlUpdateAppointment)) {
+                psAppointment.setString(1, status);
+                psAppointment.setInt(2, appointmentId);
+                psAppointment.executeUpdate();
+            }
+
+            try (PreparedStatement psOrder = conn.prepareStatement(sqlUpdateOrder)) {
+                psOrder.setString(1, "completed");
+                psOrder.setInt(2, appointmentId);
+                psOrder.executeUpdate();
+            }
+
+            conn.commit();
+        }
+    }
+
 
 }

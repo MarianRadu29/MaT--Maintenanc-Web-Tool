@@ -2,6 +2,7 @@ package org.example.model;
 
 import org.example.objects.User;
 import org.example.utils.BCrypt;
+import org.example.utils.DatabaseConnection;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -17,7 +18,7 @@ public class UserModel {
 
     public static boolean createUser(User data) {
         String sql = "INSERT INTO users(first_name, last_name, password, email, role_id, phone_number) VALUES (?, ?, ?, ?, ?, ?)";
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, data.getFirstName());
@@ -37,7 +38,7 @@ public class UserModel {
 
     public static User updateUser(User user) {
         String sql = "UPDATE users SET first_name = ?, last_name = ?, email = ?, phone_number = ? WHERE id = ?";
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, user.getFirstName());
@@ -54,9 +55,41 @@ public class UserModel {
         }
     }
 
+    public static int getUserRoleId(int userId) {
+        String sql = "SELECT role_id FROM users WHERE id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, userId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("role_id");
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("[GET USER ROLE_ID ERROR] " + e.getMessage());
+        }
+        return -1;
+    }
+
+    public static int getUserIdByAppointmentId(int appointmentId) {
+        String sql = "SELECT user_id FROM appointments WHERE id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, appointmentId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("user_id");
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("[GET USER ID BY APPOINTMENT ID ERROR] " + e.getMessage());
+        }
+        return -1;
+    }
+
     public static User getUserByEmail(String email) {
         String sql = "SELECT * FROM users WHERE email = ?";
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, email);
@@ -78,7 +111,7 @@ public class UserModel {
 
     public static User getUserById(int id) {
         String sql = "SELECT * FROM users WHERE id = ?";
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, id);
@@ -100,7 +133,7 @@ public class UserModel {
 
     public static void deleteExistingToken(int userId) throws SQLException {
         String deleteSql = "DELETE FROM forgot_password WHERE user_id = ?";
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement deleteStmt = conn.prepareStatement(deleteSql)) {
 
             deleteStmt.setInt(1, userId);
@@ -110,7 +143,7 @@ public class UserModel {
 
     public static void insertNewToken(int userId, String token, String expirationDateStr) throws SQLException {
         String insertSql = "INSERT INTO forgot_password (user_id, token, expiration_date) VALUES (?, ?, ?)";
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement insertStmt = conn.prepareStatement(insertSql)) {
 
             insertStmt.setInt(1, userId);
@@ -122,7 +155,7 @@ public class UserModel {
 
     public static LocalDateTime getForgotPasswordExpiration(String token) throws SQLException {
         String sql = "SELECT expiration_date FROM forgot_password WHERE token = ?";
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, token);
@@ -140,7 +173,7 @@ public class UserModel {
     public static int validateResetPasswordToken(String token)
             throws SQLException,Exception{
         String sql = "SELECT user_id, expiration_date FROM forgot_password WHERE token = ?";
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, token);
@@ -164,7 +197,7 @@ public class UserModel {
     }
     public static void updateUserPassword(int userId, String hashedPassword) throws SQLException {
         String sql = "UPDATE users SET password = ? WHERE id = ?";
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, hashedPassword);
@@ -175,7 +208,7 @@ public class UserModel {
 
     public static void deleteForgotPasswordTokenByUserId(int userId) throws SQLException {
         String sql = "DELETE FROM forgot_password WHERE user_id = ?";
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, userId);

@@ -84,7 +84,11 @@ document.addEventListener('DOMContentLoaded', function () {
     let inventoryItems = [];
     async function loadInventoryAPI() {
         let res = await fetch("/api/inventory", {
-            method: "GET"
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
+                "Content-Type": "application/json"
+            }
         });
         return res.json();
     }
@@ -167,7 +171,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     selectCategories.innerHTML = "<option value=\"\">Selectează categoria</option>";
 
                     fetch("api/inventory/categories", {
-                        method: "GET"
+                        method: "GET",
+                        headers: {
+                            "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
+                            "Content-Type": "application/json"
+                        }
                     })
                         .then(res => res.json())
                         .then(list => {
@@ -207,6 +215,10 @@ document.addEventListener('DOMContentLoaded', function () {
                             inventoryItems.splice(index, 1);
                             fetch(`api/inventory/delete/${itemId}`, {
                                 method: "DELETE",
+                                headers: {
+                                    "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
+                                    "Content-Type": "application/json"
+                                }
                             }).then(res => res.json()).then(obj => {
                                 showCustomAlert("Produsul a fost șters cu succes!");
                                 loadInventoryItems(inventoryItems);
@@ -242,7 +254,11 @@ document.addEventListener('DOMContentLoaded', function () {
             selectCategory.innerHTML = "<option value=\"\">Selectează categoria</option>";
 
             fetch("api/inventory/categories", {
-                method: "GET"
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
+                    "Content-Type": "application/json"
+                }
             }).then(res => res.json())
                 .then(list => {
                     list.forEach(category => {
@@ -275,7 +291,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
             fetch("/api/inventory/add", {
                 method: "POST",
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
+                    "Content-Type": "application/json"
+                },
                 body: JSON.stringify(newItem)
             }).then(res => res.json())
                 .then(result => {
@@ -307,7 +326,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
             fetch(`/api/inventory/update/${updatedItem.id}`, {
                 method: "PUT",
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
+                    "Content-Type": "application/json"
+                },
                 body: JSON.stringify(updatedItem)
             }).then(res => res.json())
                 .then(result => {
@@ -327,7 +349,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (searchInventory && categoryFilter && statusFilter) {
         fetch("api/inventory/categories", {
-            method: "GET"
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
+                "Content-Type": "application/json"
+            }
         }).then(res => res.json())
             .then(list => {
                 list.forEach(category => {

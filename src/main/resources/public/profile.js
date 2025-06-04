@@ -622,7 +622,10 @@ ${canCancel ? `
             acceptBtn.addEventListener('click', async () => {
                 await fetch("api/appointment/update",{
                     method:"PUT",
-                    headers: { "Content-Type": "application/json" },
+                    headers: {
+                        "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
+                        "Content-Type": "application/json"
+                    },
                     body:JSON.stringify({
                         appointmentId:appointment.id,
                         adminMessage:appointment.adminMessage,
@@ -637,7 +640,10 @@ ${canCancel ? `
             rejectBtn.addEventListener('click', async () => {
                 await fetch("api/appointment/update",{
                     method:"PUT",
-                    headers: { "Content-Type": "application/json" },
+                    headers: {
+                        "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
+                        "Content-Type": "application/json"
+                    },
                     body:JSON.stringify({
                         appointmentId:appointment.id,
                         adminMessage:appointment.adminMessage,
@@ -660,7 +666,10 @@ ${canCancel ? `
                         try {
                             await fetch("api/appointment/update", {
                                 method: "PUT",
-                                headers: { "Content-Type": "application/json" },
+                                headers: {
+                                    "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
+                                    "Content-Type": "application/json"
+                                },
                                 body: JSON.stringify({
                                     appointmentId: appointment.id,
                                     adminMessage: appointment.adminMessage,

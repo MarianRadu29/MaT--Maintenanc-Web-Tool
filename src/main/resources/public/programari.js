@@ -206,6 +206,10 @@ document.addEventListener('DOMContentLoaded', function () {
             // Trimite ca multipart/form-data
             fetch("/api/appointment", {
                 method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
+                    "Content-Type": "application/json"
+                },
                 body: data,
             })
                 .then(async res => {
