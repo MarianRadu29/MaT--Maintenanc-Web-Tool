@@ -27,6 +27,9 @@ public class Main {
         server.createContext("/api/inventory", new InventoryController.GetInventory());
         server.createContext("/api/inventory/categories", new InventoryController.GetCategory());
         server.createContext("/api/inventory/add", new InventoryController.AddItem());
+        server.createContext("/api/inventory/delete/", new InventoryController.DeleteItem());
+//        server.createContext("/api/inventory/update/", new InventoryController.AddItem());
+
         server.createContext("/", new StaticFileHandler("src/main/resources/public"));
 
         server.setExecutor(null);

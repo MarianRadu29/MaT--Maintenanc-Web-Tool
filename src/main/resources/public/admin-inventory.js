@@ -131,10 +131,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 const itemId = this.getAttribute('data-id');
 
                 if (confirm('Sigur doriți să ștergeți acest produs?')) {
-                    const index = inventoryItems.findIndex(i => i.id === itemId);
-
-                    if (index !== -1) {
+                    const index = inventoryItems.findIndex(i => i.id == itemId);
+                    console.log(index);
+                    if (index != -1) {
                         inventoryItems.splice(index, 1);
+                        fetch(`api/inventory/delete/${itemId}`,{
+                            method:"DELETE",
+                        }).then(res=>res.json()).then(obj=>{
+                            console.log(obj);
+                        }).catch(err=>console.log(err));
                         loadInventoryItems(inventoryItems);
                     }
                 }

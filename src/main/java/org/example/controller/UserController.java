@@ -2,20 +2,16 @@ package org.example.controller;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import org.example.utils.TokenExpiredException;
+import org.example.utils.TokenInvalidException;
 import org.example.model.UserModel;
 import org.example.objects.User;
 import org.example.utils.*;
 import org.example.view.JsonView;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -23,10 +19,6 @@ import java.util.Map;
 
 public class UserController {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    // URL și credențiale PostgreSQL
-    private static final String DB_URL      = "jdbc:postgresql://localhost:5432/postgres";
-    private static final String DB_USER     = "postgres";     // înlocuiește cu user-ul tău
-    private static final String DB_PASSWORD = "student";    // înlocuiește cu parola ta
 
     public static class GetUserInfo implements HttpHandler {
         @Override
@@ -94,17 +86,11 @@ public class UserController {
                 return;
             }
 
-            // Citim corpul cererii (body)
-            StringBuilder sb = new StringBuilder();
-            try (BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(exchange.getRequestBody(), StandardCharsets.UTF_8))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line);
-                }
-            }
+            String requestBody = new String(
+                    exchange.getRequestBody().readAllBytes(),
+                    StandardCharsets.UTF_8
+            );
 
-            String requestBody = sb.toString();
             try {
                 JSONObject json = new JSONObject(requestBody);
                 String firstName     = json.optString("firstName", null);
@@ -145,7 +131,7 @@ public class UserController {
                 JsonView.send(exchange, 200, "{\"message\":\"User information updated successfully\"}");
             } catch (Exception e) {
                 e.printStackTrace();
-                JsonView.send(exchange, 400, "{\"message\":\"Invalid JSON format\"}");
+                JsonView.send(exchange, 500, "{\"message\":\"Invalid JSON format\"}");
             }
         }
     }
@@ -158,17 +144,11 @@ public class UserController {
                 return;
             }
 
-            // Citim corpul cererii (body)
-            StringBuilder sb = new StringBuilder();
-            try (BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(exchange.getRequestBody(), StandardCharsets.UTF_8))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line);
-                }
-            }
+            String requestBody = new String(
+                    exchange.getRequestBody().readAllBytes(),
+                    StandardCharsets.UTF_8
+            );
 
-            String requestBody = sb.toString();
             try {
                 JSONObject json = new JSONObject(requestBody);
                 String email = json.optString("email", null);
@@ -180,31 +160,23 @@ public class UserController {
 
                 User user = UserModel.getUserByEmail(email);
                 if (user == null) {
-                    JsonView.send(exchange, 200, "{\"message\":\"Dacă emailul există, vei primi un link de resetare.\"}");
+                    // Nu spun daca emailul nu exista exact ca sa nu revelam informatii
+                    JsonView.send(exchange, 200,
+                            "{\"message\":\"Dacă emailul există, vei primi un link de resetare.\"}");
                     return;
                 }
 
                 String token = ForgetPasswordTokenGenerator.generateToken();
-                try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
-                    LocalDateTime expirationDate = LocalDateTime.now().plusHours(1);
-                    String expirationDateStr = expirationDate.format(FORMATTER);
+                LocalDateTime expirationDate = LocalDateTime.now().plusHours(1);
+                String expirationDateStr = expirationDate.format(FORMATTER);
 
-                    String deleteSql = "DELETE FROM forgot_password WHERE user_id = ?";
-                    try (PreparedStatement deleteStmt = conn.prepareStatement(deleteSql)) {
-                        deleteStmt.setInt(1, user.getId());
-                        deleteStmt.executeUpdate();
-                    }
-
-                    String insertSql = "INSERT INTO forgot_password (user_id, token, expiration_date) VALUES (?, ?, ?)";
-                    try (PreparedStatement insertStmt = conn.prepareStatement(insertSql)) {
-                        insertStmt.setInt(1, user.getId());
-                        insertStmt.setString(2, token);
-                        insertStmt.setString(3, expirationDateStr);
-                        insertStmt.executeUpdate();
-                    }
+                try {
+                    UserModel.deleteExistingToken(user.getId());
+                    UserModel.insertNewToken(user.getId(), token, expirationDateStr);
                 } catch (SQLException ex) {
                     ex.printStackTrace();
-                    JsonView.send(exchange, 500, "{\"message\":\"Eroare la salvarea tokenului\"}");
+                    JsonView.send(exchange, 500,
+                            "{\"message\":\"Eroare la salvarea tokenului\"}");
                     return;
                 }
 
@@ -213,10 +185,13 @@ public class UserController {
                 );
                 EmailSender.sendEmail(email, "Resetare parola", bodyEmail);
 
-                JsonView.send(exchange, 200, "{\"message\":\"Dacă emailul există, vei primi un link de resetare.\"}");
+                JsonView.send(exchange, 200,
+                        "{\"message\":\"Dacă emailul există, vei primi un link de resetare.\"}");
+
             } catch (Exception e) {
                 e.printStackTrace();
-                JsonView.send(exchange, 400, "{\"message\":\"Invalid JSON format\"}");
+                JsonView.send(exchange, 500,
+                        "{\"message\":\"Invalid JSON format\"}");
             }
         }
     }
@@ -239,37 +214,41 @@ public class UserController {
                     return;
                 }
 
-                try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
-                    String sql = "SELECT * FROM forgot_password WHERE token = ?";
-                    try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-                        stmt.setString(1, token);
-                        try (ResultSet rs = stmt.executeQuery()) {
-                            if (rs.next()) {
-                                LocalDateTime expirationDate = LocalDateTime.parse(
-                                        rs.getString("expiration_date"), FORMATTER
-                                );
-                                if (LocalDateTime.now().isAfter(expirationDate)) {
-                                    JsonView.send(exchange, 400, "{\"message\":\"Token expired\"}");
-                                    return;
-                                }
-                                JsonView.send(exchange, 200, "{\"message\":\"Token valid\"}");
-                            } else {
-                                JsonView.send(exchange, 400, "{\"message\":\"Invalid token\"}");
-                            }
-                        }
-                    }
-                } catch (SQLException ex) {
+                // 1) Obținem data de expirare a token-ului din BD (sau null dacă nu există)
+                LocalDateTime expirationDate;
+                try {
+                    expirationDate = UserModel.getForgotPasswordExpiration(token);
+                } catch (Exception ex) {
                     ex.printStackTrace();
                     JsonView.send(exchange, 500, "{\"message\":\"Eroare la validarea tokenului\"}");
+                    return;
                 }
+
+                // 2) Dacă nu există nicio intrare cu acel token => e invalid
+                if (expirationDate == null) {
+                    JsonView.send(exchange, 400, "{\"message\":\"Invalid token\"}");
+                    return;
+                }
+
+                // 3) Verificăm dacă s-a expirat
+                if (LocalDateTime.now().isAfter(expirationDate)) {
+                    JsonView.send(exchange, 400, "{\"message\":\"Token expired\"}");
+                    return;
+                }
+
+                // 4) Dacă ajungem aici, token-ul există și nu a expirat
+                JsonView.send(exchange, 200, "{\"message\":\"Token valid\"}");
+
+
             } catch (Exception e) {
                 e.printStackTrace();
-                JsonView.send(exchange, 400, "{\"message\":\"Invalid JSON format\"}");
+                JsonView.send(exchange, 400, "{\"message\":\"Invalid request format\"}");
             }
         }
     }
 
     public static class ResetPassword implements HttpHandler {
+
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             if (!"POST".equalsIgnoreCase(exchange.getRequestMethod())) {
@@ -277,17 +256,11 @@ public class UserController {
                 return;
             }
 
-            // Citim corpul cererii (body)
-            StringBuilder sb = new StringBuilder();
-            try (BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(exchange.getRequestBody(), StandardCharsets.UTF_8))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line);
-                }
-            }
+            String requestBody = new String(
+                    exchange.getRequestBody().readAllBytes(),
+                    StandardCharsets.UTF_8
+            );
 
-            String requestBody = sb.toString();
             try {
                 JSONObject json = new JSONObject(requestBody);
                 String token       = json.optString("token", null);
@@ -302,53 +275,54 @@ public class UserController {
                     return;
                 }
 
-                try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
-                    String sql = "SELECT * FROM forgot_password WHERE token = ?";
-                    try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-                        stmt.setString(1, token);
-                        try (ResultSet rs = stmt.executeQuery()) {
-                            if (rs.next()) {
-                                LocalDateTime expirationDate = LocalDateTime.parse(
-                                        rs.getString("expiration_date"), FORMATTER
-                                );
-                                if (LocalDateTime.now().isAfter(expirationDate)) {
-                                    JsonView.send(exchange, 400, "{\"message\":\"Token expired\"}");
-                                    return;
-                                }
+                int userId;
+                try {
+                    userId = UserModel.validateResetPasswordToken(token);
+                } catch (TokenInvalidException ex) {
+                    JsonView.send(exchange, 400, "{\"message\":\"Invalid token\"}");
+                    return;
+                } catch (TokenExpiredException ex) {
+                    JsonView.send(exchange, 400, "{\"message\":\"Token expired\"}");
+                    return;
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    JsonView.send(exchange, 500, "{\"message\":\"Eroare la implementare\"}");
+                    return;
+                }
 
-                                int userId = rs.getInt("user_id");
-                                String sqlUpdate = "UPDATE users SET password = ? WHERE id = ?";
-                                try (PreparedStatement updateStmt = conn.prepareStatement(sqlUpdate)) {
-                                    updateStmt.setString(1, BCrypt.hashPassword(newPassword));
-                                    updateStmt.setInt(2, userId);
-                                    updateStmt.executeUpdate();
-                                }
-
-                                String deleteSql = "DELETE FROM forgot_password WHERE user_id = ?";
-                                try (PreparedStatement deleteStmt = conn.prepareStatement(deleteSql)) {
-                                    deleteStmt.setInt(1, userId);
-                                    deleteStmt.executeUpdate();
-                                }
-
-                                User user = UserModel.getUserById(userId);
-                                String bodyEmail = EmailTemplate.createPasswordResetSuccessEmailHtml(
-                                        user.getFirstName() + " " + user.getLastName()
-                                );
-                                EmailSender.sendEmail(user.getEmail(), "Parola resetata", bodyEmail);
-
-                                JsonView.send(exchange, 200, "{\"message\":\"Parola a fost resetata cu succes!\"}");
-                            } else {
-                                JsonView.send(exchange, 400, "{\"message\":\"Invalid token\"}");
-                            }
-                        }
-                    }
-                } catch (SQLException ex) {
+                try {
+                    String hashed = BCrypt.hashPassword(newPassword);
+                    UserModel.updateUserPassword(userId, hashed);
+                } catch (Exception ex) {
                     ex.printStackTrace();
                     JsonView.send(exchange, 500, "{\"message\":\"Eroare la resetarea parolei\"}");
+                    return;
                 }
+
+                try {
+                    UserModel.deleteForgotPasswordTokenByUserId(userId);
+                } catch (Exception ex) {
+                    //chiar daca pica deletu la token este ok
+                    ex.printStackTrace();
+                }
+
+                try {
+                    User user = UserModel.getUserById(userId);
+                    if (user != null) {
+                        String bodyEmail = EmailTemplate.createPasswordResetSuccessEmailHtml(
+                                user.getFirstName() + " " + user.getLastName()
+                        );
+                        EmailSender.sendEmail(user.getEmail(), "Parolă resetată", bodyEmail);
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+
+                JsonView.send(exchange, 200, "{\"message\":\"Parola a fost resetata cu succes!\"}");
+
             } catch (Exception e) {
                 e.printStackTrace();
-                JsonView.send(exchange, 400, "{\"message\":\"Invalid JSON format\"}");
+                JsonView.send(exchange, 500, "{\"message\":\"Invalid JSON format\"}");
             }
         }
     }

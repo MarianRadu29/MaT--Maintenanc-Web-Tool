@@ -63,28 +63,26 @@ public class AppointmentController {
             }
 
             try {
-                // 1)prepare the multipart parser
+                // 1) Pregatim parser-ul multipart
                 DiskFileItemFactory factory = new DiskFileItemFactory();
                 ServletFileUpload upload    = new ServletFileUpload(factory);
-
-
                 RequestContext ctx = new HttpExchangeRequestContext(exchange);
 
-                Map<String,String>        fields        = new HashMap<>();
-                List<FileUploadData>     uploadedFiles = new ArrayList<>();
-                FileItemIterator          iter          = upload.getItemIterator(ctx);
+                Map<String, String>    fields        = new HashMap<>();
+                List<FileUploadData>   uploadedFiles = new ArrayList<>();
+                FileItemIterator       iter          = upload.getItemIterator(ctx);
 
                 while (iter.hasNext()) {
-                    FileItemStream item   = iter.next();
-                    String          name   = item.getFieldName();
+                    FileItemStream item = iter.next();
+                    String          name = item.getFieldName();
                     try (InputStream stream = item.openStream()) {
                         if (item.isFormField()) {
-                            // field text
+                            // camp text
                             String value = Streams.asString(stream, StandardCharsets.UTF_8.name());
                             fields.put(name, value);
                         } else {
+                            // camp de fisier
                             try (InputStream streamInput = item.openStream()) {
-                                // reading in buffer
                                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                                 byte[] buffer = new byte[4096];
                                 int bytesRead;
@@ -113,110 +111,53 @@ public class AppointmentController {
                 String model              = fields.get("vehicleModel");
                 String problemDescription = fields.get("problemDescription");
                 String date               = fields.get("appointmentDate");
-                String startTime               = fields.get("appointmentStartTime");
-                String endTime         = fields.get("appointmentEndTime");
+                String startTime          = fields.get("appointmentStartTime");
+                String endTime            = fields.get("appointmentEndTime");
                 String vehicleType        = fields.get("vehicleType");
-                System.out.println("clientId: " + clientId);
-                System.out.println("brand: " + brand);
-                System.out.println("model: " + model);
-                System.out.println("problemDescription: " + problemDescription);
-                System.out.println("date: " + date);
-                System.out.println("startTime: " + startTime);
-                System.out.println("endTime: " + endTime);
-                System.out.println("vehicleType: " + vehicleType);
-                System.out.println("uploadedFiles: " + uploadedFiles.size());
-                uploadedFiles.forEach(f -> {
-                    System.out.println("  " + f.fileName);
-                    System.out.println("  " + f.contentType);
-                    System.out.println("  " + f.content.length);
-                });
 
-                int appointmentId;
-                String sqlA = """
-    INSERT INTO appointments
-      (client_id, vehicle_brand, vehicle_model,
-       description, date,
-       start_time, end_time, vehicle_type)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    RETURNING id;
-""";
+                int appointmentId = AppointmentModel.insertAppointment(
+                        clientId, brand, model,
+                        problemDescription,
+                        date, startTime, endTime, vehicleType
+                );
 
-                try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-                     PreparedStatement ps = conn.prepareStatement(sqlA)) {
+                AppointmentModel.insertMediaFiles(appointmentId, uploadedFiles);
 
-                    ps.setInt(1, clientId);
-                    ps.setString(2, brand);
-                    ps.setString(3, model);
-                    ps.setString(4, problemDescription);
-                    ps.setString(5, date);
-                    ps.setString(6, startTime);
-                    ps.setString(7, endTime);
-                    ps.setString(8, vehicleType);
-
-                    try (ResultSet rs = ps.executeQuery()) {
-                        if (!rs.next()) {
-                            throw new SQLException("Nu pot obține id-ul programării");
-                        }
-                        appointmentId = rs.getInt("id");
-                    }
-
-                    String sqlM = """
-                        INSERT INTO media (appointment_id, file_name, type, file_data)
-                        VALUES (?, ?, ?, ?)
-                    """;
-                    try (PreparedStatement ps2 = conn.prepareStatement(sqlM)) {
-                        for (FileUploadData f : uploadedFiles) {
-                            if (f.content == null || f.content.length == 0 ||
-                                    "application/octet-stream".equalsIgnoreCase(f.contentType)) {
-                                continue;
-                            }
-                            ps2.setInt(1, appointmentId);
-                            ps2.setString(2, f.fileName);
-                            ps2.setString(3, f.contentType);
-                            ps2.setBytes(4, f.content);
-                            ps2.addBatch();
-                        }
-                        ps2.executeBatch();
-                    }
-                }
-
-                String firstName = null;
-                String lastName = null;
-                String userSQL = "SELECT  first_name,last_name FROM users WHERE id = ?";
-                try (Connection conn = DriverManager.getConnection(DB_URL,DB_USER,DB_PASSWORD);
-                     PreparedStatement stmt = conn.prepareStatement(userSQL)) {
-                    stmt.setInt(1, clientId);
-
-                    try (ResultSet rs = stmt.executeQuery()) {
-                        while (rs.next()) {
-                           firstName = rs.getString("first_name");
-                            lastName = rs.getString("last_name");
-                        }
-                    }
+                String fullName = AppointmentModel.getUserFullName(clientId);
+                if (fullName == null) {
+                    fullName = "";
                 }
 
                 String bodyEmail = EmailTemplate.createConfirmationEmailHtml(
-                        firstName + " " + lastName,
+                        fullName,
                         date,
-                        startTime + ":00 - " + endTime+ ":00",
+                        startTime + ":00 - " + endTime + ":00",
                         vehicleType,
                         problemDescription,
                         uploadedFiles.stream().map(FileUploadData::fileName).toList()
                 );
-                EmailSender.sendEmail("radumariansebastian29@gmail.com","Programare primita #" + appointmentId, bodyEmail);
+                EmailSender.sendEmail(
+                        "radumariansebastian29@gmail.com",
+                        "Programare primită #" + appointmentId,
+                        bodyEmail
+                );
 
-
-
+                // 7) Răspuns JSON către client
                 String resp = new JSONObject().put("appointmentId", appointmentId).toString();
-                System.out.println(resp);
                 JsonView.send(exchange, 200, resp);
 
             } catch (FileUploadException fe) {
                 fe.printStackTrace();
-                JsonView.send(exchange, 400, new JSONObject().put("error", "Invalid multipart request").toString());
+                JsonView.send(exchange, 500, new JSONObject()
+                        .put("error", "Invalid multipart request")
+                        .toString()
+                );
             } catch (SQLException se) {
                 se.printStackTrace();
-                JsonView.send(exchange, 500, new JSONObject().put("error", "DB error").toString());
+                JsonView.send(exchange, 500, new JSONObject()
+                        .put("error", "DB error")
+                        .toString()
+                );
             }
         }
     }
@@ -229,120 +170,23 @@ public class AppointmentController {
                 return;
             }
 
-            JSONArray resultArray = new JSONArray();
+            try {
+                JSONArray resultArray = AppointmentModel.getAppointments();
 
-            String sqlAppointments = """
-                SELECT
-                  a.id                               AS id,
-                  u.last_name || ' ' || u.first_name AS clientName,
-                  a.vehicle_type                     AS vehicleType,
-                  a.vehicle_brand                    AS vehicleBrand,
-                  a.vehicle_model                    AS vehicleModel,
-                  a.description                      AS problem,
-                  a.date                             AS date,
-                  a.start_time                             AS startTime,
-                  a.end_time                             AS endTime,
-                  a.status                           AS status,
-                  a.admin_message                  AS adminMessage,
-                    a.estimated_price                AS estimatedPrice,
-                    a.warranty_months                AS warrantyMonths
-                FROM appointments AS a
-                JOIN users        AS u ON u.id = a.client_id
-                WHERE a.status in ('pending','approved','modified')
-                ORDER BY a.date, a.start_time,a.end_time;
-            """;
-
-            String sqlMedia = "SELECT * FROM media WHERE appointment_id = ?";
-
-            try (Connection conn = DriverManager.getConnection(DB_URL,DB_USER, DB_PASSWORD);
-                 PreparedStatement psAppt = conn.prepareStatement(sqlAppointments);
-                 PreparedStatement psMedia = conn.prepareStatement(sqlMedia);
-                 ResultSet rsAppt = psAppt.executeQuery()) {
-
-                while (rsAppt.next()) {
-                    int        id           = rsAppt.getInt("id");
-                    String     clientName   = rsAppt.getString("clientName");
-                    String     vehicleType  = rsAppt.getString("vehicleType");
-                    String     brand        = rsAppt.getString("vehicleBrand");
-                    String     model        = rsAppt.getString("vehicleModel");
-                    String     problem      = rsAppt.getString("problem");
-                    String     date         = rsAppt.getString("date");
-                    String     startTime         = rsAppt.getString("startTime");
-                    String     endTime         = rsAppt.getString("endTime");
-                    String     status       = rsAppt.getString("status");
-                    var adminMessage = rsAppt.getString("adminMessage");
-                    var estimatedPrice = rsAppt.getDouble("estimatedPrice");
-                    var warrantyMonths = rsAppt.getInt("warrantyMonths");
-                    psMedia.setInt(1, id);
-                    List<String> attachments = new ArrayList<>();
-
-                    try (ResultSet rsMed = psMedia.executeQuery()) {
-                        while (rsMed.next()) {
-                            attachments.add(rsMed.getString("file_name"));
-                        }
-                    }
-                    var inventoryIds = new ArrayList<>();
-                    int inventoryQuantities;
-                    double inventoryPrices;
-                    var orderObject = new JSONArray();
-
-                    var sqlOrder = """
-                        SELECT oi.inventory_id, oi.quantity, oi.unit_price
-                        FROM orders AS o
-                        JOIN order_items AS oi ON o.id = oi.order_id
-                        WHERE o.appointment_id = ?
-                    """;
-                    try (PreparedStatement psOrder = conn.prepareStatement(sqlOrder)) {
-                        psOrder.setInt(1, id);
-                        try (ResultSet rsOrder = psOrder.executeQuery()) {
-                            while (rsOrder.next()) {
-                                inventoryIds.add(rsOrder.getInt("inventory_id"));
-                                inventoryQuantities = rsOrder.getInt("quantity");
-                                inventoryPrices = rsOrder.getDouble("unit_price");
-                                orderObject.put(new JSONObject().put("id", rsOrder.getInt("inventory_id"))
-                                        .put("quantity", inventoryQuantities)
-                                        .put("unitPrice", inventoryPrices));
-                            }
-                        }
-                    }
-
-                    JSONObject obj = new JSONObject()
-                            .put("id",            id)
-                            .put("clientName",    clientName)
-                            .put("vehicleType",   vehicleType)
-                            .put("vehicleBrand",  brand)
-                            .put("vehicleModel",  model)
-                            .put("problem",       problem)
-                            .put("date",          date)
-                            .put("endTime",          endTime)
-                            .put("startTime",          startTime)
-                            .put("status",        status)
-                            .put("hasAttachments", !attachments.isEmpty())
-                            .put("orderItems", orderObject)
-                            .put("adminMessage", adminMessage)
-                            .put("estimatedPrice", estimatedPrice)
-                            .put("warrantyMonths", warrantyMonths);
-
-                    resultArray.put(obj);
-                }
-
-                String response = resultArray.toString();
-
-
-//                System.out.println("siii\n" + response);
-
-
+                byte[] responseBytes = resultArray.toString().getBytes(StandardCharsets.UTF_8);
                 exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
-                byte[] bytes = response.getBytes(StandardCharsets.UTF_8);
-                exchange.sendResponseHeaders(200, bytes.length);
-                exchange.getResponseBody().write(bytes);
+                exchange.sendResponseHeaders(200, responseBytes.length);
+                exchange.getResponseBody().write(responseBytes);
                 exchange.getResponseBody().close();
 
             } catch (SQLException e) {
                 e.printStackTrace();
-                System.out.println("eroare "  + e.getMessage());
                 JSONObject err = new JSONObject().put("error", "Database error");
-                JsonView.send(exchange, 500, err.toString());
+                byte[] errorBytes = err.toString().getBytes(StandardCharsets.UTF_8);
+                exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
+                exchange.sendResponseHeaders(500, errorBytes.length);
+                exchange.getResponseBody().write(errorBytes);
+                exchange.getResponseBody().close();
             }
         }
     }
@@ -357,7 +201,6 @@ public class AppointmentController {
             }
 
             String authHeader = exchange.getRequestHeaders().getFirst("Authorization");
-
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
                 JsonView.send(exchange, 401, "{\"message\":\"Missing or invalid token\"}");
                 return;
@@ -365,135 +208,36 @@ public class AppointmentController {
 
             String token = authHeader.substring(7); // Remove "Bearer "
             Map<String, Object> claims = JwtUtil.validateAndExtractClaims(token);
-
             if (claims == null) {
                 JsonView.send(exchange, 401, "{\"message\":\"Invalid or expired token\"}");
                 return;
             }
 
+            int clientId = (int) claims.get("id");
+            try {
+                // 1) Apelăm modelul pentru a obține JSONArray cu propriile programări
+                JSONArray resultArray = AppointmentModel.getAppointmentsByClientId(clientId);
 
-            JSONArray resultArray = new JSONArray();
-
-            String sqlAppointments = """
-                SELECT
-                  a.id                               AS id,
-                  u.last_name || ' ' || u.first_name AS clientName,
-                  a.vehicle_type                     AS vehicleType,
-                  a.vehicle_brand                    AS vehicleBrand,
-                  a.vehicle_model                    AS vehicleModel,
-                  a.description                      AS problem,
-                  a.date                             AS date,
-                  a.start_time                             AS startTime,
-                  a.end_time                             AS endTime,
-                  a.status                           AS status,
-                   a.admin_message                  AS adminMessage,
-                    a.estimated_price                AS estimatedPrice,
-                    a.warranty_months                AS warrantyMonths
-                FROM appointments AS a
-                JOIN users        AS u ON u.id = a.client_id
-                WHERE a.client_id = ?
-                ORDER BY a.date, a.start_time,a.end_time;
-            """;
-
-            String sqlMedia = "SELECT * FROM media WHERE appointment_id = ?";
-
-            try (Connection conn = DriverManager.getConnection(DB_URL,DB_USER, DB_PASSWORD);
-                 PreparedStatement psAppt = conn.prepareStatement(sqlAppointments);
-                 PreparedStatement psMedia = conn.prepareStatement(sqlMedia);
-                 ) {
-
-                psAppt.setInt(1, (int)claims.get("id"));
-                ResultSet rsAppt = psAppt.executeQuery();
-                while (rsAppt.next()) {
-                    int        id           = rsAppt.getInt("id");
-                    String     clientName   = rsAppt.getString("clientName");
-                    String     vehicleType  = rsAppt.getString("vehicleType");
-                    String     brand        = rsAppt.getString("vehicleBrand");
-                    String     model        = rsAppt.getString("vehicleModel");
-                    String     problem      = rsAppt.getString("problem");
-                    String     date         = rsAppt.getString("date");
-                    String     endTime         = rsAppt.getString("endTime");
-                    String     startTime         = rsAppt.getString("startTime");
-                    String     status       = rsAppt.getString("status");
-                    var adminMessage = rsAppt.getString("adminMessage");
-                    var estimatedPrice = rsAppt.getDouble("estimatedPrice");
-                    var warrantyMonths = rsAppt.getInt("warrantyMonths");
-                    // 1) Obținem lista de fișiere atașate
-                    psMedia.setInt(1, id);
-                    List<String> attachments = new ArrayList<>();
-                    try (ResultSet rsMed = psMedia.executeQuery()) {
-                        while (rsMed.next()) {
-                            attachments.add(rsMed.getString("file_name"));
-                        }
-                    }
-
-                    var inventoryIds = new ArrayList<>();
-                    int inventoryQuantities;
-                    double inventoryPrices;
-                    var orderObject = new JSONArray();
-
-                    var sqlOrder = """
-                        SELECT oi.inventory_id, oi.quantity, oi.unit_price
-                        FROM orders AS o
-                        JOIN order_items AS oi ON o.id = oi.order_id
-                        WHERE o.appointment_id = ?
-                    """;
-                    try (PreparedStatement psOrder = conn.prepareStatement(sqlOrder)) {
-                        psOrder.setInt(1, id);
-                        try (ResultSet rsOrder = psOrder.executeQuery()) {
-                            while (rsOrder.next()) {
-                                inventoryIds.add(rsOrder.getInt("inventory_id"));
-                                inventoryQuantities = rsOrder.getInt("quantity");
-                                inventoryPrices = rsOrder.getDouble("unit_price");
-                                orderObject.put(new JSONObject().put("id", rsOrder.getInt("inventory_id"))
-                                        .put("quantity", inventoryQuantities)
-                                        .put("unitPrice", inventoryPrices));
-                            }
-                        }
-                    }
-
-                    // 2) Construim obiectul JSON pentru această programare
-                    JSONObject obj = new JSONObject()
-                            .put("id",            id)
-                            .put("clientName",    clientName)
-                            .put("vehicleType",   vehicleType)
-                            .put("vehicleBrand",  brand)
-                            .put("vehicleModel",  model)
-                            .put("problem",       problem)
-                            .put("date",          date)
-                            .put("endTime",          endTime)
-                            .put("startTime",          startTime)
-                            .put("status",        status)
-                            .put("hasAttachments", !attachments.isEmpty())
-                            .put("orderItems", orderObject)
-                            .put("adminMessage", adminMessage)
-                            .put("estimatedPrice", estimatedPrice)
-                            .put("warrantyMonths", warrantyMonths);
-//                            .put("attachments",   new JSONArray(attachments));
-
-                    resultArray.put(obj);
-                }
-
-                String response = resultArray.toString();
-
-
-                System.out.println("siii\n" + response);
-
-
+                // 2) Trimitem răspunsul JSON
+                byte[] responseBytes = resultArray.toString().getBytes(StandardCharsets.UTF_8);
                 exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
-                byte[] bytes = response.getBytes(StandardCharsets.UTF_8);
-                exchange.sendResponseHeaders(200, bytes.length);
-                exchange.getResponseBody().write(bytes);
+                exchange.sendResponseHeaders(200, responseBytes.length);
+                exchange.getResponseBody().write(responseBytes);
                 exchange.getResponseBody().close();
 
             } catch (SQLException e) {
                 e.printStackTrace();
-                System.out.println("eroare "  + e.getMessage());
                 JSONObject err = new JSONObject().put("error", "Database error");
-                JsonView.send(exchange, 500, err.toString());
+                byte[] errorBytes = err.toString().getBytes(StandardCharsets.UTF_8);
+                exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
+                exchange.sendResponseHeaders(500, errorBytes.length);
+                exchange.getResponseBody().write(errorBytes);
+                exchange.getResponseBody().close();
             }
         }
     }
+
+
     public static class GetMedia implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
@@ -503,7 +247,7 @@ public class AppointmentController {
             }
 
             String path = exchange.getRequestURI().getPath();
-            // expecting path like "/api/appointment/media/123"
+            // așteptăm o cale de forma "/api/appointment/media/{id}"
             String idStr = path.substring("/api/appointment/media/".length());
             int appointmentId;
             try {
@@ -511,47 +255,29 @@ public class AppointmentController {
             } catch (NumberFormatException e) {
                 JsonView.send(exchange, 400, new JSONObject()
                         .put("error", "Invalid appointment ID")
-                        .toString());
+                        .toString()
+                );
                 return;
             }
 
-            String sql = "SELECT file_name, type, file_data FROM media WHERE appointment_id = ?";
+            try {
+                // 1) Obținem lista de FileUploadData din model
+                List<FileUploadData> files = AppointmentModel.getMediaFiles(appointmentId);
 
-            List<FileUploadData> files = new ArrayList<>();
-            try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-                 PreparedStatement ps = conn.prepareStatement(sql)) {
-
-                ps.setInt(1, appointmentId);
-                try (ResultSet rs = ps.executeQuery()) {
-                    while (rs.next()) {
-                        String fileName    = rs.getString("file_name");
-                        String contentType = rs.getString("type");
-                        byte[] content     = rs.getBytes("file_data");
-                        // we don't have the original form field name in the DB;
-                        // you can store it in another column or reuse "fileUpload"
-                        files.add(new FileUploadData(
-                                "fileUpload",
-                                fileName,
-                                contentType,
-                                content
-                        ));
-                    }
-                }
-
-                // Build JSON response
+                // 2) Construim JSONArray-ul de răspuns: punem fiecare fișier base64-encodat
                 JSONArray arr = new JSONArray();
                 for (FileUploadData f : files) {
                     JSONObject obj = new JSONObject()
                             .put("fileName",    f.fileName())
                             .put("contentType", f.contentType())
-                            // Base64‐encode the byte[] so it can travel in JSON
+                            //  content ul binar in Base64
                             .put("content",     Base64.getEncoder().encodeToString(f.content()));
                     arr.put(obj);
                 }
-                System.out.println("size array " + arr.length());
 
+                byte[] responseBytes = arr.toString(4)
+                        .getBytes(StandardCharsets.UTF_8);
 
-                byte[] responseBytes = arr.toString(4).getBytes(StandardCharsets.UTF_8);
                 exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
                 exchange.sendResponseHeaders(200, responseBytes.length);
                 try (OutputStream os = exchange.getResponseBody()) {
@@ -562,7 +288,8 @@ public class AppointmentController {
                 e.printStackTrace();
                 JsonView.send(exchange, 500, new JSONObject()
                         .put("error", "Database error: " + e.getMessage())
-                        .toString());
+                        .toString()
+                );
             }
         }
     }

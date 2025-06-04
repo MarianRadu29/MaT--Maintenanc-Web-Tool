@@ -4,12 +4,16 @@ import org.example.objects.User;
 import org.example.utils.BCrypt;
 
 import java.sql.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 
 public class UserModel {
-    // JDBC URL pentru PostgreSQL:
     private static final String DB_URL      = "jdbc:postgresql://localhost:5432/postgres";
     private static final String DB_USER     = "postgres";
     private static final String DB_PASSWORD = "student";
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
 
     public static boolean createUser(User data) {
         String sql = "INSERT INTO users(first_name, last_name, password, email, role_id, phone_number) VALUES (?, ?, ?, ?, ?, ?)";
@@ -92,5 +96,90 @@ public class UserModel {
             System.out.println("[GET USER BY ID ERROR] " + e.getMessage());
         }
         return null;
+    }
+
+    public static void deleteExistingToken(int userId) throws SQLException {
+        String deleteSql = "DELETE FROM forgot_password WHERE user_id = ?";
+        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+             PreparedStatement deleteStmt = conn.prepareStatement(deleteSql)) {
+
+            deleteStmt.setInt(1, userId);
+            deleteStmt.executeUpdate();
+        }
+    }
+
+    public static void insertNewToken(int userId, String token, String expirationDateStr) throws SQLException {
+        String insertSql = "INSERT INTO forgot_password (user_id, token, expiration_date) VALUES (?, ?, ?)";
+        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+             PreparedStatement insertStmt = conn.prepareStatement(insertSql)) {
+
+            insertStmt.setInt(1, userId);
+            insertStmt.setString(2, token);
+            insertStmt.setString(3, expirationDateStr);
+            insertStmt.executeUpdate();
+        }
+    }
+
+    public static LocalDateTime getForgotPasswordExpiration(String token) throws SQLException {
+        String sql = "SELECT expiration_date FROM forgot_password WHERE token = ?";
+        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, token);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    String expirationDateStr = rs.getString("expiration_date");
+                    return LocalDateTime.parse(expirationDateStr, FORMATTER);
+                } else {
+                    return null;
+                }
+            }
+        }
+    }
+
+    public static int validateResetPasswordToken(String token)
+            throws SQLException,Exception{
+        String sql = "SELECT user_id, expiration_date FROM forgot_password WHERE token = ?";
+        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, token);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (!rs.next()) {
+                    // nu există rand cu acest token
+                    throw new Exception();
+                }
+
+                String expirationDateStr = rs.getString("expiration_date");
+                LocalDateTime expirationDate = LocalDateTime.parse(expirationDateStr, FORMATTER);
+                if (LocalDateTime.now().isAfter(expirationDate)) {
+                    // token-ul a expirat
+                    throw new Exception();
+                }
+
+                // token e valid
+                return rs.getInt("user_id");
+            }
+        }
+    }
+    public static void updateUserPassword(int userId, String hashedPassword) throws SQLException {
+        String sql = "UPDATE users SET password = ? WHERE id = ?";
+        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, hashedPassword);
+            stmt.setInt(2, userId);
+            stmt.executeUpdate();
+        }
+    }
+
+    public static void deleteForgotPasswordTokenByUserId(int userId) throws SQLException {
+        String sql = "DELETE FROM forgot_password WHERE user_id = ?";
+        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, userId);
+            stmt.executeUpdate();
+        }
     }
 }
