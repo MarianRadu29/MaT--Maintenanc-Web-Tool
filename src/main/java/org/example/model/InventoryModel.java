@@ -113,5 +113,22 @@ public class InventoryModel {
             return rows > 0;
         }
     }
+
+    public static boolean updateItem(int itemId, String name, int categoryID, int quantity, double price, String supplier, String status) throws SQLException {
+        String sql = "UPDATE inventory SET name = ?, category = ?, quantity = ?, price = ?, supplier = ?, status = ? WHERE id = ?";
+        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, name);
+            ps.setInt(2, categoryID);
+            ps.setInt(3, quantity);
+            ps.setDouble(4, price);
+            ps.setString(5, supplier);
+            ps.setString(6, status);
+            ps.setInt(7, itemId);
+            int rows = ps.executeUpdate();
+            return rows > 0;
+        }
+    }
+
 }
 

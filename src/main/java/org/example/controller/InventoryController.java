@@ -107,49 +107,49 @@ public class InventoryController {
         }
     }
 
-//    public static class UpdateItem implements HttpHandler {
-//        @Override
-//        public void handle(HttpExchange exchange) throws IOException {
-//            if (!"PUT".equalsIgnoreCase(exchange.getRequestMethod())) {
-//                exchange.sendResponseHeaders(405, -1);
-//                return;
-//            }
-//
-//            String requestBody = new BufferedReader(
-//                    new InputStreamReader(exchange.getRequestBody(), StandardCharsets.UTF_8)
-//            ).lines().collect(Collectors.joining());
-//
-//            JSONObject json = new JSONObject(requestBody);
-//            int itemId       = json.optInt("id");
-//            String name      = json.optString("name");
-//            int categoryID   = json.optInt("category");
-//            int quantity     = json.optInt("quantity", 0);
-//            double price     = json.optDouble("price", 0.0);
-//            String supplier  = json.optString("supplier");
-//            String status    = json.optString("status", "in-stock");
-//
-//            try {
-//                boolean success = InventoryModel.updateItem(itemId, name, categoryID, quantity, price, supplier, status);
-//                if (success) {
-//                    JSONObject resp = new JSONObject();
-//                    resp.put("status", "success");
-//                    resp.put("message", "Item updated successfully.");
-//
-//                    byte[] responseBytes = resp.toString().getBytes(StandardCharsets.UTF_8);
-//                    exchange.getResponseHeaders().set("Content-Type", "application/json");
-//                    exchange.sendResponseHeaders(200, responseBytes.length);
-//                    try (OutputStream os = exchange.getResponseBody()) {
-//                        os.write(responseBytes);
-//                    }
-//                } else {
-//                    exchange.sendResponseHeaders(500, -1);
-//                }
-//            } catch (SQLException e) {
-//                e.printStackTrace();
-//                exchange.sendResponseHeaders(500, -1);
-//            }
-//        }
-//    }
+    public static class UpdateItem implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            if (!"PUT".equalsIgnoreCase(exchange.getRequestMethod())) {
+                exchange.sendResponseHeaders(405, -1);
+                return;
+            }
+
+            String requestBody = new BufferedReader(
+                    new InputStreamReader(exchange.getRequestBody(), StandardCharsets.UTF_8)
+            ).lines().collect(Collectors.joining());
+
+            JSONObject json = new JSONObject(requestBody);
+            int itemId       = json.optInt("id");
+            String name      = json.optString("name");
+            int categoryID   = json.optInt("category");
+            int quantity     = json.optInt("quantity", 0);
+            double price     = json.optDouble("price", 0.0);
+            String supplier  = json.optString("supplier");
+            String status    = json.optString("status", "in-stock");
+
+            try {
+                boolean success = InventoryModel.updateItem(itemId, name, categoryID, quantity, price, supplier, status);
+                if (success) {
+                    JSONObject resp = new JSONObject();
+                    resp.put("status", "success");
+                    resp.put("message", "Item updated successfully.");
+
+                    byte[] responseBytes = resp.toString().getBytes(StandardCharsets.UTF_8);
+                    exchange.getResponseHeaders().set("Content-Type", "application/json");
+                    exchange.sendResponseHeaders(200, responseBytes.length);
+                    try (OutputStream os = exchange.getResponseBody()) {
+                        os.write(responseBytes);
+                    }
+                } else {
+                    exchange.sendResponseHeaders(500, -1);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                exchange.sendResponseHeaders(500, -1);
+            }
+        }
+    }
 
     public static class DeleteItem implements HttpHandler {
         @Override
