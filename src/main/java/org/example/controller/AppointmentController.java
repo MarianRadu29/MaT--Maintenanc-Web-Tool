@@ -396,6 +396,7 @@ public class AppointmentController {
                         String newStartTime = jsonBody.optString("startTime");
                         String newEndTime = jsonBody.optString("endTime");
                         AppointmentModel.updateAppointmentModified(appointmentId, newStartTime, newEndTime);
+                        System.out.println("ssssssiiiiiiiiiii");
                     }
                     case "accepted" -> {
                         AppointmentModel.setStatusAppointment(appointmentId, "approved");

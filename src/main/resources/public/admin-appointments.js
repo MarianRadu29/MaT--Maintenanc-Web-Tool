@@ -659,19 +659,43 @@ function openEditTimeModal(appointment) {
                 startTime:startTime,
                 endTime:endTime
             }
-            fetch("api/appointment/update",{
-                method:"PUT",
+            fetch("api/appointment/update", {
+                method: "PUT",
                 headers: {
-                    "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
-                    "Content-Type": "application/json"
+                  "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
+                  "Content-Type": "application/json"
                 },
-                body:JSON.stringify(data)
-            }).then(res=>res.json()).then( obj=>
-            {
-                showCustomAlert('Ora a fost modificată cu succes!',3000);
-                editModal.style.display = 'none';
-            })
-
+                body: JSON.stringify(data)
+              })
+              .then(response => {
+                if (response.status === 200) {
+                  return response.json().then(obj => {
+                    showCustomAlert('Ora a fost modificată cu succes!', 3000);
+                    editModal.style.display = 'none';
+                  });
+                }
+                else if (response.status === 400) {
+                  return response.json().then(errObj => {
+                    showCustomAlert(`Date invalide: ${errObj.message || 'Verifică câmpurile.'}`, 3000);
+                  });
+                }
+                else if (response.status === 409) {
+                  return response.json().then(errObj => {
+                    showCustomAlert(`Nu puteti programa intre orele ${startTime}:00-${endTime}:00,exista programarii in acel interval de timp`, 3000);
+                  });
+                }
+                else {
+                  return response.text().then(text => {
+                    showCustomAlert(`Eroare neprevăzută (${response.status}): ${text}`, 3000);
+                  });
+                }
+              })
+              .catch(err => {
+                // Eroare de rețea sau JSON invalide
+                console.error("Fetch error:", err);
+                showCustomAlert("Nu s-a putut contacta serverul.", 3000);
+              });
+              
         });
     }
 

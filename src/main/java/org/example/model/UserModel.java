@@ -72,13 +72,13 @@ public class UserModel {
     }
 
     public static int getUserIdByAppointmentId(int appointmentId) {
-        String sql = "SELECT user_id FROM appointments WHERE id = ?";
+        String sql = "SELECT client_id FROM appointments WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, appointmentId);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    return rs.getInt("user_id");
+                    return rs.getInt("client_id");
                 }
             }
         } catch (SQLException e) {
