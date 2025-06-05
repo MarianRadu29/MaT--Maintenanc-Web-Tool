@@ -284,7 +284,6 @@ BEFORE UPDATE OF status ON inventory
 FOR EACH ROW
 EXECUTE FUNCTION inventory_prevent_delete_if_active_orders();
 
-
 CREATE OR REPLACE FUNCTION trg_check_appointment_overlap()
     RETURNS TRIGGER AS $$
 BEGIN
@@ -297,8 +296,8 @@ BEGIN
               AND a.id <> COALESCE(NEW.id, 0)
               AND a.status NOT IN ('canceled', 'rejected')
               AND NOT (
-                a.end_time::time <= NEW.start_time::time
-                    OR a.start_time::time >= NEW.end_time::time
+                a.end_time::int <= NEW.start_time::int
+                    OR a.start_time::int >= NEW.end_time::int
                 )
         ) THEN
             RAISE EXCEPTION
@@ -354,29 +353,3 @@ CREATE TRIGGER trg_inventory_merge_if_exists
     FOR EACH ROW
 EXECUTE FUNCTION trg_inventory_merge_if_exists();
 
-
-CREATE OR REPLACE FUNCTION trg_inventory_set_status()
-    RETURNS TRIGGER AS $$
-BEGIN
-    IF NEW.quantity IS NULL OR OLD.status = 'deleted' THEN
-        RETURN NEW;
-    END IF;
-
-    IF NEW.quantity = 0 THEN
-        NEW.status := 'out-of-stock';
-    ELSIF NEW.quantity < 5 THEN
-        NEW.status := 'low-stock';
-    ELSE
-        NEW.status := 'in-stock';
-    END IF;
-
-    RETURN NEW;
-END;
-$$
-    LANGUAGE plpgsql;
-
-
-CREATE TRIGGER trg_inventory_set_status
-    BEFORE INSERT OR UPDATE ON inventory
-    FOR EACH ROW
-EXECUTE FUNCTION trg_inventory_set_status();
