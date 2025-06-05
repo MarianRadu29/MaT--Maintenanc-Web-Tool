@@ -5,7 +5,24 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a1a27d4e-17cb-4261-b221-8c0b2f038ddc" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/public/admin-appointment-items.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/public/admin-appointment-items.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/public/admin-appointments.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/public/admin-appointments.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/public/admin-data.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/public/admin-data.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/public/admin-inventory.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/public/admin-inventory.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/public/admin.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/public/admin.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/public/admin.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/public/auth.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/public/auth.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/public/calendar.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/public/calendar.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/public/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/public/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/public/login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/public/profile.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/public/profile.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/public/profile.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/public/profile.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/public/programari.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/public/programari.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/public/programari.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/public/programari.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/public/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/public/register.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,9 +37,9 @@
       <list>
         <option value="HTML File" />
         <option value="CSS File" />
-        <option value="JavaScript File" />
         <option value="Exception" />
         <option value="Class" />
+        <option value="JavaScript File" />
       </list>
     </option>
   </component>
