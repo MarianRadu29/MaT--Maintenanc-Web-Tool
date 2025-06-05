@@ -885,7 +885,7 @@ function showSuccessMessage(message) {
 
 function showErrorMessage(message) {
     // Poți implementa un toast notification sau alt sistem de mesaje
-    alert(message); // Soluție temporară
+    showCustomAlert(message,3000); // Soluție temporară
 }
 
 // Funcție pentru crearea și afișarea modalului
