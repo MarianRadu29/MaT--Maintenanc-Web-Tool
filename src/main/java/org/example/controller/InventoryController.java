@@ -141,16 +141,13 @@ public class InventoryController {
             String status     = json.optString("status", "in-stock");
 
             try {
-                boolean success = InventoryModel.addItem(name, categoryID, quantity, price, supplier, status);
-                if (success) {
+                InventoryModel.addItem(name, categoryID, quantity, price, supplier, status);
                     JSONObject res = new JSONObject();
                     res.put("status", "success");
                     res.put("message", "Item added successfully.");
 
                    JsonView.send(exchange, 200, res.toString());
-                } else {
-                    exchange.sendResponseHeaders(500, -1);
-                }
+
             } catch (SQLException e) {
                 e.printStackTrace();
                 exchange.sendResponseHeaders(500, -1);
