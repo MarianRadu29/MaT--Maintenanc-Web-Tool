@@ -272,6 +272,7 @@ function removeSelectedItem(index) {
     calculateTotalPrice();
 }
 
+
 function calculateTotalPrice() {
     totalPrice = currentAppointment.orderItems.reduce((sum, item) => sum + item.selectedQuantity * item.price, 0);
     const totalPriceElement = document.getElementById('totalPrice');
@@ -311,6 +312,7 @@ document.addEventListener('DOMContentLoaded', function () {
     initInventoryLoad().then(() => {
         initializeInventorySearch();
         updateSelectedItemsDisplay();
+        calculateTotalPrice();
     });
 });
 
@@ -330,6 +332,13 @@ async function handleAppointmentView(appointment) {
     }
 
     setAppointmentStatus(appointment.status, appointment);
+
+    // Adaugă aici resetarea dacă e pending
+    if (appointment.status === "pending") {
+        resetInventorySelection();
+    }
+
     loadUsedEquipment(appointment);
     initializeInventorySearch();
 }
+

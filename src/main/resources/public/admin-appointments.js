@@ -1,4 +1,5 @@
 
+
 document.addEventListener('DOMContentLoaded', function () {
 
     const appointmentModal = document.getElementById('appointmentModal');
