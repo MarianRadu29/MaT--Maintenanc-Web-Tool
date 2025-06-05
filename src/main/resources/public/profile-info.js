@@ -252,3 +252,13 @@ function isValidEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
 }
+
+// Corectare: Afișează link admin doar pentru admini (roleID == 2)
+const adminLink = document.getElementById('admin-link');
+if (adminLink) {
+    if (userData && userData.roleID == 2) {
+        adminLink.style.display = 'list-item';
+    } else {
+        adminLink.style.display = 'none';
+    }
+}

@@ -353,3 +353,4 @@ CREATE TRIGGER trg_inventory_merge_if_exists
     FOR EACH ROW
 EXECUTE FUNCTION trg_inventory_merge_if_exists();
 
+``
