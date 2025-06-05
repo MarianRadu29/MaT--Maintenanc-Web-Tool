@@ -1,6 +1,5 @@
 -- DROP TABLE IF EXISTS order_items;
 -- DROP TABLE IF EXISTS orders;
--- DROP TABLE IF EXISTS supplier_orders;
 -- DROP TABLE IF EXISTS media;
 -- DROP TABLE IF EXISTS appointments;
 -- DROP TABLE IF EXISTS forgot_password;
@@ -94,16 +93,6 @@ CREATE TABLE IF NOT EXISTS media (
                                      file_data       BYTEA,
                                      FOREIGN KEY(appointment_id) REFERENCES appointments(id)
     );
-
--- -- Creare tabela supplier_orders
--- CREATE TABLE IF NOT EXISTS supplier_orders (
---                                                id            SERIAL PRIMARY KEY,
---                                                inventory_id  INTEGER,
---                                                quantity      INTEGER,
---                                                order_date    TEXT,
---                                                status        TEXT,
---                                                FOREIGN KEY(inventory_id) REFERENCES inventory(id)
---     );
 
 -- Creare tabela orders
 CREATE TABLE IF NOT EXISTS orders (
