@@ -39,7 +39,7 @@
 - de reparat atunci cand intru pe o programare care nu are produse selectate imi arata pretul de la ultima programare pe care am intrat
 - de facut sticky partea de sus la modaluri 
 - de facut validari la login si alerte la login si register
-
+- de incercat sa rezolv bugul cu "-" la profil
 
 
 

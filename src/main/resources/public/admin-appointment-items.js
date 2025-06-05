@@ -296,14 +296,14 @@ async function approveAppointment(appointmentId) {
         });
 
         if (!response.ok) throw new Error("Eroare la aprobare");
-        alert("Programarea a fost aprobată!");
+        showCustomAlert("Programarea a fost aprobată!");
 
         setAppointmentStatus("approved");
         updateSelectedItemsDisplay();
 
     } catch (err) {
         console.error("Eroare la aprobare:", err);
-        alert("Eroare la aprobarea programării.");
+        showCustomAlert("Eroare la aprobarea programării.");
     }
 }
 

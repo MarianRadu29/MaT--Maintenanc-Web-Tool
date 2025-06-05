@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const fileInput = document.getElementById(`${importType}Import`);
 
             if (fileInput.files.length === 0) {
-                alert(`Vă rugăm să selectați un fișier ${importType.toUpperCase()} pentru import.`);
+                showCustomAlert(`Vă rugăm să selectați un fișier ${importType.toUpperCase()} pentru import.`);
                 return;
             }
 
@@ -30,16 +30,16 @@ document.addEventListener('DOMContentLoaded', function () {
                         data = JSON.parse(e.target.result);
                     }
 
-                    alert(`${importType.toUpperCase()} importat cu succes!`);
+                    showCustomAlert(`${importType.toUpperCase()} importat cu succes!`);
                     console.log('Imported data:', data);
 
                 } catch (error) {
-                    alert(`Eroare la importul ${importType.toUpperCase()}: ${error.message}`);
+                    showCustomAlert(`Eroare la importul ${importType.toUpperCase()}: ${error.message}`);
                 }
             };
 
             reader.onerror = function () {
-                alert('Eroare la citirea fișierului.');
+                showCustomAlert('Eroare la citirea fișierului.');
             };
 
             if (importType === 'csv') {
@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 contentType = 'application/json';
                 content = JSON.stringify(data, null, 2);
             } else if (exportType === 'pdf') {
-                alert('Funcționalitatea de export PDF va fi implementată în viitor.');
+                showCustomAlert('Funcționalitatea de export PDF va fi implementată în viitor.');
                 return;
             }
 
