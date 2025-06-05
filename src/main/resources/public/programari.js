@@ -262,7 +262,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     e.preventDefault();
                     localStorage.removeItem("userData");
                     localStorage.removeItem("accessToken");
-                    localStorage.removeItem("refreshToken");
 
                     // Reset auth links to login/register buttons
                     authLinks.innerHTML = `

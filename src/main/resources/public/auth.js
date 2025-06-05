@@ -39,9 +39,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 const data = await response.json();
                 const accessToken = data.accessToken;
-                const refreshToken = data.refreshToken;
                 localStorage.setItem("accessToken", accessToken);
-                localStorage.setItem("refreshToken", refreshToken);
                 const responseUser = await fetch("/api/user", {
                     method: "GET",
                     headers: {
@@ -121,9 +119,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (response.status === 200) {
                 const data = await response.json();
                 const accessToken = data.accessToken;
-                const refreshToken = data.refreshToken;
                 localStorage.setItem("accessToken", accessToken);
-                localStorage.setItem("refreshToken", refreshToken);
                 
                 const responseUser = await fetch("/api/user", {
                     method: "GET",

@@ -23,7 +23,6 @@ function checkLoggedInUser() {
                     e.preventDefault();
                     localStorage.removeItem("userData");
                     localStorage.removeItem("accessToken");
-                    localStorage.removeItem("refreshToken");
 
                     window.location.reload();
                     authLinks.innerHTML = `

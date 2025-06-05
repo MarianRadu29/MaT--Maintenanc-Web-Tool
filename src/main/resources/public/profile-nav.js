@@ -27,7 +27,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 e.preventDefault();
                 localStorage.removeItem("userData");
                 localStorage.removeItem("accessToken");
-                localStorage.removeItem("refreshToken");
                 sessionStorage.removeItem("userData");
 
                 // Reset UI
@@ -96,7 +95,6 @@ document.addEventListener("DOMContentLoaded", async function () {
                 e.preventDefault();
                 localStorage.removeItem("userData");
                 localStorage.removeItem("accessToken");
-                localStorage.removeItem("refreshToken");
                 sessionStorage.removeItem("userData");
 
                 // Reset UI
