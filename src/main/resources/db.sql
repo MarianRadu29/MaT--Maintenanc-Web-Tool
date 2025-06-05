@@ -358,7 +358,7 @@ EXECUTE FUNCTION trg_inventory_merge_if_exists();
 CREATE OR REPLACE FUNCTION trg_inventory_set_status()
     RETURNS TRIGGER AS $$
 BEGIN
-    IF NEW.quantity IS NULL THEN
+    IF NEW.quantity IS NULL OR OLD.status = 'deleted' THEN
         RETURN NEW;
     END IF;
 
