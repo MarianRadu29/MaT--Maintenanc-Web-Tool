@@ -1,8 +1,8 @@
-// Variabilă globală pentru userData
+//user data
 let userData = null;
 let appointments = [];
 
-// User data
+
 async function getUserData() {
     try {
         const accessToken = localStorage.getItem('accessToken');
@@ -33,7 +33,6 @@ async function getUserData() {
 
 async function initializeApp() {
     try {
-        // Get user data from API
         userData = await getUserData();
 
         if (!userData) {
@@ -41,13 +40,11 @@ async function initializeApp() {
             return;
         }
 
-        // Store user data in localStorage for consistency
         localStorage.setItem('userData', JSON.stringify(userData));
         if (sessionStorage.getItem('userData')) {
             sessionStorage.setItem('userData', JSON.stringify(userData));
         }
 
-        // Initialize all components that depend on userData
         initializeTabs();
         populateUserData();
         updateAuthLinks();
@@ -70,12 +67,11 @@ function populateUserData() {
 }
 
 function initializeEditFunctionality() {
-    // Sistem de editare inline
+    //sistem de editare
     const editButtons = document.querySelectorAll('.edit-btn');
     const saveButtons = document.querySelectorAll('.save-btn');
     const cancelButtons = document.querySelectorAll('.cancel-btn');
 
-    // Event listeners pentru butoanele de editare
     editButtons.forEach(btn => {
         btn.addEventListener('click', (e) => {
             const field = e.target.closest('.edit-btn').dataset.field;
@@ -83,7 +79,7 @@ function initializeEditFunctionality() {
         });
     });
 
-    // Event listeners pentru butoanele de salvare
+    //butoane de salvare
     saveButtons.forEach(btn => {
         btn.addEventListener('click', (e) => {
             const field = e.target.closest('.save-btn').dataset.field;
@@ -91,7 +87,6 @@ function initializeEditFunctionality() {
         });
     });
 
-    // Event listeners pentru butoanele de anulare
     cancelButtons.forEach(btn => {
         btn.addEventListener('click', (e) => {
             const field = e.target.closest('.cancel-btn').dataset.field;
@@ -99,7 +94,6 @@ function initializeEditFunctionality() {
         });
     });
 
-    // Suport pentru Enter și Escape în câmpurile de editare
     document.addEventListener('keydown', (e) => {
         if (e.target.closest('.edit-inputs')) {
             const editContainer = e.target.closest('.info-edit');
@@ -120,11 +114,9 @@ function startEdit(field) {
     const displayRow = document.querySelector(`[data-field="${field}"]`).closest('.info-item-inline').querySelector('.info-row');
     const editRow = document.getElementById(`edit-${field}`);
 
-    // Ascunde rândul de afișare și arată rândul de editare
     displayRow.style.display = 'none';
     editRow.style.display = 'flex';
 
-    // Populează câmpurile de input cu valorile curente
     if (field === 'fullname') {
         document.getElementById('user-firstname').value = userData.firstName || '';
         document.getElementById('user-lastname').value = userData.lastName || '';
@@ -226,7 +218,6 @@ async function saveEdit(field) {
                 sessionStorage.setItem('userData', JSON.stringify(userData));
             }
 
-            // Actualizează afișarea
             populateUserData();
             showCustomAlert('Datele au fost actualizate cu succes!', 3000);
         }
@@ -253,7 +244,6 @@ function isValidEmail(email) {
     return emailRegex.test(email);
 }
 
-// Corectare: Afișează link admin doar pentru admini (roleID == 2)
 const adminLink = document.getElementById('admin-link');
 if (adminLink) {
     if (userData && userData.roleID == 2) {

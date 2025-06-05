@@ -1,14 +1,11 @@
-document.getElementById("currentYear").textContent = new Date().getFullYear();
 
 document.addEventListener("DOMContentLoaded", function () {
-    // Get current year for footer
     document.getElementById("currentYear").innerText = new Date().getFullYear();
 
-    // Hide admin and user account links by default
+    // hide admin and user account links by default
     document.getElementById("user-account").style.display = "none";
     document.getElementById("admin-link").style.display = "none";
 
-    // Function to render authentication buttons
     function renderAuthButtons() {
         const authLinks = document.querySelector(".auth-links");
         if (authLinks) {
@@ -19,7 +16,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // Function to render logout button
     function renderLogoutButton() {
         const authLinks = document.querySelector(".auth-links");
         if (authLinks) {
@@ -27,7 +23,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 <a href="#" id="logoutButton" class="btn btn-secondary">Deconectare</a>
             `;
 
-            // Add logout functionality
             document.getElementById("logoutButton").addEventListener("click", function (e) {
                 e.preventDefault();
                 localStorage.removeItem("userData");
@@ -43,7 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // Check if user is already logged in
+    // check if user is already logged in
     function checkLoggedInUser() {
         const userData = JSON.parse(
             localStorage.getItem("userData") ||
@@ -52,7 +47,6 @@ document.addEventListener("DOMContentLoaded", function () {
         );
 
         if (userData) {
-            // Update UI for logged in user
             document.getElementById("user-account").style.display = "block";
 
             if (userData.roleID == 2) {
@@ -61,16 +55,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
             renderLogoutButton();
         } else {
-            // User not logged in, show auth buttons
             renderAuthButtons();
         }
     }
 
-    // Initialize the UI
     checkLoggedInUser();
 });
 
-// Mobile menu toggle
 const menuToggle = document.getElementById("menuToggle");
 const mainNav = document.querySelector(".main-nav");
 
@@ -81,14 +72,7 @@ if (menuToggle) {
 }
 
 document.addEventListener("DOMContentLoaded", async function () {
-    // Get current year for footer
-    document.getElementById("currentYear").innerText = new Date().getFullYear();
 
-    // Hide admin and user account links by default
-    document.getElementById("user-account").style.display = "none";
-    document.getElementById("admin-link").style.display = "none";
-
-    // Function to render authentication buttons
     function renderAuthButtons() {
         const authLinks = document.querySelector(".auth-links");
         if (authLinks) {
@@ -99,7 +83,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
     }
 
-    // Function to render logout button
+    //render logout button
     function renderLogoutButton() {
         const authLinks = document.querySelector(".auth-links");
         if (authLinks) {
@@ -107,7 +91,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 <a href="#" id="logoutButton" class="btn btn-secondary">Deconectare</a>
             `;
 
-            // Add logout functionality
+            // logout functionality
             document.getElementById("logoutButton").addEventListener("click", function (e) {
                 e.preventDefault();
                 localStorage.removeItem("userData");
@@ -123,7 +107,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
     }
 
-    // Check if user is already logged in
+    // check if user is already logged in
     function checkLoggedInUser() {
         const storedUserData = JSON.parse(
             localStorage.getItem("userData") ||
@@ -132,7 +116,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         );
 
         if (storedUserData) {
-            // Update UI for logged in user
             document.getElementById("user-account").style.display = "block";
 
             if (storedUserData.roleID == 2) {
@@ -141,15 +124,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 
             renderLogoutButton();
         } else {
-            // User not logged in, show auth buttons
             renderAuthButtons();
         }
     }
 
-    // Initialize auth UI first
     checkLoggedInUser();
 
-    // Initialize the main app
     await initializeApp();
 });
 
@@ -171,7 +151,6 @@ function disableBodyScroll() {
     document.body.style.overflow = 'hidden';
 }
 
-// Actualizează butoanele login/logout din header
 function updateAuthLinks() {
     const userData = JSON.parse(localStorage.getItem('userData') || sessionStorage.getItem('userData') || null);
     const authLinks = document.querySelector('.auth-links');

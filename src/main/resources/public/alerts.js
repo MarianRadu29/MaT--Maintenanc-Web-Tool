@@ -1,4 +1,4 @@
-// === Custom Alert Element ===
+//alerte
 const customAlert = document.createElement('div');
 customAlert.id = 'customAlert';
 customAlert.style.cssText = `
@@ -31,7 +31,6 @@ function showCustomAlert(message, duration = 3000) {
     }, duration);
 }
 
-// === Custom Confirm Modal ===
 const confirmModal = document.createElement('div');
 confirmModal.id = 'confirmModal';
 confirmModal.style.cssText = `

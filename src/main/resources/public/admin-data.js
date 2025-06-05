@@ -1,42 +1,7 @@
-// Implementare showCustomAlert cu stiluri aplicate direct prin JavaScript
-function showCustomAlert(message, duration = 3000) {
-    const alertDiv = document.createElement('div');
-    alertDiv.textContent = message;
-  
-    // Stiluri inline aplicate prin JS
-    Object.assign(alertDiv.style, {
-      position: 'fixed',
-      top: '20px',
-      right: '20px',
-      backgroundColor: 'rgba(0, 0, 0, 0.8)',
-      color: '#fff',
-      padding: '12px 20px',
-      borderRadius: '4px',
-      fontFamily: 'sans-serif',
-      fontSize: '14px',
-      zIndex: '10000',
-      opacity: '0',
-      transition: 'opacity 0.3s ease'
-    });
-  
-    document.body.appendChild(alertDiv);
-  
-    // Forțăm reflow pentru a declanșa tranziția
-    window.getComputedStyle(alertDiv).opacity;
-    alertDiv.style.opacity = '1';
-  
-    setTimeout(() => {
-      alertDiv.style.opacity = '0';
-      alertDiv.addEventListener('transitionend', () => {
-        alertDiv.remove();
-      });
-    }, duration);
-  }
-  
+
   document.addEventListener('DOMContentLoaded', function () {
    
-  
-    // Referințe DOM
+
     const fileInput       = document.getElementById('csvImport');
     const importCsvButtons = document.querySelectorAll('button[data-import="csv"]');
     const exportButtons    = document.querySelectorAll('button[data-export]');
@@ -118,14 +83,13 @@ function showCustomAlert(message, duration = 3000) {
     
                 switch (status) {
                   case 200: {
-                    // astept un JSON de forma FileUploadData { fileName, contentType, content (base64) }
                     
                     const { fileName, contentType, content } = res;
                     if (!fileName || !contentType || !content) {
                       throw new Error('Date incomplete primite de la server.');
                     }
-    
-                    // 2) decodific Base64 -> Uint8Array
+
+                    // decodific Base64 -> Uint8Array
                     const byteString = atob(content);
                     const len        = byteString.length;
                     const bytes     = new Uint8Array(len);
@@ -133,7 +97,7 @@ function showCustomAlert(message, duration = 3000) {
                       bytes[i] = byteString.charCodeAt(i);
                     }
     
-                    // 3) creez Blob si declansez descarcarea
+                    // creez Blob si declansez descarcarea
                     const blob = new Blob([bytes], { type: contentType });
                     const url  = URL.createObjectURL(blob);
                     const a    = document.createElement('a');
@@ -148,7 +112,6 @@ function showCustomAlert(message, duration = 3000) {
                     return;
                   }
                   case 401:
-                    ////////////////!!!!!!!!!!!!!!
                     showCustomAlert('401 Unauthorized: Trebuie sa te autentifici.', 4000);
                     return;
                   case 403:

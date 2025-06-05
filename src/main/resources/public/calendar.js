@@ -1,8 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
-  // Get current year for footer
   document.getElementById("currentYear").innerText = new Date().getFullYear();
 
-  // Initialize UI elements
   const userAccount = document.getElementById("user-account");
   const adminLink = document.getElementById("admin-link");
   const authLinks = document.querySelector(".auth-links");
@@ -10,7 +8,6 @@ document.addEventListener("DOMContentLoaded", function () {
   if (userAccount) userAccount.style.display = "none";
   if (adminLink) adminLink.style.display = "none";
 
-  // Adaugă butoanele de autentificare inițiale
   if (authLinks) {
     authLinks.innerHTML = `
       <a class="btn btn-primary" href="login.html">Conectare</a>
@@ -66,14 +63,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const daysInPrevMonth = new Date(year, month, 0).getDate();
 
-    // Previous month days
     for (let i = firstDayOfWeek - 1; i >= 0; i--) {
       const day = daysInPrevMonth - i;
       const dayElement = createDayElement(day, true, year, month);
       calendarDays.appendChild(dayElement);
     }
 
-    // Current month days
     for (let day = 1; day <= daysInMonth; day++) {
       const dateObj = new Date(year, month, day);
       const isToday =
@@ -114,7 +109,6 @@ document.addEventListener("DOMContentLoaded", function () {
       calendarDays.appendChild(dayElement);
     }
 
-    // Next month days
     const totalCells = 42;
     const remainingCells = totalCells - (firstDayOfWeek + daysInMonth);
     for (let day = 1; day <= remainingCells; day++) {
@@ -254,7 +248,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   }
 
-  // Mobile menu toggle functionality
+  //  menu toggle functionality
   const menuToggle = document.getElementById("menuToggle");
   const mainNav = document.querySelector(".main-nav");
 
@@ -264,7 +258,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // *** User authentication check and UI update ***
   function checkLoggedInUser() {
     const userData = JSON.parse(
         localStorage.getItem("userData") ||
@@ -299,6 +292,5 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // Initialize user authentication state on page load
   checkLoggedInUser();
 });

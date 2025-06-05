@@ -1,4 +1,4 @@
-/* Base styles */
+/* variabile culori */
 :root {
     --primary-color: #3B82F6;
     --primary-hover: #2563EB;
@@ -90,7 +90,6 @@ ul {
     background-color: var(--light-bg);
 }
 
-/* Header */
 .header {
     background-color: white;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -149,7 +148,6 @@ ul {
     gap: 0.5rem;
 }
 
-/* Responsive Navbar */
 .menu-toggle {
     display: none;
     font-size: 1.75rem;
@@ -211,7 +209,6 @@ ul {
     }
 }
 
-/* Card styles */
 .card {
     background-color: var(--card-bg);
     border-radius: var(--radius);
@@ -226,7 +223,6 @@ ul {
     color: var(--dark-text);
 }
 
-/* Form styles */
 .form-group {
     margin-bottom: 1.25rem;
 }
@@ -256,7 +252,6 @@ input, textarea, select {
     flex: 1;
 }
 
-/* Select styling */
 select {
     padding-right: 2.5rem;
     background-color: white;
@@ -279,7 +274,6 @@ select:hover {
     border-color: var(--primary-hover);
 }
 
-/* Authentication section */
 .auth-section {
     min-height: calc(100vh - 300px);
     display: flex;
@@ -289,7 +283,6 @@ select:hover {
     animation: fadeIn 0.5s ease-out;
 }
 
-/* Profile specific styles */
 .profile-card {
     background-color: var(--card-bg);
     border-radius: var(--radius);
@@ -328,7 +321,6 @@ select:hover {
     color: var(--primary-hover);
 }
 
-/* Profile inline editing styles */
 .profile-info {
     display: flex;
     flex-direction: column;
@@ -527,7 +519,6 @@ select:hover {
     transition: background-color 0.2s ease;
 }
 
-/* Badge styles */
 .badge {
     display: inline-flex;
     align-items: center;
@@ -580,7 +571,6 @@ select:hover {
     border-color: rgba(139, 92, 246, 0.3);
 }
 
-/* Appointments filters styling */
 .appointments-filters {
     margin-bottom: 1.5rem;
 }
@@ -609,7 +599,6 @@ select:hover {
     background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
 }
 
-/* Action buttons in table */
 .action-btn {
     background: none;
     border: none;
@@ -629,7 +618,6 @@ select:hover {
     background-color: rgba(59, 130, 246, 0.1);
 }
 
-/* Empty state */
 .empty-state {
     text-align: center;
     margin-top: 1rem;
@@ -649,7 +637,6 @@ select:hover {
     margin-bottom: 1rem;
 }
 
-/* Footer */
 .footer {
     background-color: var(--dark-text);
     color: #F3F4F6;
@@ -703,7 +690,6 @@ select:hover {
     background-color: rgba(239, 68, 68, 0.1);
 }
 
-/* Animation */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -715,7 +701,6 @@ select:hover {
     }
 }
 
-/* Responsive design */
 @media (max-width: 1024px) {
     .table-responsive {
         display: block;
@@ -771,7 +756,6 @@ select:hover {
     }
 }
 
-/* Modal Styles */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -832,7 +816,7 @@ select:hover {
 }
 .detail-item {
     display: flex;
-    align-items: center; /* Schimbat din flex-start în center */
+    align-items: center;
     gap: 0.5rem;
     padding: 0.75rem;
     border-radius: 8px;
@@ -881,7 +865,7 @@ select:hover {
     padding: 0.75rem 1.5rem;
     font-weight: 500;
 }
-/* Responsive Design */
+
 @media (max-width: 640px) {
     .modal-content {
         margin: 1rem;
@@ -897,7 +881,7 @@ select:hover {
     .detail-item {
         flex-direction: column;
         gap: 0.5rem;
-        align-items: flex-start; /* Pentru mobile, păstrăm alinierea la început */
+        align-items: flex-start;
     }
 
     .detail-item i {
@@ -960,7 +944,6 @@ select:hover {
     color: white;
 }
 
-/* Stiluri pentru secțiunea de detalii aprobate */
 .approved-details {
     margin-top: 20px;
     padding: 20px;
@@ -981,12 +964,10 @@ select:hover {
     color: #28a745;
 }
 
-/* Adăugăm spațiere între elementele din detalii aprobate */
 .approved-details .detail-item {
     margin-bottom: 15px;
 }
 
-/* Stiluri pentru lista de echipamente */
 .equipment-section {
     margin-top: 15px;
 }
@@ -1032,7 +1013,6 @@ select:hover {
     font-size: 1rem;
 }
 
-/* Stiluri pentru costul total */
 .total-cost {
     margin-top: 20px;
 }
@@ -1052,13 +1032,11 @@ select:hover {
     color: var(--dark-text);
 }
 
-/* Îmbunătățiri pentru modalul mai mare */
 .modal-content {
     max-height: 90vh;
     overflow-y: auto;
 }
 
-/* Responsive pentru dispozitive mobile */
 @media (max-width: 768px) {
     .equipment-item {
         flex-direction: column;
@@ -1077,7 +1055,7 @@ select:hover {
     }
 }
 
-/* Stiluri pentru filtrele din tabul "Programările Mele" */
+
 .appointments-filters {
     margin-bottom: 1.5rem;
 }
@@ -1094,7 +1072,6 @@ select:hover {
     min-width: 200px;
 }
 
-/* Responsive pentru mobile - filtre */
 @media (max-width: 1024px) {
     .appointments-filters .form-row {
         flex-direction: column;
@@ -1121,7 +1098,6 @@ select:hover {
     }
 }
 
-/* Pentru ecrane foarte mici */
 @media (max-width: 480px) {
     .appointments-filters {
         padding: 0 0.5rem;

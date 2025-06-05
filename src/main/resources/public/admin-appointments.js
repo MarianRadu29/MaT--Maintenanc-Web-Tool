@@ -11,10 +11,9 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Variable to store appointments data
     let appointments = [];
 
-    // Load appointments
+    // load appointments
     fetch("/api/appointments",
     {
         headers: {
@@ -28,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             return response.json();
         }).then(data => {
-        appointments = data; // Store the data
+        appointments = data;
         loadAppointments(data);
     })
         .catch(error => {
@@ -41,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Add filters for appointments
+    //filters
     const searchAppointments = document.getElementById('searchAppointments');
     const statusFilterAppointments = document.getElementById('statusFilterAppointments');
     const vehicleFilterAppointments = document.getElementById('vehicleFilterAppointments');
@@ -69,7 +68,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // Add event listeners for appointment management
     const approveButton = document.getElementById('approveAppointment');
     const rejectButton = document.getElementById('rejectAppointment');
     const cancelButton = document.getElementById('cancelAppointment');
@@ -134,7 +132,6 @@ document.addEventListener('DOMContentLoaded', function () {
                                 });
 
                             case 400:
-                                // 400 Bad Request → corpul conține, probabil, detalii despre eroare
                                 return res.json()
                                     .then(errorBody => {
                                         console.error("Bad Request (400):", errorBody);
@@ -144,7 +141,6 @@ document.addEventListener('DOMContentLoaded', function () {
                                     });
 
                             case 404:
-                                // 404 Not Found → res text, nu JSON (de obicei)
                                 return res.text().then(textBody => {
                                     console.error("Not Found (404):", textBody);
                                 });
@@ -155,7 +151,6 @@ document.addEventListener('DOMContentLoaded', function () {
                                 });
 
                             default:
-                                // Orice alt cod de status
                                 return res.text().then(textBody => {
                                     console.error(`Eroare neașteptată (${res.status}):`, textBody);
                                 });
@@ -212,7 +207,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
                             case 400:
-                                // 400 Bad Request → corpul conține, probabil, detalii despre eroare
                                 return res.json()
                                     .then(errorBody => {
                                         console.error("Bad Request (400):", errorBody);
@@ -222,7 +216,6 @@ document.addEventListener('DOMContentLoaded', function () {
                                     });
 
                             case 404:
-                                // 404 Not Found → res text, nu JSON (de obicei)
                                 return res.text().then(textBody => {
                                     console.error("Not Found (404):", textBody);
                                 });
@@ -233,7 +226,6 @@ document.addEventListener('DOMContentLoaded', function () {
                                 });
 
                             default:
-                                // Orice alt cod de status
                                 return res.text().then(textBody => {
                                     console.error(`Eroare neașteptată (${res.status}):`, textBody);
                                 });
@@ -250,7 +242,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     appointments[index].status = 'rejected';
                     appointments[index].adminMessage = responseMessage;
 
-                    // Actualizează și obiectul currentAppointment
                     currentAppointment.status = 'rejected';
                     currentAppointment.adminMessage = responseMessage;
 
@@ -406,7 +397,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 `;
 
 
-                    // Controlează vizibilitatea secțiunii de selecție produse
                     const inventorySelectionTitle = document.getElementById('inventorySelectionTitle');
                     const inventorySearchBox = document.querySelector('.inventory-search-box');
                     const inventoryResults = document.getElementById('inventoryResults');
@@ -419,7 +409,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         if (inventoryResults) inventoryResults.style.display = 'none';
                         if (selectedItemsSection) selectedItemsSection.textContent = 'Produse folosite în această programare:';
 
-                        // Încărcăm produsele folosite în selectedInventoryItems pentru afișare
                         selectedInventoryItems = [];
                         if (app.inventoryPieces && app.inventoryPieces.length > 0) {
                             app.inventoryPieces.forEach(usedItem => {
@@ -432,16 +421,13 @@ document.addEventListener('DOMContentLoaded', function () {
                                 }
                             });
                         }
-                        // Actualizăm afișarea cu produsele folosite
                         updateSelectedItemsDisplay();
                     } else {
-                        // Afișează toate elementele pentru programările în așteptare
                         if (inventorySelectionTitle) inventorySelectionTitle.style.display = 'block';
                         if (inventorySearchBox) inventorySearchBox.style.display = 'block';
                         if (inventoryResults) inventoryResults.style.display = 'block';
                         if (selectedItemsSection) selectedItemsSection.textContent = 'Produse Selectate:';
 
-                        // Resetăm selecția pentru programările noi
                         selectedInventoryItems = [];
                         updateSelectedItemsDisplay();
                     }
@@ -541,7 +527,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function openEditTimeModal(appointment) {
 
-    // Creează modalul dacă nu există
     let editModal = document.getElementById('editTimeModal');
     if (!editModal) {
         editModal = document.createElement('div');
@@ -598,19 +583,16 @@ function openEditTimeModal(appointment) {
         `;
         document.body.appendChild(editModal);
 
-        // Adaugă event listeners pentru închiderea modalului
         document.getElementById('closeEditTimeModal').addEventListener('click', function() {
             editModal.style.display = 'none';
         });
 
-        // Închide modalul când se dă click în afara lui
         window.addEventListener('click', function(event) {
             if (event.target === editModal) {
                 editModal.style.display = 'none';
             }
         });
 
-        // Form submit handler
         document.getElementById('editTimeForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -669,21 +651,18 @@ function openEditTimeModal(appointment) {
         });
     }
 
-    // FIX: Convertește valorile la string și asigură-te că sunt setate corect
     const startTimeValue = String(appointment.startTime);
     const endTimeValue = String(appointment.endTime);
 
     console.log('Setting start time to:', startTimeValue);
     console.log('Setting end time to:', endTimeValue);
 
-    // Setează valorile curente în select-uri
+    // setez valorile curente in select-uri
     const startTimeSelect = document.getElementById('editStartTime');
     const endTimeSelect = document.getElementById('editEndTime');
 
-    // Verifică dacă valorile există în opțiuni înainte de a le seta
     if (startTimeSelect) {
         startTimeSelect.value = startTimeValue;
-        // Verifică dacă valoarea a fost setată corect
         if (startTimeSelect.value !== startTimeValue) {
             console.warn(`Start time ${startTimeValue} not found in options`);
         }
@@ -691,12 +670,10 @@ function openEditTimeModal(appointment) {
 
     if (endTimeSelect) {
         endTimeSelect.value = endTimeValue;
-        // Verifică dacă valoarea a fost setată corect
         if (endTimeSelect.value !== endTimeValue) {
             console.warn(`End time ${endTimeValue} not found in options`);
         }
     }
-
-    // Afișează modalul
+    
     editModal.style.display = 'block';
 }

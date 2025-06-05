@@ -75,7 +75,7 @@ function showResetForm(token) {
   });
 }
 
-// validează tokenul printr-un request GET
+// valideaza tokenul printr-un GET
 async function verifyToken(token) {
   try {
     const response = await fetch(`/api/validate-reset-token?token=${encodeURIComponent(token)}`);

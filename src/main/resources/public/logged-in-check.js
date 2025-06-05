@@ -5,7 +5,6 @@ function checkLoggedInUser() {
         null
     );
     if (userData) {
-        // Update UI for logged in user
         const authLinks = document.querySelector(".auth-links");
         const adminLink = document.getElementById("admin-link");
         if (authLinks && adminLink) {
@@ -17,7 +16,7 @@ function checkLoggedInUser() {
             if (userData.roleID == 2) {
                 adminLink.style.display = "block";
             }
-            // Add logout functionality
+            // logout functionality
             document
                 .getElementById("logoutButton")
                 .addEventListener("click", function (e) {
@@ -36,5 +35,4 @@ function checkLoggedInUser() {
     }
 }
 
-// Call this on page load
 checkLoggedInUser();

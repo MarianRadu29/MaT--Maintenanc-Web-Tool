@@ -25,9 +25,9 @@ async function loadAppointments() {
     renderAppointments();
 }
 
-// Initialize appointment filters
+// filters
 function initializeAppointmentFilters() {
-    // Evenimente filtre input
+    // event filtre input
     document.getElementById("searchAppointments").addEventListener("input", e => {
         renderAppointments({
             search: e.target.value,
@@ -53,9 +53,9 @@ function initializeAppointmentFilters() {
     });
 }
 
-// Initialize appointment events
+// events pt programari
 function initializeAppointmentEvents() {
-    // Event listener pentru butoanele "Vezi"
+    // event listener pentru butoanele "Vezi"
     document.addEventListener("click", (e) => {
         if (e.target.classList.contains("view-details")) {
             const appointmentId = e.target.getAttribute("data-id");
@@ -67,7 +67,7 @@ function initializeAppointmentEvents() {
     });
 }
 
-// Render tabel programari
+// render tabel programari
 function renderAppointments(filter = {}) {
     const tbody = document.getElementById("appointmentsTableBody");
     const emptyState = document.getElementById("emptyAppointments");
@@ -129,7 +129,7 @@ function renderAppointments(filter = {}) {
     }
 }
 
-// Funcții de traducere
+//traducere
 function translateVehicleType(type) {
     const translations = {
         "motorcycle": "Motocicletă",
@@ -151,31 +151,26 @@ function translateStatus(status) {
     return translations[status] || capitalize(status);
 }
 
-// Capitalize helper
+// capitalize helper
 function capitalize(str) {
     if (!str) return "";
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-// Funcții pentru gestionarea scroll-ului
-
-
 function enableBodyScroll() {
     document.body.style.overflow = '';
 }
 
-// Funcție pentru afișarea modal
 function showAppointmentModal(appointment) {
-    // Verifică dacă modalul există deja, dacă da îl șterge
+    // daca modalil este deja il sterge
     const existingModal = document.getElementById('appointmentModal');
     if (existingModal) {
         existingModal.remove();
     }
 
-    // Blochează scroll-ul pe body
+    // blocheaza scroll ul cand esrti in modal
     disableBodyScroll();
 
-    // Formatare dată pentru modal
     let dateTimeDisplay = '';
     let timeDisplay = '';
 
@@ -190,18 +185,17 @@ function showAppointmentModal(appointment) {
         timeDisplay = timePart;
     }
 
-    // Verifică statusul programării
+    // status programare
     const isModified = appointment.status === 'modified';
     const isPending = appointment.status === 'pending';
     const isApproved = appointment.status === 'approved';
     const isCompleted = appointment.status === 'completed';
-    // Permite anularea pentru pending și approved
     const canCancel = isPending || isApproved;
 
     console.log('Appointment status:', appointment.status);
     console.log('Can cancel:', canCancel);
 
-    // Creează modalul
+    //modal
     const modal = document.createElement('div');
     modal.id = 'appointmentModal';
     modal.className = 'modal-overlay';
@@ -209,7 +203,6 @@ function showAppointmentModal(appointment) {
     const modalContent = document.createElement('div');
     modalContent.className = 'modal-content';
 
-    // Calculează prețul total pentru echipamente (dacă există)
     let totalEquipmentPrice = 0;
     let equipmentListHTML = '';
 
@@ -369,26 +362,24 @@ function showAppointmentModal(appointment) {
     modal.appendChild(modalContent);
     document.body.appendChild(modal);
 
-    // Funcție pentru închiderea modalului
     function closeModal() {
         modal.remove();
         enableBodyScroll();
     }
 
-    // Event listeners pentru închiderea modalului
+    // event listeners pentru inchiderea modalului
     const closeButtons = modal.querySelectorAll('.modal-close');
     closeButtons.forEach(btn => {
         btn.addEventListener('click', closeModal);
     });
 
-    // Închide modalul când se dă click pe overlay
     modal.addEventListener('click', (e) => {
         if (e.target === modal) {
             closeModal();
         }
     });
 
-    // Închide modalul cu tasta Escape
+    // inchide cu escape
     const handleEscape = (e) => {
         if (e.key === 'Escape') {
             closeModal();
@@ -397,7 +388,6 @@ function showAppointmentModal(appointment) {
     };
     document.addEventListener('keydown', handleEscape);
 
-    // Event listeners pentru butoanele de acceptare/respingere modificări
     if (isModified) {
         const acceptBtn = modal.querySelector('.accept-modification');
         const rejectBtn = modal.querySelector('.reject-modification');
@@ -451,12 +441,10 @@ function showAppointmentModal(appointment) {
         }
     }
 
-    // Event listener pentru butonul de anulare
     if (canCancel) {
         const cancelBtn = modal.querySelector('.cancel-appointment');
         if (cancelBtn) {
             cancelBtn.addEventListener('click', async () => {
-                // Confirmă anularea
                 if (confirm('Sunteți sigur că doriți să anulați această programare?')) {
                     try {
                         await fetch("api/appointment/update", {
@@ -472,7 +460,6 @@ function showAppointmentModal(appointment) {
                             })
                         });
                         closeModal();
-                        // Reîncarcă programările pentru a reflecta schimbarea
                         loadAppointments();
                     } catch (error) {
                         console.error('Eroare la anularea programării:', error);
@@ -498,17 +485,15 @@ async function deleteAppointment(appointmentId) {
             throw new Error(`HTTP status ${response.status}`);
         }
 
-        // Elimină programarea din array-ul local
         appointments = appointments.filter(a => a.id != appointmentId);
 
-        // Re-renderează tabelul
         renderAppointments({
             search: document.getElementById("searchAppointments").value,
             vehicleType: document.getElementById("vehicleTypeFilter").value,
             status: document.getElementById("statusFilter").value
         });
 
-        // Afișează mesaj de succes (opțional)
+        //mesaj de succes
         showSuccessMessage("Programarea a fost ștearsă cu succes!");
 
     } catch (error) {
@@ -518,13 +503,11 @@ async function deleteAppointment(appointmentId) {
 }
 
 function showSuccessMessage(message) {
-    // Poți implementa un toast notification sau alt sistem de mesaje
-    showCustomAlert(message,3000); // Soluție temporară
+    showCustomAlert(message,3000);
 }
 
 function showErrorMessage(message) {
-    // Poți implementa un toast notification sau alt sistem de mesaje
-    showCustomAlert(message,3000); // Soluție temporară
+    showCustomAlert(message,3000);
 }
 
 loadAppointments();
