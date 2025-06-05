@@ -1,3 +1,8 @@
+const userData = localStorage.getItem('userData') || sessionStorage.getItem('userData') || null;
+if(!userData){
+    window.location.href = "/login.html";
+}
+
 function checkLoggedInUser() {
     const userData = JSON.parse(
         localStorage.getItem("userData") ||
