@@ -10,6 +10,14 @@ public class Main {
     public static void main(String[] args) throws Exception {
         HttpServer server = HttpServer.create(new InetSocketAddress(8001), 0);
 
+        setupRoutes(server);
+
+        server.start();
+        System.out.println("Server running on http://localhost:8001");
+    }
+
+    public static void setupRoutes(HttpServer server) {
+
         server.createContext("/api/register", new AuthController.Register());
         server.createContext("/api/login", new AuthController.Login());
         server.createContext("/api/user", new UserController.GetUserInfo());
@@ -29,14 +37,14 @@ public class Main {
         server.createContext("/api/inventory/add", new InventoryController.AddItem());
         server.createContext("/api/inventory/delete/", new InventoryController.DeleteItem());
         server.createContext("/api/inventory/update/", new InventoryController.UpdateItem());
-
         server.createContext("/", new StaticFileHandler("src/main/resources/public"));
 
-        server.setExecutor(null);
-        server.start();
-        System.out.println("Server running on http://localhost:8001");
+
+        // Adaugă alte rute aici
     }
 }
+
+
 
 // www.autocenteriasi.ro/ MODEL de front pt proiect
 // `dotenv` pentru a nu mai avea hardcodate datele de conectare la baza de date sau alte date sensibile

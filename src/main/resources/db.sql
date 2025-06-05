@@ -317,3 +317,66 @@ CREATE TRIGGER trg_appointments_no_overlap
     BEFORE INSERT OR UPDATE ON appointments
     FOR EACH ROW
 EXECUTE FUNCTION trg_check_appointment_overlap();
+
+
+CREATE OR REPLACE FUNCTION trg_inventory_merge_if_exists()
+    RETURNS TRIGGER AS $$
+DECLARE
+    existing_id     INTEGER;
+    existing_qty    INTEGER;
+    existing_price  REAL;
+BEGIN
+    SELECT id, quantity, price
+    INTO existing_id, existing_qty, existing_price
+    FROM inventory
+    WHERE name = NEW.name
+      AND supplier = NEW.supplier
+      AND status <> 'deleted'
+    LIMIT 1;
+
+    IF FOUND THEN
+        UPDATE inventory
+        SET quantity = existing_qty + NEW.quantity,
+            price    = GREATEST(existing_price, NEW.price)
+        WHERE id = existing_id;
+
+        RETURN NULL;
+    END IF;
+
+    RETURN NEW;
+END;
+$$
+    LANGUAGE plpgsql;
+
+
+CREATE TRIGGER trg_inventory_merge_if_exists
+    BEFORE INSERT ON inventory
+    FOR EACH ROW
+EXECUTE FUNCTION trg_inventory_merge_if_exists();
+
+
+CREATE OR REPLACE FUNCTION trg_inventory_set_status()
+    RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.quantity IS NULL THEN
+        RETURN NEW;
+    END IF;
+
+    IF NEW.quantity = 0 THEN
+        NEW.status := 'out-of-stock';
+    ELSIF NEW.quantity < 5 THEN
+        NEW.status := 'low-stock';
+    ELSE
+        NEW.status := 'in-stock';
+    END IF;
+
+    RETURN NEW;
+END;
+$$
+    LANGUAGE plpgsql;
+
+
+CREATE TRIGGER trg_inventory_set_status
+    BEFORE INSERT OR UPDATE ON inventory
+    FOR EACH ROW
+EXECUTE FUNCTION trg_inventory_set_status();
