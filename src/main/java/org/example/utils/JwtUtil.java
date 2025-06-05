@@ -1,5 +1,6 @@
 package org.example.utils;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -10,8 +11,11 @@ import java.util.Date;
 import java.util.Map;
 
 public class JwtUtil {
-    private static final String SECRET_KEY = "my_super_secret_key_for_jwt_signing_change_me!";
-
+    private static final String SECRET_KEY;
+    static{
+        Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
+        SECRET_KEY = dotenv.get("JWT_KEY");
+    }
     public static String generateToken(int userId, String email, int expiresInMinutes) {
         long now = System.currentTimeMillis();
         long expiry = now + expiresInMinutes * 60L * 1000;

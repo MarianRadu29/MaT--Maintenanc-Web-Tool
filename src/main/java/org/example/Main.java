@@ -25,7 +25,6 @@ public class Main {
         server.createContext("/api/forgot-password",new AuthController.ForgotPassword());
         server.createContext("/api/validate-reset-token",new AuthController.ValidateTokenResetPassword());
         server.createContext("/api/reset-password",new AuthController.ResetPassword());
-        server.createContext("/api/refresh", new RefreshController.RefreshToken());
         server.createContext("/api/appointments", new AppointmentController.GetAppointments());
         server.createContext("/api/appointments/self", new AppointmentController.GetAppointmentsSelf());
         server.createContext("/api/appointments/day/", new AppointmentController.GetDayAppointments());
@@ -37,6 +36,8 @@ public class Main {
         server.createContext("/api/inventory/add", new InventoryController.AddItem());
         server.createContext("/api/inventory/delete/", new InventoryController.DeleteItem());
         server.createContext("/api/inventory/update/", new InventoryController.UpdateItem());
+        server.createContext("/api/import", new InventoryController.ImportInventory());
+        server.createContext("/api/export", new InventoryController.ExportInventory());
         server.createContext("/", new StaticFileHandler("src/main/resources/public"));
 
 

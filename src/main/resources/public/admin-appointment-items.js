@@ -274,9 +274,11 @@ function removeSelectedItem(index) {
 
 
 function calculateTotalPrice() {
-    totalPrice = currentAppointment.orderItems.reduce((sum, item) => sum + item.selectedQuantity * item.price, 0);
-    const totalPriceElement = document.getElementById('totalPrice');
-    if (totalPriceElement) totalPriceElement.textContent = totalPrice.toFixed(2);
+    if(currentAppointment?.orderItems){
+        totalPrice = currentAppointment.orderItems.reduce((sum, item) => sum + item.selectedQuantity * item.price, 0);
+        const totalPriceElement = document.getElementById('totalPrice');
+        if (totalPriceElement) totalPriceElement.textContent = totalPrice.toFixed(2);
+    }
 }
 
 function resetInventorySelection() {

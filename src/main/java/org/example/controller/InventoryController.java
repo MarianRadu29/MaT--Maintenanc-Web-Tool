@@ -2,6 +2,9 @@ package org.example.controller;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import org.example.model.InventoryModel;
 import org.example.model.UserModel;
 import org.example.objects.User;
@@ -10,14 +13,13 @@ import org.example.view.JsonView;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.InputStreamReader;
-import java.io.BufferedReader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.sql.SQLException;
-import java.util.Map;
+import java.sql.*;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static org.example.model.InventoryModel.getOrderedInventory;
 
 public class InventoryController {
 
@@ -277,4 +279,176 @@ public class InventoryController {
 
         }
     }
+
+    public static class ImportInventory implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            if (!"POST".equalsIgnoreCase(exchange.getRequestMethod())) {
+                exchange.sendResponseHeaders(405, -1);
+                return;
+            }
+
+            String authHeader = exchange.getRequestHeaders().getFirst("Authorization");
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                JsonView.send(exchange, 401, "{\"message\":\"Missing or invalid token\"}");
+                return;
+            }
+            String token = authHeader.substring(7);
+            Map<String, Object> claims = JwtUtil.validateAndExtractClaims(token);
+            if (claims == null) {
+                JsonView.send(exchange, 401, "{\"message\":\"Invalid or expired token\"}");
+                return;
+            }
+            int userId = (int) claims.get("id");
+            int roleId = UserModel.getUserRoleId(userId);
+            if (roleId == 1) {
+                JsonView.send(exchange, 403, "{\"message\":\"Forbidden\"}");
+                return;
+            }
+
+            // 3) Citim corpul request-ului ca text in UTF-8
+            StringBuilder sbBody = new StringBuilder();
+            try (BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(exchange.getRequestBody(), StandardCharsets.UTF_8))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    sbBody.append(line).append("\n");
+                }
+            }
+            String body = sbBody.toString();
+
+            // parsare CSV
+            List<Map<String, String>> rows = new ArrayList<>();
+            try (
+                    Reader stringReader = new StringReader( new JSONObject(body).getString("content"));
+                    CSVParser csvParser = new CSVParser(stringReader, CSVFormat.DEFAULT
+                            .withFirstRecordAsHeader()
+                            .withIgnoreSurroundingSpaces()
+                            .withTrim())
+            ) {
+                List<String> expectedHeaders = Arrays.asList(
+                        "name", "categoryId", "quantity", "price", "supplier", "status"
+                );
+                List<String> actualHeaders = csvParser.getHeaderNames();
+
+
+                List<String> missing = new ArrayList<>();
+                for (String h : expectedHeaders) {
+                    if (!actualHeaders.contains(h)) {
+                        missing.add(h);
+                    }
+                }
+                if (!missing.isEmpty()) {
+                    throw new IOException("Lipsec coloana/coloanele: " + String.join(", ", missing));
+                }
+                // Construim lista rows
+                for (CSVRecord record : csvParser) {
+                    Map<String, String> row = new HashMap<>();
+                    for (String header : expectedHeaders) {
+                        row.put(header, record.get(header));
+                    }
+                    rows.add(row);
+                }
+            } catch (Exception e) {
+                JsonView.send(exchange, 400,
+                        new JSONObject().put("message", "Invalid CSV format " + e.getMessage()).toString());
+                return;
+            }
+
+            int importedCount;
+            try {
+                importedCount = InventoryModel.importCsvRows(rows);
+            } catch (SQLException | NumberFormatException e) {
+                e.printStackTrace();
+                JsonView.send(exchange, 500,
+                        new JSONObject().put("message", "Internal server error").toString());
+                return;
+            }
+
+            JSONObject respJson = new JSONObject();
+            respJson.put("importedCount", importedCount);
+            JsonView.send(exchange, 200, respJson.toString());
+        }
+    }
+
+    public static class ExportInventory implements HttpHandler {
+
+        public void handle(HttpExchange exchange) throws IOException {
+            if (!"GET".equalsIgnoreCase(exchange.getRequestMethod())) {
+                exchange.sendResponseHeaders(405, -1);
+                return;
+            }
+
+            String authHeader = exchange.getRequestHeaders().getFirst("Authorization");
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                JsonView.send(exchange, 401, "{\"message\":\"Missing or invalid token\"}");
+                return;
+            }
+
+            String token = authHeader.substring(7);
+            Map<String, Object> claims = JwtUtil.validateAndExtractClaims(token);
+            if (claims == null) {
+                JsonView.send(exchange, 401, "{\"message\":\"Invalid or expired token\"}");
+                return;
+            }
+
+            int userId = (int) claims.get("id");
+            int roleId = UserModel.getUserRoleId(userId);
+            if (roleId == 1) {
+                JsonView.send(exchange, 403, "{\"message\":\"Forbidden\"}");
+                return;
+            }
+
+            JSONArray list;
+            try {
+                list = getOrderedInventory();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                exchange.sendResponseHeaders(500, -1);
+                return;
+            }
+            if (list.isEmpty()) {
+                JsonView.send(exchange, 404, "{\"message\":\"No orders found\"}");
+                return;
+            }
+
+            StringBuilder sb = new StringBuilder();
+            // Header
+            sb.append("Order ID,Appointment ID,Client Name,Appointment Date,Equipment Total,Grand Total,Service Total\n");
+
+            // Linii
+            for (int i = 0; i < list.length(); i++) {
+                JSONObject order = list.getJSONObject(i);
+                String orderId        = String.valueOf(order.getInt("orderId"));
+                String appointmentId  = String.valueOf(order.getInt("appointmentId"));
+                String clientName     = order.getString("clientName");
+                String appointmentDate = order.getString("appointmentDate");
+                String equipmentTotal = String.valueOf(order.getDouble("equipmentTotal"));
+                String grandTotal     = String.valueOf(order.getDouble("grandTotal"));
+                String serviceTotal   = String.valueOf(order.getDouble("serviceTotal"));
+
+                sb.append(orderId).append(',')
+                        .append(appointmentId).append(',')
+                        .append(clientName).append(',')
+                        .append(appointmentDate).append(',')
+                        .append(equipmentTotal).append(',')
+                        .append(grandTotal).append(',')
+                        .append(serviceTotal).append('\n');
+            }
+
+
+            byte[] csvBytes = sb.toString().getBytes(StandardCharsets.UTF_8);
+            String base64Content = Base64.getEncoder().encodeToString(csvBytes);
+
+            JSONObject respJson = new JSONObject();
+            respJson.put("fieldName", "file");
+            respJson.put("fileName", "export_inventory.csv");
+            respJson.put("contentType", "text/csv");
+            respJson.put("content", base64Content);
+
+            JsonView.send(exchange, 200, respJson.toString());
+        }
+    }
+
+
 }

@@ -1,5 +1,6 @@
 package org.example.utils;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
@@ -8,9 +9,14 @@ import java.util.Properties;
 
 public class EmailSender {
 
-    private static final String fromEmail = "radu.marian.2431.1234@gmail.com";
-    private static final String password = "ewrj uzjp xmcq mvrw";
+    private static final String fromEmail;
+    private static final String password;
 
+    static{
+        Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
+        fromEmail = dotenv.get("EMAIL_FROM");
+        password = dotenv.get("EMAIL_PASSWORD");
+    }
     public static void sendEmail(String toEmail, String subject, String body) {
         Properties props = new Properties();
         props.put("mail.smtp.host", "smtp.gmail.com");

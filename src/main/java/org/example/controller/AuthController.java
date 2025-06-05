@@ -70,9 +70,8 @@ public class AuthController {
 
                 user = UserModel.getUserByEmail(email);
                 String accessToken = JwtUtil.generateToken(user.getId(), email, 60 * 24); // 15 minute
-                String refreshToken = JwtUtil.generateToken(user.getId(), email, 60 * 24 * 7); // 7 zile
 
-                String json = String.format("{\"message\":\"User registered successfully\", \"accessToken\":\"%s\", \"refreshToken\":\"%s\"}", accessToken, refreshToken);
+                String json = String.format("{\"message\":\"User registered successfully\", \"accessToken\":\"%s\"}", accessToken);
                 JsonView.send(exchange, 200, json);
             } else {
                 JsonView.send(exchange, 409, "{\"message\":\"User already exists\"}");
@@ -99,8 +98,7 @@ public class AuthController {
             User user = UserModel.getUserByEmail(email);
             if (user != null && BCrypt.checkPassword(password, user.getPassword())) {
                 String accessToken = JwtUtil.generateToken(user.getId(), email, 60 * 24);
-                String refreshToken = JwtUtil.generateToken(user.getId(), email, 60 * 24 * 7);
-                String json = String.format("{\"message\":\"Login successful\", \"accessToken\":\"%s\", \"refreshToken\":\"%s\"}", accessToken, refreshToken);
+                String json = String.format("{\"message\":\"Login successful\", \"accessToken\":\"%s\"}", accessToken);
                 JsonView.send(exchange, 200, json);
             } else {
                 JsonView.send(exchange, 404, "{\"message\":\"email or password is wrong\"}");
