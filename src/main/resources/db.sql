@@ -10,8 +10,7 @@
 
 -- Creare tabela users
 -- role_id 1 = client
--- role_id 2 = employee
--- role_id 3 = admin
+-- role_id 2 = admin
 CREATE TABLE IF NOT EXISTS users (
                                      id            SERIAL PRIMARY KEY,
                                      first_name    TEXT   NOT NULL,
@@ -37,7 +36,7 @@ CREATE TABLE IF NOT EXISTS category (
                                         name  TEXT   NOT NULL UNIQUE
 );
 
--- Inserare valori în tabela category (doar dacă nu există deja)
+-- Inserare valori in tabela category (doar daca nu exista deja)
 INSERT INTO category (name) VALUES
                                 ('Brake System'),
                                 ('Transmission System'),
@@ -95,15 +94,6 @@ CREATE TABLE IF NOT EXISTS media (
                                      FOREIGN KEY(appointment_id) REFERENCES appointments(id)
     );
 
--- -- Creare tabela supplier_orders
--- CREATE TABLE IF NOT EXISTS supplier_orders (
---                                                id            SERIAL PRIMARY KEY,
---                                                inventory_id  INTEGER,
---                                                quantity      INTEGER,
---                                                order_date    TEXT,
---                                                status        TEXT,
---                                                FOREIGN KEY(inventory_id) REFERENCES inventory(id)
---     );
 
 -- Creare tabela orders
 CREATE TABLE IF NOT EXISTS orders (
@@ -269,7 +259,7 @@ BEGIN
              WHERE oi.inventory_id = NEW.id
                AND o.status IN ('pending')
         ) THEN
-            RAISE EXCEPTION 'Nu poți marca item-ul % ca "deleted": există comenzi active (pending) care folosesc aceasta piesa.', NEW.id;
+            RAISE EXCEPTION 'Nu poti marca item-ul % ca "deleted": exista comenzi active (pending) care folosesc aceasta piesa.', NEW.id;
         END IF;
     END IF;
 

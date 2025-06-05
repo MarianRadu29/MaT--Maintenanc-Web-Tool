@@ -90,7 +90,7 @@ async function verifyToken(token) {
 
 const token = getQueryParam('token');
 if (!token) {
-  showMessage('Lipsă token în URL.', true);
+  showMessage('Lipsa token in URL.', true);
 } else {
   verifyToken(token);
 }
