@@ -150,7 +150,7 @@ public class AppointmentModel {
               a.warranty_months                  AS warrantyMonths
             FROM appointments AS a
             JOIN users        AS u ON u.id = a.client_id
-            WHERE a.status IN ('pending', 'approved', 'modified')
+            WHERE a.status IN ('pending', 'approved', 'modified', 'completed')
             ORDER BY a.date, a.start_time, a.end_time;
         """;
 

@@ -266,10 +266,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const today = new Date();
         const currentDate = today.toISOString().split('T')[0];
 
-        const futureAppointments = appointmentsData.filter(appointment => {
-            if (!appointment.date) return false;
-            return appointment.date >= currentDate;
-        });
+        const futureAppointments = appointmentsData.filter(appointment => !!appointment.date);
 
         futureAppointments.forEach(appointment => {
             const row = document.createElement('tr');
@@ -403,7 +400,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     const selectedItemsSection = document.querySelector('.selected-items-section h4');
 
                     if (app.status === 'approved' || app.status === 'completed') {
-                        // Ascunde instrucțiunile, căutarea și rezultatele pentru programările aprobate/finalizate
                         if (inventorySelectionTitle) inventorySelectionTitle.style.display = 'none';
                         if (inventorySearchBox) inventorySearchBox.style.display = 'none';
                         if (inventoryResults) inventoryResults.style.display = 'none';
@@ -432,7 +428,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         updateSelectedItemsDisplay();
                     }
 
-                    // Atașamente
                     if (app.hasAttachments) {
                         const container = detailsContainer.querySelector('#attachmentsContainer');
                         fetch(`/api/appointment/media/${app.id}`,{
@@ -643,7 +638,6 @@ function openEditTimeModal(appointment) {
                 }
               })
               .catch(err => {
-                // Eroare de rețea sau JSON invalide
                 console.error("Fetch error:", err);
                 showCustomAlert("Nu s-a putut contacta serverul.", 3000);
               });
@@ -674,6 +668,6 @@ function openEditTimeModal(appointment) {
             console.warn(`End time ${endTimeValue} not found in options`);
         }
     }
-    
+
     editModal.style.display = 'block';
 }
