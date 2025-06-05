@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // === Modal functionality ===
+    // modal functionality
     const inventoryModal = document.getElementById('inventoryModal');
     const editInventoryModal = document.getElementById('editInventoryModal');
     const closeBtns = document.querySelectorAll('.close, .close-btn');

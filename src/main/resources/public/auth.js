@@ -1,19 +1,16 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // Get current year for footer
     document.getElementById('currentYear').innerText = new Date().getFullYear();
 
-    // Handle login form submission
+    // handle login form submission
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
         loginForm.addEventListener('submit', async function (e) {
             e.preventDefault();
 
-            // Get form data
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const rememberMe = document.getElementById('rememberMe')?.checked || false;
 
-            // Simple client-side validation
             if (!email || !validateEmail(email)) {
                 showError('Vă rugăm să introduceți un email valid.');
                 return;
@@ -24,8 +21,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
-            // Simulate login request
-            // simulateLoginRequest(email, password, rememberMe);
 
             const form = new FormData(this);
             const params = new URLSearchParams(form);
@@ -44,9 +39,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 const data = await response.json();
                 const accessToken = data.accessToken;
-                const refreshToken = data.refreshToken;
                 localStorage.setItem("accessToken", accessToken);
-                localStorage.setItem("refreshToken", refreshToken);
                 const responseUser = await fetch("/api/user", {
                     method: "GET",
                     headers: {
@@ -70,7 +63,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Handle register form submission
     const registerForm = document.getElementById('registerForm');
     if (registerForm) {
         registerForm.addEventListener('submit', async function (e) {
@@ -85,7 +77,6 @@ document.addEventListener('DOMContentLoaded', function () {
             const confirmPassword = document.getElementById('confirmPassword').value;
             const termsAgree = document.getElementById('termsAgree').checked;
 
-            // Simple client-side validation
             if (!firstName || !lastName) {
                 showError('Vă rugăm să completați numele și prenumele.');
                 return;
@@ -128,9 +119,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (response.status === 200) {
                 const data = await response.json();
                 const accessToken = data.accessToken;
-                const refreshToken = data.refreshToken;
                 localStorage.setItem("accessToken", accessToken);
-                localStorage.setItem("refreshToken", refreshToken);
                 
                 const responseUser = await fetch("/api/user", {
                     method: "GET",
@@ -167,85 +156,44 @@ document.addEventListener('DOMContentLoaded', function () {
         let errorElement = document.querySelector('.auth-error');
 
         if (!errorElement) {
-            // Create error element if it doesn't exist
             errorElement = document.createElement('div');
             errorElement.className = 'auth-error';
 
-            // Insert after form title
             const formTitle = document.querySelector('.section-title');
             formTitle.insertAdjacentElement('afterend', errorElement);
         }
 
-        // Set error message
         errorElement.textContent = message;
 
-        // Auto-remove error after 5 seconds
         setTimeout(() => {
             errorElement.remove();
         }, 5000);
     }
 
     function showSuccess(message) {
-        // Create success element
         const successElement = document.createElement('div');
         successElement.className = 'auth-success';
         successElement.textContent = message;
 
-        // Insert after form title
         const formTitle = document.querySelector('.section-title');
         formTitle.insertAdjacentElement('afterend', successElement);
 
-        // Auto-remove success after 5 seconds
         setTimeout(() => {
             successElement.remove();
         }, 5000);
     }
 
-    // // Simulate login request
-    // function simulateLoginRequest(email, password, rememberMe) {
-    //     // In a real app, this would be an API call
-    //     const submitButton = document.querySelector('button[type="submit"]');
-    //     submitButton.disabled = true;
-    //     submitButton.textContent = 'Se procesează...';
-
-    //     setTimeout(() => {
-    //         // Mock successful login
-    //         const userData = {
-    //             email: email,
-    //             firstName: 'Utilizator', // In a real app, this would come from the backend
-    //             isLoggedIn: true
-    //         };
-
-    //         // Store user data
-    //         if (rememberMe) {
-    //             localStorage.setItem('userData', JSON.stringify(userData));
-    //         } else {
-    //             sessionStorage.setItem('userData', JSON.stringify(userData));
-    //         }
-
-    //         // Show success message
-    //         showSuccess('Autentificare reușită! Veți fi redirecționat...');
-
-    //         // Redirect after short delay
-    //         setTimeout(() => {
-    //             window.location.href = '/';
-    //         }, 1000);
-    //     }, 1500);
-    // }
-
-    // Check if user is already logged in
     function checkLoggedInUser() {
         const userData = JSON.parse(localStorage.getItem('userData') || sessionStorage.getItem('userData') || '{}');
 
         if (userData.isLoggedIn) {
-            // If on login or register page, redirect to home
             if (window.location.pathname.includes('login.html') || window.location.pathname.includes('register.html')) {
                 window.location.href = '/';
             }
         }
     }
 
-    // Add CSS for auth error/success messages
+    // CSS for auth error/success messages
     const style = document.createElement('style');
     style.textContent = `
     .auth-error {
@@ -268,7 +216,7 @@ document.addEventListener('DOMContentLoaded', function () {
   `;
     document.head.appendChild(style);
 
-    // Call this on page load
+    // call on page load
     checkLoggedInUser();
 });
 

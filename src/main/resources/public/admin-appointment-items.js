@@ -89,7 +89,6 @@ function loadUsedEquipment(appointment) {
 
         if (!inventoryItem) return null;
 
-        // Verificare explicită pentru cantitate folosită
         const quantityUsed = usedItem.selectedQuantity ?? usedItem.quantity;
 
         // Dacă quantityUsed este invalid (null/undefined), folosim 1 ca fallback
@@ -335,7 +334,6 @@ async function handleAppointmentView(appointment) {
 
     setAppointmentStatus(appointment.status, appointment);
 
-    // Adaugă aici resetarea dacă e pending
     if (appointment.status === "pending") {
         resetInventorySelection();
     }

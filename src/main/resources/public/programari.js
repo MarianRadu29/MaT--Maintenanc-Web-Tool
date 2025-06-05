@@ -1,47 +1,40 @@
 
 document.addEventListener('DOMContentLoaded', function () {
-    // Initialize auth links first
     initializeAuthLinks();
 
-    // Check authentication first
+
     const userData = localStorage.getItem('userData') || sessionStorage.getItem('userData') || null;
     if(!userData){
         window.location.href = "/login.html";
         return;
     }
 
-    // Get current year for footer
     const currentYearElement = document.getElementById("currentYear");
     if (currentYearElement) {
         currentYearElement.innerText = new Date().getFullYear();
     }
 
-    // Initialize UI elements
     document.getElementById("user-account").style.display = "none";
     document.getElementById("admin-link").style.display = "none";
 
     const timeSlots = document.getElementById("timeSlots");
     const appointmentDateInput = document.getElementById("appointmentDate");
 
-    // Get appointment data from localStorage if available
     const appointmentDate = localStorage.getItem("selectedAppointmentDate");
     const appointmentTime = localStorage.getItem("selectedAppointmentTime");
 
-    // --- File upload handling cu DataTransfer pentru multiple adăugări ---
     const fileUpload = document.getElementById("fileUpload");
     const fileUploadArea = document.querySelector(".file-upload-area");
     const filesList = document.getElementById("filesList");
 
-    // creează un DataTransfer pentru a gestiona files[]
+    // creeaza un DataTransfer pentru a gestiona files[]
     const dt = new DataTransfer();
 
     if (fileUpload && fileUploadArea && filesList) {
         // click pe zona custom deschide dialogul
         fileUploadArea.addEventListener("click", () => fileUpload.click());
 
-        // atunci când alegi noi fisierer în dialog
         fileUpload.addEventListener("change", () => {
-            // adaugă fiecare fisire nou id dt si in lista vizuala
             Array.from(fileUpload.files).forEach((file) => {
                 dt.items.add(file); // adaug  DataTransfer
                 appendFileItem(file); // afisez în UI
@@ -68,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function () {
             fileUploadArea.classList.remove("dragover");
         });
 
-        // functie helper pentru afisare + ștergere
+        // functie helper pentru afisare + stergere
         function appendFileItem(file) {
             // validare
             if (!file.type.match("image/*") && !file.type.match("video/*")) {
@@ -106,7 +99,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // Service type selection
     const serviceTypes = document.querySelectorAll(".service-type");
     let selectedVehicleType = "motorcycle";
     serviceTypes.forEach((btn) => {
@@ -117,14 +109,12 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Set the date and time in the form if they exist in localStorage
     if (appointmentDate && appointmentTime) {
         const dateInput = document.getElementById("appointmentDate");
         if (dateInput) {
             dateInput.value = appointmentDate;
         }
 
-        // Set the selected time in the time slots (if applicable)
         const timeSlotElements = document.querySelectorAll(".time-slot");
         timeSlotElements.forEach((slot) => {
             if (slot.textContent.trim() === appointmentTime) {
@@ -132,12 +122,10 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        // Remove items from localStorage after they're used
         localStorage.removeItem("selectedAppointmentDate");
         localStorage.removeItem("selectedAppointmentTime");
     }
 
-    // Time slots generation on date change
     if (appointmentDateInput && appointmentDateInput.value) {
         generateTimeSlots(appointmentDateInput.value);
     }
@@ -148,16 +136,14 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Form submission
+    // form submission
     const appointmentForm = document.getElementById("appointmentForm");
 
     if (appointmentForm) {
         appointmentForm.addEventListener("submit", function (e) {
             e.preventDefault();
-            // Get form data
             const data = new FormData(this);
 
-            // Get selected time
             const selectedTime = document.querySelector(".time-slot.selected");
             if (!selectedTime) {
                 showCustomAlert("Vă rugăm să selectați o oră pentru programare.",3000);
@@ -170,12 +156,11 @@ document.addEventListener('DOMContentLoaded', function () {
             data.append("appointmentEndTime", String(Number(hour)+1));
             data.append("idClient", JSON.parse(localStorage.getItem("userData")).id);
 
-            // Simulate form submission
             const submitButton = this.querySelector('button[type="submit"]');
             submitButton.disabled = true;
             submitButton.textContent = "Se procesează...";
 
-            // Trimite ca multipart/form-data
+            // trimite ca multipart/form-data
             fetch("/api/appointment", {
                 method: "POST",
                 headers: {
@@ -209,29 +194,25 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
 
             setTimeout(() => {
-                //ar trebui facut un pop up frumos elegant cat de cat
                 showCustomAlert(
                     "Programare trimisă cu succes! Veți primi un email de confirmare.",3000
                 );
 
-                // Reset form
                 appointmentForm.reset();
                 filesList.innerHTML = "";
                 document.querySelectorAll(".time-slot").forEach((slot) => {
                     slot.classList.remove("selected");
                 });
                 serviceTypes.forEach((btn) => btn.classList.remove("active"));
-                serviceTypes[0].classList.add("active"); // Reset to motorcycle
+                serviceTypes[0].classList.add("active");
                 selectedVehicleType = "motorcycle";
 
-                // Re-enable submit button
                 submitButton.disabled = false;
                 submitButton.textContent = "Trimite programare";
             }, 1500);
         });
     }
 
-    // Mobile menu toggle
     const menuToggle = document.getElementById("menuToggle");
     const mainNav = document.querySelector(".main-nav");
 
@@ -241,14 +222,11 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Call this on page load
     checkLoggedInUser();
 
-    // Initialize auth links function
     function initializeAuthLinks() {
         const authLinks = document.querySelector(".auth-links");
         if (authLinks) {
-            // Set default login/register buttons
             authLinks.innerHTML = `
                 <a class="btn btn-primary" href="login.html">Conectare</a>
                 <a class="btn btn-secondary" href="register.html">Înregistrare</a>
@@ -256,7 +234,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // Check if user is already logged in
     function checkLoggedInUser() {
         const userData = JSON.parse(
             localStorage.getItem("userData") ||
@@ -268,7 +245,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const adminLink = document.getElementById("admin-link");
 
         if (userData && authLinks) {
-            // Update UI for logged in user
             document.getElementById("user-account").style.display = "block";
 
             authLinks.innerHTML = `
@@ -279,14 +255,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 adminLink.style.display = "block";
             }
 
-            // Add logout functionality
+            //logout functionality
             const logoutButton = document.getElementById("logoutButton");
             if (logoutButton) {
                 logoutButton.addEventListener("click", function (e) {
                     e.preventDefault();
                     localStorage.removeItem("userData");
                     localStorage.removeItem("accessToken");
-                    localStorage.removeItem("refreshToken");
 
                     // Reset auth links to login/register buttons
                     authLinks.innerHTML = `
@@ -294,13 +269,11 @@ document.addEventListener('DOMContentLoaded', function () {
                         <a href="register.html" class="btn btn-secondary">Înregistrare</a>
                     `;
 
-                    // Hide user-specific elements
                     document.getElementById("user-account").style.display = "none";
                     if (adminLink) {
                         adminLink.style.display = "none";
                     }
 
-                    // Reload page or redirect
                     window.location.reload();
                 });
             }
@@ -313,54 +286,44 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // Generate time slots function
     function generateTimeSlots(selectedDate) {
         const timeSlotsContainer = timeSlots.querySelector(".time-slots-container");
-        // Obține toate elementele time-slot deja existente
         const timeSlotsElements = timeSlotsContainer.querySelectorAll(".time-slot");
 
-        // Fetch appointments for the selected date from the server
-        const dateString = selectedDate; // Formatul datei selectate este deja acceptabil
-        const apiUrl = `/api/appointments/day/${dateString}`; // Endpointul care returnează programările pentru ziua respectivă
+        const dateString = selectedDate; // formatul datei selectate este deja acceptabil
+        const apiUrl = `/api/appointments/day/${dateString}`; // endpoint pt programarile din ziua respectiva
 
         fetch(apiUrl)
             .then((response) => response.json())
             .then((appointments) => {
-                // Generate time slots from 9:00 to 17:00
                 const startHour = 9;
                 const endHour = 17;
 
-                // Loop over each hour and check if it is booked
                 for (let hour = startHour; hour <= endHour; hour++) {
                     const time = `${String(hour).padStart(2, "0")}:00`;
 
-                    // Find the time slot element that corresponds to this hour
                     const timeSlotElement = Array.from(timeSlotsElements).find(
                         (slot) => slot.textContent.trim() === time
                     );
 
                     if (timeSlotElement) {
-                        // Check if the time slot is booked
-                        const isBooked = appointments.includes(String(hour)); // Verificăm dacă ora este ocupată
+                        const isBooked = appointments.includes(String(hour));
 
-                        // Update the class for the time slot based on whether it is booked
                         if (isBooked) {
                             timeSlotElement.classList.add("unavailable");
                         } else {
                             timeSlotElement.classList.remove("unavailable");
                         }
 
-                        // Optional: Handle the onclick functionality for available slots
                         if (!isBooked) {
                             timeSlotElement.onclick = function () {
-                                // Remove selected class from all time slots
                                 const slots = document.querySelectorAll(".time-slot");
 
                                 slots.forEach((slot) => {
                                     slot.classList.remove("selected");
                                 });
 
-                                // Add selected class to clicked time slot
+                                // add selected class to clicked time slot
                                 this.classList.add("selected");
                             };
                         }

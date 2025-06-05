@@ -1,4 +1,4 @@
-/* Base styles */
+/* variabile culori*/
 :root {
     --primary-color: #3B82F6;
     --primary-hover: #2563EB;
@@ -55,7 +55,6 @@ ul {
     list-style: none;
 }
 
-/* Buttons */
 .btn {
     display: inline-block;
     padding: 0.75rem 1.5rem;
@@ -82,7 +81,6 @@ ul {
     width: 100%;
 }
 
-/* Header */
 .header {
     background-color: white;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -125,7 +123,6 @@ ul {
     color: var(--primary-color);
 }
 
-/* Card and Form styles */
 .card {
     background-color: var(--card-bg);
     border-radius: var(--radius);
@@ -172,8 +169,6 @@ input, textarea, select {
     }
 }
 
-
-/* Footer */
 .footer {
     background-color: var(--dark-text);
     color: #F3F4F6;
@@ -205,7 +200,6 @@ input, textarea, select {
     color: var(--light-text);
 }
 
-/* Authentication Pages Styles */
 .auth-section {
     min-height: calc(100vh - 300px);
     display: flex;
@@ -270,7 +264,6 @@ input, textarea, select {
     margin-top: 0.25rem;
 }
 
-/* Responsive Navbar */
 .menu-toggle {
     display: none;
     font-size: 1.75rem;
@@ -278,7 +271,6 @@ input, textarea, select {
     color: var(--primary-color);
 }
 
-/* Responsive design */
 @media (max-width: 1000px) {
     .main-nav {
         overflow: hidden;
@@ -352,7 +344,6 @@ input, textarea, select {
     }
 }
 
-/* Animation */
 @keyframes fadeIn {
     from {
         opacity: 0;
