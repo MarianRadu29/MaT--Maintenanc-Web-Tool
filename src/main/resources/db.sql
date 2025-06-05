@@ -95,15 +95,15 @@ CREATE TABLE IF NOT EXISTS media (
                                      FOREIGN KEY(appointment_id) REFERENCES appointments(id)
     );
 
--- Creare tabela supplier_orders
-CREATE TABLE IF NOT EXISTS supplier_orders (
-                                               id            SERIAL PRIMARY KEY,
-                                               inventory_id  INTEGER,
-                                               quantity      INTEGER,
-                                               order_date    TEXT,
-                                               status        TEXT,
-                                               FOREIGN KEY(inventory_id) REFERENCES inventory(id)
-    );
+-- -- Creare tabela supplier_orders
+-- CREATE TABLE IF NOT EXISTS supplier_orders (
+--                                                id            SERIAL PRIMARY KEY,
+--                                                inventory_id  INTEGER,
+--                                                quantity      INTEGER,
+--                                                order_date    TEXT,
+--                                                status        TEXT,
+--                                                FOREIGN KEY(inventory_id) REFERENCES inventory(id)
+--     );
 
 -- Creare tabela orders
 CREATE TABLE IF NOT EXISTS orders (
