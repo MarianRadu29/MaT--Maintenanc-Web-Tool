@@ -96,9 +96,7 @@ public class AuthController {
                 JsonView.send(exchange, 400, "{\"message\":\"Missing fields\"}");
                 return;
             }
-
             User user = UserModel.getUserByEmail(email);
-            System.out.println(BCrypt.checkPassword(password, user.getPassword()));
             if (user != null && BCrypt.checkPassword(password, user.getPassword())) {
                 String accessToken = JwtUtil.generateToken(user.getId(), email, 60 * 24);
                 String refreshToken = JwtUtil.generateToken(user.getId(), email, 60 * 24 * 7);

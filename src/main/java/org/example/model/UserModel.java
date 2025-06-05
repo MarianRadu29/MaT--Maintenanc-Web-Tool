@@ -105,6 +105,7 @@ public class UserModel {
             }
         } catch (SQLException e) {
             System.out.println("[GET USER BY EMAIL ERROR] " + e.getMessage());
+
         }
         return null;
     }

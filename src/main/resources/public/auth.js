@@ -40,13 +40,15 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
 
-            const data = await response.json();
-            const accessToken = data.accessToken;
-            const refreshToken = data.refreshToken;
-            localStorage.setItem("accessToken", accessToken);
-            localStorage.setItem("refreshToken", refreshToken);
+            
 
             if (response.status === 200) {
+
+                const data = await response.json();
+                const accessToken = data.accessToken;
+                const refreshToken = data.refreshToken;
+                localStorage.setItem("accessToken", accessToken);
+                localStorage.setItem("refreshToken", refreshToken);
                 const responseUser = await fetch("/api/user", {
                     method: "GET",
                     headers: {
@@ -63,6 +65,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 window.location.href = "/";
             } else if (response.status === 400) {
                 showError(result.message);
+            }
+            else if(response.status === 404) {
+                showError("Email-ul sau parola sunt gresite");
             }
         });
     }
@@ -121,13 +126,14 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
 
-            const data = await response.json();
-            const accessToken = data.accessToken;
-            const refreshToken = data.refreshToken;
-            localStorage.setItem("accessToken", accessToken);
-            localStorage.setItem("refreshToken", refreshToken);
-
+            
             if (response.status === 200) {
+                const data = await response.json();
+                const accessToken = data.accessToken;
+                const refreshToken = data.refreshToken;
+                localStorage.setItem("accessToken", accessToken);
+                localStorage.setItem("refreshToken", refreshToken);
+                
                 const responseUser = await fetch("/api/user", {
                     method: "GET",
                     headers: {
@@ -144,6 +150,7 @@ document.addEventListener('DOMContentLoaded', function () {
             } else if (response.status === 400) {
                 showError(result.message);
             }
+           
         });
     }
 
@@ -196,37 +203,37 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 5000);
     }
 
-    // Simulate login request
-    function simulateLoginRequest(email, password, rememberMe) {
-        // In a real app, this would be an API call
-        const submitButton = document.querySelector('button[type="submit"]');
-        submitButton.disabled = true;
-        submitButton.textContent = 'Se procesează...';
+    // // Simulate login request
+    // function simulateLoginRequest(email, password, rememberMe) {
+    //     // In a real app, this would be an API call
+    //     const submitButton = document.querySelector('button[type="submit"]');
+    //     submitButton.disabled = true;
+    //     submitButton.textContent = 'Se procesează...';
 
-        setTimeout(() => {
-            // Mock successful login
-            const userData = {
-                email: email,
-                firstName: 'Utilizator', // In a real app, this would come from the backend
-                isLoggedIn: true
-            };
+    //     setTimeout(() => {
+    //         // Mock successful login
+    //         const userData = {
+    //             email: email,
+    //             firstName: 'Utilizator', // In a real app, this would come from the backend
+    //             isLoggedIn: true
+    //         };
 
-            // Store user data
-            if (rememberMe) {
-                localStorage.setItem('userData', JSON.stringify(userData));
-            } else {
-                sessionStorage.setItem('userData', JSON.stringify(userData));
-            }
+    //         // Store user data
+    //         if (rememberMe) {
+    //             localStorage.setItem('userData', JSON.stringify(userData));
+    //         } else {
+    //             sessionStorage.setItem('userData', JSON.stringify(userData));
+    //         }
 
-            // Show success message
-            showSuccess('Autentificare reușită! Veți fi redirecționat...');
+    //         // Show success message
+    //         showSuccess('Autentificare reușită! Veți fi redirecționat...');
 
-            // Redirect after short delay
-            setTimeout(() => {
-                window.location.href = '/';
-            }, 1000);
-        }, 1500);
-    }
+    //         // Redirect after short delay
+    //         setTimeout(() => {
+    //             window.location.href = '/';
+    //         }, 1000);
+    //     }, 1500);
+    // }
 
     // Check if user is already logged in
     function checkLoggedInUser() {
