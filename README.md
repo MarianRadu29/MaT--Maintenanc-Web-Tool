@@ -1,155 +1,243 @@
-# Web Project
+# MaT (Maintenance Web Tool)
+
+## Content
+1. [Authors](#authors)
+2. [Introduction](#introduction)  
+   1. [Purpose](#purpose)  
+   2. [Document Convention](#document-convention)  
+   3. [Target Audience](#target-audience)  
+   4. [Bibliography and References](#bibliography-and-references)  
+3. [General Description](#general-description)  
+   1. [Product Perspective](#product-perspective)  
+   2. [Product Features](#product-features)  
+   3. [User Classes and Characteristics](#user-classes-and-characteristics)  
+   4. [Operating Environment](#operating-environment)  
+   5. [User Documentation](#user-documentation)  
+4. [Application Interface](#application-interface)  
+   1. [User Interface](#user-interface)  
+      - [Home page](#home-page)  
+      - [Login page](#login-page)  
+      - [Registration page](#registration-page)  
+      - [Forget-Password page](#forget-password-page)  
+      - [Reset-Password page](#reset-password-page)  
+      - [Calendar page](#calendar-page)  
+      - [Appointment page](#appointment-page)  
+      - [Profile page](#profile-page)  
+      - [Admin page](#admin-page)  
+   2. [Hardware Interface](#hardware-interface)  
+   3. [Software Interface](#software-interface)  
+   4. [Communication Interface](#communication-interface)  
+5. [Characteristics of the Application](#characteristics-of-the-application)  
+   1. [Account Management](#account-management)  
+   2. [Admin Section](#admin-section)  
+   3. [Session Management](#session-management)  
+6. [Technologies for Protection and Security](#technologies-for-protection-and-security)  
 
 
+        
+## Authors
+Second year students at the Faculty of Computer Science, UAIC, group B1
 
---- 
-## Chestii de implementat:
+- Radu Marian-Sebastian - [radumariansebastian29@gmail.com](mailto:radumariansebastian29@gmail.com)
 
-- SA FOLOSIM COOKIE URI IN LOC DE LOCALSTORAGE 
-- la lista de programari la admin sa se vada numai programarile din ziua respectiva si din zilele urmatoare(cred ca ar trebui toate din istoric)
-- la operatiuni unde se foloseste tokenul daca nu este valid sa se verifice si daca este inca valid, daca nu sa se dea un mesaj de eroare si sa se redirectioneze la login
-- ar trebui trimis si emailul userului si nr de telefon la pagina de admin la programari la detalii
----
+- Pintilie David-Mihail - [pintiliedavid06@gmail.com](mailto:pintiliedavid06@gmail.com)
 
-## Chestii de modificat pe front
-- de rezolvat bugul la tabele pe ecrane mici ✅
-- la calendar sa nu pot selecta ziua de duminica ✅
-- de facut `pop up` uri in loc de alerte
-- de rezolvat cum arata filtrele la pagina de profil ✅
-- de adaugat `interactiune` sa iti poti schimba datele direct din profil ✅
-- de reparat `navbar` pentru pagina de programari (doar pe asta nu merge din ceva motiv)✅
-- la admin sa apara doar programarile din ziua respectiva si din viitor ✅
-- de facut tabelele sa fie 100% responsive ✅
-- de modificat sa nu mai apara butonul de conectare de fiecare data cand intru pe o pagina noua
-- de modificat cand faci o programare chenarul de la incarcare documente e prea mare
-- de modificat imaginea cu motocicleta de pe home-page✅
-- eventual de facut o pagina de servicii unde sa se detalieze mai mult fiecare serviciu in parte
-- de facut calendarul responsive pe ecrane f mici (cand e ecranul mic sa apara prescurtarile zilelor saptamanii)✅
-- de modificat fisierele sa nu mai am css in fisierele js✅
-- la o programare la sectiunea de admin cand dau modifica sa apara iar=)) un pop up ceva care sa editez intervalele orare ale acelei programari(check urile le fac la backend si iti trimit raspunsul daca e ok sau nu)✅
-- de scos scrolul pe toata pagina cand sunt pe modal(pe vezi) ✅
-- de facut cele 2 modale sa arate la fel (de la admin si de la profil) , sa arata ce cel de la profil
-- de modificat iconita de la marca (din modal)✅
-- de repearat in modal la profil sa preia cantitatea buna de echipamente folosite ✅
-- de mofificat la admin sa nu mai apara butonul de aproba atunci cand programarea e deja aprobata ✅
-- de facut sa apara si echipamentele la programariele approved ✅
-- de facut sa apara si programarile anulate si finalizate la admin
-- de facut sa se dea refresh dupa ce se face o actiune (aproba , etc)✅
-- de reparat atunci cand intru pe o programare care nu are produse selectate imi arata pretul de la ultima programare pe care am intrat
-- de facut validari la login si alerte la login si register✅
-- de incercat sa rezolv bugul cu "-" la profil (NU) =)
+## Introduction
+- C4 diagrams
+
+    ![C4-nivel1.png](images/C4-nivel1.png)
+    ![C4-nivel2.png](images/C4-nivel2.png)
+
+- Schema Database
+
+    ![db.png](images/db.png)
+## Purpose
+
+This project provides an **online scheduling** and **inventory** management system for motorcycle, bicycle and scooter (electric or traditional) services. The purpose of the application is to:
+
+- Allow them to consult the available calendar and quickly book a time slot, filling out a form with dates, times and details about the technical problem, including attaching photos or videos.
+- Provide administrators with a control panel where they can **approve** or **reject** appointments, with personalized messages (e.g. "We don't have the necessary items in stock, come back in Z days") and add useful information such as estimated price or warranty.
+- Keep track of items stocks.
+- Import and export data in **CSV** formats about items and orders.
+
+## Document Convention
+- This document is written in Markdown format. The document is structured in sections, each section containing a title.
+- This document follows the template for software requirements documentation according to the `IEEE Software Requirements Specification`.
+
+## Target audience
+The platform is primarily aimed at:
+
+- **Owners and administrators of two-wheeler service stations**
+PFA/SRL contractors who manage repair shops for motorcycles, bicycles or scooters (electric or traditional). They need a centralized tool for scheduling orders, monitoring items stocks, as well as for quickly generating reports in CSV format.
+
+- **Mechanics and service technicians**
+Specialists who want immediate access to the details of each appointment (date, time, problem description, attached photos/video) and who want to update the status of interventions and the history of work directly from the web interface.
+
+- **End customers (two wheels)**
+Bicyclists, scooters and motorcyclists who want an intuitive, self-service appointment, with the possibility of attaching photos/video to describe the malfunctions and the first notifications by email of approval, rejection or price offer and warranty.
+
+## Bibliography and references
+
+- Dr. Buraga Sabin-Corneliu, Dr. Andrei Panu, [Web Technologies](https://edu.info.uaic.ro/web-technologies/), FII UAIC
+- Dr. Captarencu Oana, [Web Technologies Laboratory](https://profs.info.uaic.ro/oana.captarencu/tw/), FII UAIC
+- [IEEE Software Requirements Specification](https://ieeexplore.ieee.org/document/278253)
+- [REST API Tutorial](https://www.restapitutorial.com/)
+- [HttpServer Java Class](https://docs.oracle.com/en/java/javase/23/docs/api/jdk.httpserver/com/sun/net/httpserver/HttpServer.html)
+- [W3Schools](https://www.w3schools.com/)
+- [Markdown Guide](https://www.markdownguide.org/)
+
+## General Description
+The **Maintenance Web Tool** system is a standalone web application, designed to easily integrate into existing workflows of motorcycle, bicycle and scooter services. 
+1. **Modular architecture**
+- The application is structured on three main components:
+    - **Web interface** (frontend) — built with fundamental technologies (HTML, CSS and Javascript), allows WEB and administrators access on desktop or mobile.
+    - **REST API**) — exposes programming, management, import/export stock data (inventory respectively information about completed orders).
+    - **Relational database** — stores programs, users, products in stock and order history.
+        - **Email service** (SMTP): automatically sends notifications of confirmation, approval or rejection of the programming.
+        - **Multimedia storage**: stores files (images, clips) attached to the purchase in the DB.
+
+2. **Import/export interfaces**
+- Import data in **CSV** format for adding new items/or updating stock
+- Export data in **CSV** formats for the history of completed service orders.
+
+### Product perspective
+Maintenance Web Tool is an independent web system that can be installed on the service's own server and offers standardized data import and export (CSV). The application has a responsive frontend and a REST API backend. The system communicates with external SMTP email services for notifications. Through these mechanisms, the tool works both autonomously and as an integrated module in an existing software suite, ensuring a transparent and secure data exchange.
+### Product features
+- Calendar view with real-time service availability
+- Create, modify and cancel appointments with attached descriptions, photos and videos
+- Automatic email notifications for confirmation, approval or rejection
+- Administrator approval/rejection flow, with personalized messages and details (estimated price, warranty)
+- Parts inventory management
+- Data import (inventory) in CSV formats
+- Data export related to customer orders CSV
+
+### User classes and features
+#### Client  
+- Variable technical level, from beginner to enthusiast
+- Intuitive interface, compatible with desktop and mobile
+- Can attach multimedia files (photos, videos) to the scheduling form
+- Receive automatic email notifications regarding scheduling status
+
+#### Administrator / Proprietar Service / Mecanic
+- Advanced knowledge of the operational and financial flow of the service
+- Full rights: approve or reject appointments with personalized messages
+- Manage parts stocks and place orders with suppliers
+- Needs report exports in CSV, JSON and PDF formats for accounting and analysis
+### Operating environment
+- Maintenance Web Tool can be used on any device with a Web Browser that supports HTML5, CSS and Javascript.
+
+### User documentation
+- Users can consult this document to understand the functionalities and operating mode of the `MaT` application.
+
+## Application interface
+
+### User interface
+
+#### Home page  
+- The home page welcomes users with a clear hero section and quick links to key functions (book appointment,calendar section).
+![homepage1.png](images/homepage1.png)  
+![homepage2.png](images/homepage2.png)  
+
+#### Login page  
+- This page provides a simple, secure form for users to sign in with email and password. It includes client-side validation and a “Forgot Password?” link for account recovery.
+![login.png](images/login.png)  
+
+#### Registration page  
+- Users can create a new account by entering their name, email, phone number, and choosing a password. Real-time checks ensure valid email format and strong password criteria.
+![registration.png](images/registration.png)  
+
+#### Forget-Password page  
+- Clients enter their registered email to request a password reset link. The page confirms when the reset email has been dispatched.
+![forget-password.png](images/forget-password.png)  
+
+#### Reset-Password page  
+- The reset form requires users to enter and confirm their new password. Password strength feedback guides them to choose a secure credential.
+![reset-password.png](images/reset-password.png)  
+
+#### Calendar page  
+- An interactive calendar displays available time slots by day. Users click a slot to initiate appointment and see real-time availability updates.
+![calendar1.png](images/calendar1.png)  
+![calendar2.png](images/calendar2.png)  
+
+#### Appointment page  
+- This form collects vehicle details (type, model), a problem description, and allows drag-and-drop uploads of images or video. Inline help tips guide users through each field.
+![appointment1.png](images/appointment1.png)  
+![appointment2.png](images/appointment2.png)  
+
+#### Profile page  
+##### Info  
+- The profile info section shows user details and account settings. Edit buttons let users update their info.  
+![profile-info.png](images/profile-info.png)  
+##### Appointments section  
+- Lists all upcoming and past appointments with status badges. Users can cancel open appointments or confirm modifications requested by the admin.
+![profile-appointment.png](images/profile-appointment.png)  
+
+#### Admin page  
+##### Management Appointment page  
+- Admins see a sortable table of all service requests with filters for status. Action buttons open modals to approve with notes or send a custom rejection message.  
+![admin-appointment.png](images/admin-appointment.png)  
+##### Inventory page  
+ - Displays current stock levels and items catalog. Inline editing and low-stock alerts help admins reorder before supplies run out.  
+![admin-inventory.png](images/admin-inventory.png)  
+##### Data import/export page  
+- Provides tools to upload CSV files for batch imports and to download filtered reports as CSV. A field-mapping preview ensures data aligns correctly.  
+![admin-data.png](images/admin-data.png)  
 
 
+### Hardware interface
+- The application will run on a server.
+- The application will require an internet connection to send emails.
+- The application will require a computer or mobile device to access the user interface.
+### Software interface
+- The application will use a REST API to communicate with the server.
+- The application will use HTML CSS for awesome design.
+- The application will use JavaScript to interact with the user interface.
+### Communication interface
+- The application will use HTTP to communicate with the server.
+- The application will use JSON to send and receive data.
+- The application will use multiform-data for send image/video data to server.
 
-****
 
-[//]: # ()
-[//]: # (## Service Scheduler README)
+## Characteristics of the application
 
-[//]: # ()
-[//]: # (Acest document prezintă lista paginilor HTML necesare pentru aplicația online de management al programărilor și gestiune)
+### Account Management
+#### Description and Generalities
+- A user can register by choosing an email,a phone number, a password, first name, and last name. They can authenticate themselves by only needing the email and password.
+- A user can see all available time slots by day and can make an appoitment.
+#### Information Update
+- When a new user is created, their credentials are entered into the database. Similarly, when the user decides to modify their credentials, the new values are also updated in the database.
+#### Operating Conditions
+- To modify their credentials, the user must be authenticated.
+- To authenticate, the user needs an account registered in the database.
 
-[//]: # (a service-ului de motociclete, biciclete și trotinete.)
 
-[//]: # ()
-[//]: # (## 1. Pagini Publice &#40;Client&#41;)
-
-[//]: # ()
-[//]: # (* **index.html**)
-
-[//]: # (  Pagina principală, prezintă descrierea serviciului și link către autentificare/înregistrare.)
-
-[//]: # ()
-[//]: # (* **register.html**)
-
-[//]: # (  Formular de înregistrare pentru clienți &#40;nume, email, parolă, date de contact&#41;.)
-
-[//]: # (* **login.html**)
-
-[//]: # (  Formular de autentificare pentru clienți și administratori.)
-
-[//]: # (* **calendar.html**)
-
-[//]: # (  Vizualizare calendar cu zilele și orele disponibile pentru programări.)
-
-[//]: # (* **appointment\_form.html**)
-
-[//]: # (  Formular pentru solicitarea unei programări &#40;selectare dată/oră, descriere problemă, atașare imagini/video&#41;.)
-
-[//]: # (* **appointment\_success.html**)
-
-[//]: # (  Mesaj de confirmare că programarea a fost înregistrată cu succes.)
-
-[//]: # (* **appointment\_error.html**)
-
-[//]: # (  Afișează erori în cazul în care solicitarea de programare nu a fost validă.)
-
-[//]: # (## 2. Pagini Admin &#40;Administrator&#41;)
-
-[//]: # (* **admin\_dashboard.html**)
-
-[//]: # (  Panou de administrare cu statistici sumare &#40;număr programări, stocuri, comenzi în curs&#41;.)
-
-[//]: # (* **admin\_appointments.html**)
-
-[//]: # (  Listă cu toate programările primite &#40;filtrare după stare: pending, approved, rejected&#41;.)
-
-[//]: # (* **admin\_appointment\_detail.html**)
-
-[//]: # (  Detalii complete ale unei programări: date client, multimedia atașată, butoane Approve/Reject și câmpuri pentru)
-
-[//]: # (  răspuns administrativ &#40;preț, garanție, mesaj respingere&#41;.)
-
-[//]: # (* **admin\_inventory.html**)
-
-[//]: # (  Listă și gestionare a pieselor în stoc: adăugare, actualizare cantități, ștergere.)
-
-[//]: # (* **admin\_suppliers.html**)
-
-[//]: # (  Listă furnizori și detalii de contact.)
-
-[//]: # (* **admin\_order\_form.html**)
-
-[//]: # (  Formular pentru plasare de comenzi către furnizori &#40;selectare furnizor, articole, cantități&#41;.)
-
-[//]: # (* **admin\_orders.html**)
-
-[//]: # (  Istoric comenzi către furnizori și stare &#40;pending, delivered, canceled&#41;.)
-
-[//]: # (## 3. Pagini Import/Export)
-
-[//]: # (* **import.html**)
-
-[//]: # (  Upload CSV sau JSON pentru importul de date în sistem &#40;programări, stocuri, comenzi&#41;.)
-
-[//]: # (* **export.html**)
-
-[//]: # (  Alegerea formatului de export &#40;CSV, JSON, PDF&#41; și generarea fișierului pentru descărcare.)
-
-[//]: # (## 4. Pagină de Simulare)
-
-[//]: # (* **simulation.html**)
-
-[//]: # (  Interfață pentru configurarea și rularea simulării activității service-ului pe perioade de timp &#40;lunar, anual&#41;: număr)
-
-[//]: # (  programări generate, variație stocuri, comenzi automate.)
-
-[//]: # (## 5. Pagini Comune)
-
-[//]: # (* **header.html**)
-
-[//]: # (  Fragment cu meniul de navigare &#40;inclus în toate paginile&#41;.)
-
-[//]: # (* **footer.html**)
-
-[//]: # (  Fragment cu informații de copyright și link-uri utile.)
-
-[//]: # (* **styles.css**)
-
-[//]: # (  Fișier global de stiluri.)
-
-[//]: # (* **scripts.js**)
-
-[//]: # (  Fișier global de scripturi JavaScript &#40;funcționalități comune, AJAX, validări&#41;.)
-
-[//]: # (---)
+### Admin Section
+#### Description and Generalities
+- The Admin Section is intended for users with administrator rights, offering comprehensive control over service operations including appointment approval or rejection with custom messages. From the dashboard, admins can manage inventory levels, and import or export data in CSV format.
+#### Information Update
+ - When the admin change the status about all appointments,the updates are inserted into DB.Same about inventory items(price,level/stock,suppliers).
+#### Operating Conditions
+- The user must be authenticated.
+- The user must have admin rights.
+### Session management
+#### Description
+- The application will have a session management system that will allow users to log in and log out.
+- The session management system will be implemented using JWT tokens.
+- The session management system will have a timeout of 1 day.
+#### Data flow
+- The user will log in using the login form.
+- The server will validate the user's credentials.
+- The server will generate a JWT token and send it to the user.
+- The user will store the token in the local storage.
+- The user will send the token in the header of certain requests.
+#### Requirements and constraints
+- The user must have an account to log in.
+- The user must have a valid email and password to log in.
+- The user must have a valid JWT token to access the application.
+- The user must have a specific role in order to access certain pages.
+## Technologies for protection and security
+### Description
+- The application will encrypt the user's password before storing it in the database.
+- Authorization is done with `JWT token`.
+- Passwords are hashed with `Bcrypt`.
+- The application is using prepared statements to prevent `SQL injection`.
