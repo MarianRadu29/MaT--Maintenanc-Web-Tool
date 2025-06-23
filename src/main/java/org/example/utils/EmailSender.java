@@ -29,7 +29,6 @@ public class EmailSender {
                 return new PasswordAuthentication(fromEmail, password);
             }
         });
-
         try {
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(fromEmail));

@@ -1,0 +1,73 @@
+body {
+    font-family: "Roboto", sans-serif;
+    background-color: #f3f4f6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    padding: 1rem;
+}
+.card {
+    background: white;
+    padding: 2rem 3rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+}
+h2 {
+    margin-bottom: 1.5rem;
+    color: #1f2937;
+}
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    text-align: left;
+    color: #4b5563;
+}
+input[type="email"] {
+    width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 1.25rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+button {
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s ease;
+}
+button:hover {
+    background-color: #2563eb;
+}
+.message {
+    margin-top: 1rem;
+    color: #10b981;
+    font-weight: 500;
+    display: none;
+}
+.error {
+    color: #ef4444;
+}
+a.back-link {
+    display: inline-block;
+    margin-top: 1.5rem;
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 500;
+}
+a.back-link:hover {
+    text-decoration: underline;
+}

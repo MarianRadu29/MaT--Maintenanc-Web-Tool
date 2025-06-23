@@ -12,11 +12,11 @@ Prezentare video : https://www.youtube.com/watch?v=t5dqCMFIo1M
 3. [General Description](#general-description)  
    1. [Product Perspective](#product-perspective)  
    2. [Product Features](#product-features)  
-   3. [User Classes and Characteristics](#user-classes-and-characteristics)  
+   3. [User Classes and Characteristics](#userData-classes-and-characteristics)  
    4. [Operating Environment](#operating-environment)  
-   5. [User Documentation](#user-documentation)  
+   5. [User Documentation](#userData-documentation)  
 4. [Application Interface](#application-interface)  
-   1. [User Interface](#user-interface)  
+   1. [User Interface](#userData-interface)  
       - [Home page](#home-page)  
       - [Login page](#login-page)  
       - [Registration page](#registration-page)  
@@ -168,7 +168,7 @@ Maintenance Web Tool is an independent web system that can be installed on the s
 
 #### Profile page  
 ##### Info  
-- The profile info section shows user details and account settings. Edit buttons let users update their info.  
+- The profile info section shows userData details and account settings. Edit buttons let users update their info.  
 ![profile-info.png](images/profile-info.png)  
 ##### Appointments section  
 - Lists all upcoming and past appointments with status badges. Users can cancel open appointments or confirm modifications requested by the admin.
@@ -189,11 +189,11 @@ Maintenance Web Tool is an independent web system that can be installed on the s
 ### Hardware interface
 - The application will run on a server.
 - The application will require an internet connection to send emails.
-- The application will require a computer or mobile device to access the user interface.
+- The application will require a computer or mobile device to access the userData interface.
 ### Software interface
 - The application will use a REST API to communicate with the server.
 - The application will use HTML CSS for awesome design.
-- The application will use JavaScript to interact with the user interface.
+- The application will use JavaScript to interact with the userData interface.
 ### Communication interface
 - The application will use HTTP to communicate with the server.
 - The application will use JSON to send and receive data.
@@ -204,13 +204,13 @@ Maintenance Web Tool is an independent web system that can be installed on the s
 
 ### Account Management
 #### Description and Generalities
-- A user can register by choosing an email,a phone number, a password, first name, and last name. They can authenticate themselves by only needing the email and password.
-- A user can see all available time slots by day and can make an appoitment.
+- A userData can register by choosing an email,a phone number, a password, first name, and last name. They can authenticate themselves by only needing the email and password.
+- A userData can see all available time slots by day and can make an appoitment.
 #### Information Update
-- When a new user is created, their credentials are entered into the database. Similarly, when the user decides to modify their credentials, the new values are also updated in the database.
+- When a new userData is created, their credentials are entered into the database. Similarly, when the userData decides to modify their credentials, the new values are also updated in the database.
 #### Operating Conditions
-- To modify their credentials, the user must be authenticated.
-- To authenticate, the user needs an account registered in the database.
+- To modify their credentials, the userData must be authenticated.
+- To authenticate, the userData needs an account registered in the database.
 
 
 ### Admin Section
@@ -219,27 +219,27 @@ Maintenance Web Tool is an independent web system that can be installed on the s
 #### Information Update
  - When the admin change the status about all appointments,the updates are inserted into DB.Same about inventory items(price,level/stock,suppliers).
 #### Operating Conditions
-- The user must be authenticated.
-- The user must have admin rights.
+- The userData must be authenticated.
+- The userData must have admin rights.
 ### Session management
 #### Description
 - The application will have a session management system that will allow users to log in and log out.
 - The session management system will be implemented using JWT tokens.
 - The session management system will have a timeout of 1 day.
 #### Data flow
-- The user will log in using the login form.
-- The server will validate the user's credentials.
-- The server will generate a JWT token and send it to the user.
-- The user will store the token in the local storage.
-- The user will send the token in the header of certain requests.
+- The userData will log in using the login form.
+- The server will validate the userData's credentials.
+- The server will generate a JWT token and send it to the userData.
+- The userData will store the token in the local storage.
+- The userData will send the token in the header of certain requests.
 #### Requirements and constraints
-- The user must have an account to log in.
-- The user must have a valid email and password to log in.
-- The user must have a valid JWT token to access the application.
-- The user must have a specific role in order to access certain pages.
+- The userData must have an account to log in.
+- The userData must have a valid email and password to log in.
+- The userData must have a valid JWT token to access the application.
+- The userData must have a specific role in order to access certain pages.
 ## Technologies for protection and security
 ### Description
-- The application will encrypt the user's password before storing it in the database.
+- The application will encrypt the userData's password before storing it in the database.
 - Authorization is done with `JWT token`.
 - Passwords are hashed with `Bcrypt`.
 - The application is using prepared statements to prevent `SQL injection`.

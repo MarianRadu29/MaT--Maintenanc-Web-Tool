@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Utils {
+
+    //  http://localhost:8001/reset-password.html?token=12345678
     public static Map<String, String> parseQuery(String query) {
         Map<String, String> result = new HashMap<>();
         if (query == null || query.isEmpty()) return result;
@@ -26,7 +28,7 @@ public class Utils {
         return result;
     }
 
-    // Decodificare URL encoded (ex: %20 -> spațiu)
+    // Decodificare URL encoded (ex: %20 => ' ' <==> 32 cod ASCII)
     private static String decode(String s) {
         try {
             return java.net.URLDecoder.decode(s, StandardCharsets.UTF_8);

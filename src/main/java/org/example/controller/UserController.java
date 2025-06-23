@@ -2,19 +2,14 @@ package org.example.controller;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import org.example.utils.TokenExpiredException;
-import org.example.utils.TokenInvalidException;
 import org.example.model.UserModel;
-import org.example.objects.User;
+import org.example.objects.UserData;
 import org.example.utils.*;
-import org.example.view.JsonView;
+import org.example.utils.JsonView;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 public class UserController {
@@ -39,17 +34,22 @@ public class UserController {
 
             int userId = (int) claims.get("id");
             String email = (String) claims.get("email");
-            User user = UserModel.getUserByEmail(email);
+            UserData userData = UserModel.getUserByEmail(email);
 
-            if (user == null || user.getId() != userId) {
+            if (userData == null || userData.getId() != userId) {
                 JsonView.send(exchange, 404, "{\"message\":\"User not found\"}");
                 return;
             }
 
-            String json = String.format(
-                    "{\"id\":%d,\"roleID\":%d,\"firstName\":\"%s\",\"lastName\":\"%s\",\"email\":\"%s\",\"phoneNumber\":\"%s\"}",
-                    user.getId(), user.getRoleId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getPhoneNumber()
-            );
+            JSONObject obj = new JSONObject()
+                    .put("id",           userData.getId())
+                    .put("roleID",       userData.getRoleId())
+                    .put("firstName",    userData.getFirstName())
+                    .put("lastName",     userData.getLastName())
+                    .put("email",        userData.getEmail())
+                    .put("phoneNumber",  userData.getPhoneNumber());
+
+            String json = obj.toString();
             JsonView.send(exchange, 200, json);
         }
     }
@@ -78,9 +78,9 @@ public class UserController {
 
             int userId = (int) claims.get("id");
             String email = (String) claims.get("email");
-            User user = UserModel.getUserByEmail(email);
+            UserData userData = UserModel.getUserByEmail(email);
 
-            if (user == null || user.getId() != userId) {
+            if (userData == null || userData.getId() != userId) {
                 JsonView.send(exchange, 404, "{\"message\":\"User not found\"}");
                 return;
             }
@@ -106,27 +106,27 @@ public class UserController {
                 }
 
                 if (!(firstName == null || firstName.isEmpty())) {
-                    user.setFirstName(firstName);
+                    userData.setFirstName(firstName);
                 }
                 if (!(lastName == null || lastName.isEmpty())) {
-                    user.setLastName(lastName);
+                    userData.setLastName(lastName);
                 }
                 if (!(phoneNumber == null || phoneNumber.isEmpty())) {
-                    user.setPhoneNumber(phoneNumber);
+                    userData.setPhoneNumber(phoneNumber);
                 }
                 if (!(emailFromJson == null || emailFromJson.isEmpty())) {
-                    user.setEmail(emailFromJson);
+                    userData.setEmail(emailFromJson);
                 }
 
                 if (emailFromJson != null) {
-                    User userEmailCheck = UserModel.getUserByEmail(emailFromJson);
-                    if (userEmailCheck != null && user.getId() != userEmailCheck.getId()) {
+                    UserData userDataEmailCheck = UserModel.getUserByEmail(emailFromJson);
+                    if (userDataEmailCheck != null && userData.getId() != userDataEmailCheck.getId()) {
                         JsonView.send(exchange, 409, "{\"message\":\"User with this email already exists\"}");
                         return;
                     }
                 }
 
-                UserModel.updateUser(user);
+                UserModel.updateUser(userData);
                 JsonView.send(exchange, 200, "{\"message\":\"User information updated successfully\"}");
             } catch (Exception e) {
                 e.printStackTrace();

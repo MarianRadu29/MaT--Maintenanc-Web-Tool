@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Contul Meu - ServicePro</title>
+    <link href="../css/profile.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet" />
+</head>
+<body>
+<header class="header">
+    <div class="container">
+        <div class="header-content">
+            <div class="logo">
+                <h1><a href="/">ServicePro</a></h1>
+            </div>
+            <button class="menu-toggle" id="menuToggle" aria-label="Deschide meniul">
+                <i class="ri-menu-line"></i>
+            </button>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="/">Acasă</a></li>
+                    <li><a href="programari.html">Programări</a></li>
+                    <li><a href="calendar.html">Calendar</a></li>
+                    <li><a href="#">Servicii</a></li>
+                    <li><a href="#">Contact</a></li>
+                    <li id="admin-link"><a href="admin.html">Admin</a></li>
+                    <li id="userData-account"><a class="active" href="profile.html">Profil</a></li>
+                    <li class="auth-links">
+
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</header>
+
+<section class="auth-section">
+    <div class="container">
+        <div class="card profile-card">
+            <h2 class="section-title">Contul Meu</h2>
+
+            <nav class="profile-tabs">
+                <button class="tab-button active" data-tab="info">Info</button>
+                <button class="tab-button" data-tab="appointments">Programările Mele</button>
+            </nav>
+
+            <div class="tab-content" id="tab-info">
+                <div class="profile-info">
+                    <!-- Nume complet -->
+                    <div class="info-item-inline">
+                        <div class="info-row">
+                            <i class="ri-user-line info-icon"></i>
+                            <span class="info-label">Nume complet:</span>
+                            <span class="info-value" id="userData-fullname-display">-</span>
+                            <button class="edit-btn" data-field="fullname" title="Editează">
+                                <i class="ri-edit-line"></i>
+                            </button>
+                        </div>
+                        <div class="info-edit" id="edit-fullname" style="display: none;">
+                            <i class="ri-user-line info-icon"></i>
+                            <span class="info-label">Nume complet:</span>
+                            <div class="edit-inputs">
+                                <input type="text" id="user-firstname" placeholder="Prenume" />
+                                <input type="text" id="user-lastname" placeholder="Nume" />
+                            </div>
+                            <div class="edit-actions">
+                                <button class="save-btn" data-field="fullname">
+                                    <i class="ri-check-line"></i>
+                                </button>
+                                <button class="cancel-btn" data-field="fullname">
+                                    <i class="ri-close-line"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="info-item-inline">
+                        <div class="info-row">
+                            <i class="ri-mail-line info-icon"></i>
+                            <span class="info-label">Email:</span>
+                            <span class="info-value" id="userData-email-display">-</span>
+                            <button class="edit-btn" data-field="email" title="Editează">
+                                <i class="ri-edit-line"></i>
+                            </button>
+                        </div>
+                        <div class="info-edit" id="edit-email" style="display: none;">
+                            <i class="ri-mail-line info-icon"></i>
+                            <span class="info-label">Email:</span>
+                            <div class="edit-inputs">
+                                <input type="email" id="user-email-input" placeholder="Email" />
+                            </div>
+                            <div class="edit-actions">
+                                <button class="save-btn" data-field="email">
+                                    <i class="ri-check-line"></i>
+                                </button>
+                                <button class="cancel-btn" data-field="email">
+                                    <i class="ri-close-line"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Telefon -->
+                    <div class="info-item-inline">
+                        <div class="info-row">
+                            <i class="ri-phone-line info-icon"></i>
+                            <span class="info-label">Telefon:</span>
+                            <span class="info-value" id="userData-phone-display">-</span>
+                            <button class="edit-btn" data-field="phone" title="Editează">
+                                <i class="ri-edit-line"></i>
+                            </button>
+                        </div>
+                        <div class="info-edit" id="edit-phone" style="display: none;">
+                            <i class="ri-phone-line info-icon"></i>
+                            <span class="info-label">Telefon:</span>
+                            <div class="edit-inputs">
+                                <input type="tel" id="user-phone-input" placeholder="Număr telefon" />
+                            </div>
+                            <div class="edit-actions">
+                                <button class="save-btn" data-field="phone">
+                                    <i class="ri-check-line"></i>
+                                </button>
+                                <button class="cancel-btn" data-field="phone">
+                                    <i class="ri-close-line"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Rol (nu se poate edita) -->
+                    <div class="info-item-inline">
+                        <div class="info-row">
+                            <i class="ri-shield-user-line info-icon"></i>
+                            <span class="info-label">Rol:</span>
+                            <span class="info-value" id="userData-role-display">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="tab-appointments" style="display:none;">
+                <div class="appointments-filters">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="searchAppointments">Caută</label>
+                            <input type="text" id="searchAppointments" placeholder="Caută după tip vehicul, problemă..." />
+                        </div>
+                        <div class="form-group">
+                            <label for="vehicleTypeFilter">Tip vehicul</label>
+                            <select id="vehicleTypeFilter">
+                                <option value="">Toate</option>
+                                <option value="motorcycle">Motocicletă</option>
+                                <option value="bicycle">Bicicletă</option>
+                                <option value="scooter">Trotinetă</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="statusFilter">Status</label>
+                            <select id="statusFilter">
+                                <option value="">Toate</option>
+                                <option value="pending">În așteptare</option>
+                                <option value="canceled">Anulate</option>
+                                <option value="rejected">Respinse</option>
+                                <option value="completed">Modificate</option>
+                                <option value="approved">Aprobate</option>
+                                <option value="completed">Finalizate</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="data-table" style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                        <tr>
+                            <th>Data & Ora</th>
+                            <th>Vehicul</th>
+                            <th>Problemă</th>
+                            <th>Status</th>
+                            <th>Acțiuni</th>
+                        </tr>
+                        </thead>
+                        <tbody id="appointmentsTableBody">
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="empty-state" id="emptyAppointments" style="display: none; text-align: center; margin-top: 1rem;">
+                    <i class="ri-calendar-2-line" style="font-size: 3rem; color: var(--light-text, #9ca3af);"></i>
+                    <h3>Nu aveți programări active</h3>
+                    <p>Creați o programare nouă pentru vehiculul dumneavoastră</p>
+                    <a href="programari.html" class="btn btn-primary mt-4">Creează Programare</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer class="footer">
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-column" id="servicii">
+                <h3>ServicePro</h3>
+                <p>Servicii profesionale pentru motociclete, biciclete și trotinete.</p>
+            </div>
+            <div class="footer-column">
+                <h3>Program</h3>
+                <p>Luni - Vineri: 9:00 - 18:00</p>
+                <p>Sâmbătă: 9:00 - 14:00</p>
+                <p>Duminică: Închis</p>
+            </div>
+            <div class="footer-column" id="contact">
+                <h3>Contact</h3>
+                <p>Adresa: Str. Exemplu nr. 123, București</p>
+                <p>Telefon: 0700 123 456</p>
+                <p>Email: contact@servicepro.ro</p>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; <span id="currentYear"></span> ServicePro. Toate drepturile rezervate.</p>
+        </div>
+    </div>
+</footer>
+
+<script src="../js/profile-nav.js"></script>
+<script src="../js/profile-info.js"></script>
+<script src="../js/profile-appointments.js"></script>
+<script src="../js/alerts.js"></script>
+<script src="../js/scripts.js"></script>
+</body>
+</html>

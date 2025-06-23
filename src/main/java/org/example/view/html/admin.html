@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Admin - Service Auto</title>
+    <link href="../css/styles.css" rel="stylesheet">
+    <link href="../css/admin.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<header class="header">
+    <div class="container">
+        <div class="header-content">
+            <div class="logo">
+                <h1>ServicePro</h1>
+            </div>
+
+            <button class="menu-toggle" id="menuToggle" aria-label="Deschide meniul">
+                <i class="ri-menu-line"></i>
+            </button>
+
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="/">Acasă</a></li>
+                    <li><a href="programari.html">Programări</a></li>
+                    <li><a href="calendar.html">Calendar</a></li>
+                    <li><a href="#servicii">Servicii</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                    <li id="admin-link"><a class="active" href="admin.html">Admin</a></li>
+                    <li id="userData-account"><a href="profile.html">Profil</a></li>
+                    <li class="auth-links">
+
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</header>
+
+<div class="container admin-dashboard">
+    <h2 class="page-title">Panou Administrare</h2>
+
+    <div class="tab-container">
+        <div class="tabs">
+            <button class="tab active" data-tab="appointments">
+                <span class="icon">📅</span>Programări
+            </button>
+            <button class="tab" data-tab="inventory">
+                <span class="icon">📦</span>Inventar
+            </button>
+            <button class="tab" data-tab="data">
+                <span class="icon">📊</span>Date
+            </button>
+            <button class="tab" data-tab="users">
+                <span class="icon">👥</span>Utilizatori
+            </button>
+        </div>
+
+        <div class="tab-content">
+            <div class="tab-pane active" id="appointments">
+                <div class="appointments-tools">
+                    <h3>Gestionare Programări</h3>
+                    <div class="toolbar">
+                        <div class="search-box">
+                            <input id="searchAppointments" placeholder="Caută în programări..." type="text">
+                        </div>
+                        <select id="statusFilterAppointments">
+                            <option value="">Toate statusurile</option>
+                            <option value="pending">În așteptare</option>
+                            <option value="approved">Aprobate</option>
+                            <option value="rejected">Respinse</option>
+                            <option value="modified">Modificate</option>
+                            <option value="modified">Finalizate</option>
+                        </select>
+                        <select id="vehicleFilterAppointments">
+                            <option value="">Toate vehiculele</option>
+                            <option value="motorcycle">Motociclete</option>
+                            <option value="bicycle">Biciclete</option>
+                            <option value="scooter">Trotinete</option>
+                        </select>
+                    </div>
+                </div>
+
+                <table class="appointments-table">
+                    <thead>
+                    <tr>
+                        <th>Client</th>
+                        <th>Data/Ora</th>
+                        <th>Vehicul</th>
+                        <th>Problemă</th>
+                        <th>Status</th>
+                        <th>Atașamente</th>
+                        <th>Acțiuni</th>
+                    </tr>
+                    </thead>
+                    <tbody id="appointmentsTableBody">
+                    <!-- aici intra toate appointments -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="tab-pane" id="inventory">
+                <div class="inventory-tools">
+                    <h3>Gestionare Inventar</h3>
+                    <div class="toolbar">
+                        <button class="btn btn-primary" id="addItemBtn">Adaugă produs</button>
+                        <div class="search-box">
+                            <input id="searchInventory" placeholder="Caută în inventar..." type="text">
+                        </div>
+                        <select id="categoryFilter">
+                            <option value="">Toate categoriile</option>
+                        </select>
+                        <select id="statusFilter">
+                            <option value="">Toate statusurile</option>
+                            <option value="in-stock">În stoc</option>
+                            <option value="low-stock">Stoc limitat</option>
+                            <option value="out-of-stock">Epuizat</option>
+                        </select>
+                    </div>
+                </div>
+
+                <table class="inventory-table">
+                    <thead>
+                    <tr>
+                        <th>Nume produs</th>
+                        <th>Categorie</th>
+                        <th>Cantitate</th>
+                        <th>Preț</th>
+                        <th>Furnizor</th>
+                        <th>Status</th>
+                        <th>Acțiuni</th>
+                    </tr>
+                    </thead>
+                    <tbody id="inventoryTableBody">
+                    <!-- aici intra inventarul -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="tab-pane" id="data">
+                <div class="data-tools">
+                    <div class="import-section">
+                        <h3>Import Date</h3>
+                        <div class="import-options">
+                            <div class="import-option">
+                                <h4>Import CSV</h4>
+                                <input accept=".csv" id="csvImport" type="file">
+                                <button class="btn btn-secondary" data-import="csv">Importă CSV</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="export-section">
+                        <h3>Export Date</h3>
+                        <div class="export-options">
+                            <button class="btn" data-export="csv">Export CSV</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+<!--            momentan doar am adaugat ,treb impl-->
+            <div class="tab-pane" id="users"></div>
+        </div>
+    </div>
+</div>
+
+<!--modal programari -->
+<div class="modal" id="appointmentModal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h3>Detalii Programare</h3>
+        <div id="appointmentDetails"></div>
+        <div class="inventory-selection-section" id="productSelectionSection">
+            <h4 id="inventorySelectionTitle">Selectează produsele necesare pentru această comandă.</h4>
+
+            <div class="inventory-search-box">
+                <input id="inventorySearchModal" placeholder="Caută produse în inventar..." type="text" class="inventory-search-input">
+            </div>
+
+            <div class="inventory-results" id="inventoryResults">
+                <!-- rezultate dupa filtrare -->
+            </div>
+
+            <div class="selected-items-section">
+                <h4>Produse Selectate:</h4>
+                <div id="selectedItemsList" class="selected-items-list">
+                    <div class="no-results">Nu aveți produse selectate</div>
+                </div>
+                <div class="total-price" id="totalContainer">
+                    Total: <span id="totalPrice">0.00</span> RON
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="responseMessage">Mesaj pentru client</label>
+            <textarea id="responseMessage" placeholder="Introduceți un mesaj pentru client..." rows="3"></textarea>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="estimatedPrice">Preț estimativ manopera (RON)</label>
+                <input id="estimatedPrice" placeholder="ex: 350" type="text">
+            </div>
+            <div class="form-group">
+                <label for="warranty">Garanție (luni)</label>
+                <input id="warranty" placeholder="ex: 12 luni" type="text">
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-secondary" id="cancelAppointment">Anulează</button>
+            <button class="btn btn-danger" id="rejectAppointment">Respinge</button>
+            <button class="btn btn-success" id="approveAppointment">Aprobă</button>
+            <button class="btn btn-primary" id="finalizeAppointment">Finalizează</button>
+        </div>
+    </div>
+</div>
+
+<!-- modal inventar -->
+<div class="modal" id="inventoryModal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h3 id="inventoryModalTitle">Adaugă produs</h3>
+        <form id="inventoryForm">
+            <input id="itemId" type="hidden">
+            <div class="form-group">
+                <label for="itemName">Nume produs</label>
+                <input id="itemName" required type="text">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="itemCategory">Categorie</label>
+                    <select id="itemCategory" required>
+                        <option value="">Selectează categoria</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="itemQuantity">Cantitate</label>
+                    <input id="itemQuantity" min="0" required type="number">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="itemPrice">Preț (RON)</label>
+                    <input id="itemPrice" min="0" required step="0.01" type="number">
+                </div>
+                <div class="form-group">
+                    <label for="itemSupplier">Furnizor</label>
+                    <input id="itemSupplier" required type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="itemStatus">Status</label>
+                <select id="itemStatus" required>
+                    <option value="in-stock">În stoc</option>
+                    <option value="low-stock">Stoc limitat</option>
+                    <option value="out-of-stock">Epuizat</option>
+                    <option value="ordered">Comandat</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary close-btn" type="button">Anulează</button>
+                <button class="btn btn-primary" type="submit">Salvează</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- modal pentru edit inventar -->
+<div class="modal" id="editInventoryModal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h3 id="editInventoryModalTitle">Editează produs</h3>
+        <form id="editInventoryForm">
+            <input id="editItemId" type="hidden">
+            <div class="form-group">
+                <label for="editItemName">Nume produs</label>
+                <input id="editItemName" required type="text">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="editItemCategory">Categorie</label>
+                    <select id="editItemCategory" required>
+                        <option value="">Selectează categoria</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editItemQuantity">Cantitate</label>
+                    <input id="editItemQuantity" min="0" required type="number">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="editItemPrice">Preț (RON)</label>
+                    <input id="editItemPrice" min="0" required step="0.01" type="number">
+                </div>
+                <div class="form-group">
+                    <label for="editItemSupplier">Furnizor</label>
+                    <input id="editItemSupplier" required type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="editItemStatus">Status</label>
+                <select id="editItemStatus" required>
+                    <option value="in-stock">În stoc</option>
+                    <option value="low-stock">Stoc limitat</option>
+                    <option value="out-of-stock">Epuizat</option>
+                    <option value="ordered">Comandat</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary close-btn" type="button">Anulează</button>
+                <button class="btn btn-primary" type="submit">Actualizează</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<footer class="footer">
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-column" id="servicii">
+                <h3>ServicePro</h3>
+                <p>Servicii profesionale pentru motociclete, biciclete și trotinete.</p>
+            </div>
+            <div class="footer-column">
+                <h3>Program</h3>
+                <p>Luni - Vineri: 9:00 - 18:00</p>
+                <p>Sâmbătă: 9:00 - 14:00</p>
+                <p>Duminică: Închis</p>
+            </div>
+            <div class="footer-column" id="contact">
+                <h3>Contact</h3>
+                <p>Adresa: Str. Exemplu nr. 123, București</p>
+                <p>Telefon: 0700 123 456</p>
+                <p>Email: contact@servicepro.ro</p>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; <span id="currentYear"></span> ServicePro. Toate drepturile rezervate.</p>
+        </div>
+    </div>
+</footer>
+
+
+<script src="../js/admin-appointment-items.js"></script>
+<script src="../js/logged-in-check.js"></script>
+<script src="../js/admin-inventory.js"></script>
+<script src="../js/admin-nav.js"></script>
+<script src="../js/admin-data.js"></script>
+<script src="../js/admin-appointments.js"></script>
+<script src="../js/alerts.js"></script>
+<script src="../js/scripts.js"></script>
+
+
+</body>
+</html>

@@ -13,12 +13,11 @@ import org.apache.commons.fileupload.util.Streams;
 
 import org.example.model.AppointmentModel;
 import org.example.model.UserModel;
-import org.example.objects.User;
 import org.example.utils.EmailSender;
 import org.example.utils.EmailTemplate;
 import org.example.utils.HttpExchangeRequestContext;
 import org.example.utils.JwtUtil;
-import org.example.view.JsonView;
+import org.example.utils.JsonView;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

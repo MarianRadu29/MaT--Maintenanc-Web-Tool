@@ -7,9 +7,8 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.example.model.InventoryModel;
 import org.example.model.UserModel;
-import org.example.objects.User;
 import org.example.utils.JwtUtil;
-import org.example.view.JsonView;
+import org.example.utils.JsonView;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

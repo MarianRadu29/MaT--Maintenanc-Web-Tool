@@ -6,6 +6,7 @@ import com.sun.net.httpserver.HttpHandler;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Arrays;
 
 public class StaticFileHandler implements HttpHandler {
     private final String root;
@@ -16,39 +17,16 @@ public class StaticFileHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        System.out.println(exchange.getRequestURI());
+        System.out.println("Path: " + exchange.getRequestURI());
+
         String path = exchange.getRequestURI().getPath();
         if (path.equals("/")) path = "/index.html";
-        /*if(path.equals("/admin.html")){
-            String authHeader = exchange.getRequestHeaders().getFirst("Authorization");
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                exchange.sendResponseHeaders(401, -1);
-                return;
-            }
-            String token = authHeader.substring(7); // Remove "Bearer "
-            if (!JwtUtil.isTokenValid(token)) {
-                exchange.sendResponseHeaders(401, -1);
-                return;
-            }
-            var keys = JwtUtil.validateAndExtractClaims(token);
-            if (keys == null) {
-                exchange.sendResponseHeaders(401, -1);
-                return;
-            }
-            int userId = (int) keys.get("id");
-            String email = (String) keys.get("email");
-            var user = UserModel.getUserByEmail(email);
-            if(user == null || user.getId() != userId) {
-                exchange.sendResponseHeaders(401, -1);
-                return;
-            }
-            if(user.getRoleId() == 1){
-                exchange.sendResponseHeaders(404, -1);
-                return;
-            }
-        }*/
 
-        File file = new File(root + path).getCanonicalFile();
+
+//        la celalalte fisiere css/js le adaug prin html
+        String nameFile = root + ( path.endsWith(".html") ? "/html" : "" ) + path;
+
+        File file = new File(nameFile).getCanonicalFile();
         if (!file.exists() || !file.getPath().startsWith(new File(root).getCanonicalPath())) {
             exchange.sendResponseHeaders(404, -1);
             return;

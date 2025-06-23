@@ -1,6 +1,6 @@
 package org.example.model;
 
-import org.example.objects.User;
+import org.example.objects.UserData;
 import org.example.utils.BCrypt;
 import org.example.utils.DatabaseConnection;
 
@@ -16,7 +16,7 @@ public class UserModel {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 
-    public static boolean createUser(User data) {
+    public static boolean createUser(UserData data) {
         String sql = "INSERT INTO users(first_name, last_name, password, email, role_id, phone_number) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -36,19 +36,19 @@ public class UserModel {
         }
     }
 
-    public static User updateUser(User user) {
+    public static UserData updateUser(UserData userData) {
         String sql = "UPDATE users SET first_name = ?, last_name = ?, email = ?, phone_number = ? WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setString(1, user.getFirstName());
-            pstmt.setString(2, user.getLastName());
-            pstmt.setString(3, user.getEmail());
-            pstmt.setString(4, user.getPhoneNumber());
-            pstmt.setInt(5, user.getId());
+            pstmt.setString(1, userData.getFirstName());
+            pstmt.setString(2, userData.getLastName());
+            pstmt.setString(3, userData.getEmail());
+            pstmt.setString(4, userData.getPhoneNumber());
+            pstmt.setInt(5, userData.getId());
 
             pstmt.executeUpdate();
-            return user;
+            return userData;
         } catch (SQLException e) {
             System.out.println("[UPDATE USER ERROR] " + e.getMessage());
             return null;
@@ -87,7 +87,7 @@ public class UserModel {
         return -1;
     }
 
-    public static User getUserByEmail(String email) {
+    public static UserData getUserByEmail(String email) {
         String sql = "SELECT * FROM users WHERE email = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -101,7 +101,7 @@ public class UserModel {
                 String firstName = rs.getString("first_name");
                 String lastName = rs.getString("last_name");
                 String password = rs.getString("password");
-                return new User(firstName, lastName, password, email, id, phoneNumber, roleId);
+                return new UserData(firstName, lastName, password, email, id, phoneNumber, roleId);
             }
         } catch (SQLException e) {
             System.out.println("[GET USER BY EMAIL ERROR] " + e.getMessage());
@@ -110,7 +110,7 @@ public class UserModel {
         return null;
     }
 
-    public static User getUserById(int id) {
+    public static UserData getUserById(int id) {
         String sql = "SELECT * FROM users WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -124,7 +124,7 @@ public class UserModel {
                 String lastName = rs.getString("last_name");
                 String password = rs.getString("password");
                 String email = rs.getString("email");
-                return new User(firstName, lastName, password, email, id, phoneNumber, roleId);
+                return new UserData(firstName, lastName, password, email, id, phoneNumber, roleId);
             }
         } catch (SQLException e) {
             System.out.println("[GET USER BY ID ERROR] " + e.getMessage());

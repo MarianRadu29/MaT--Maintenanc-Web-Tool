@@ -38,7 +38,7 @@ public class Main {
         server.createContext("/api/inventory/update/", new InventoryController.UpdateItem());
         server.createContext("/api/import", new InventoryController.ImportInventory());
         server.createContext("/api/export", new InventoryController.ExportInventory());
-        server.createContext("/", new StaticFileHandler("src/main/resources/public"));
+        server.createContext("/", new StaticFileHandler("src/main/java/org/example/view"));
 
 
         // Adaugă alte rute aici
