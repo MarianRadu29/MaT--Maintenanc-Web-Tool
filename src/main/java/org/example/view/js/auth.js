@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded',  function()  {
         loginForm.addEventListener('submit', async function (e) {
             e.preventDefault();
 
-            const email = document.getElementById('email').value;
+            const email = DOMPurify.sanitize(document.getElementById('email').value);
             const password = document.getElementById('password').value;
             const rememberMe = document.getElementById('rememberMe')?.checked || false;
 
@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded',  function()  {
 
 
             if (response.status === 200) {
-                await getInfoUser(response);
+                window.location.href = "/";
             } else if (response.status === 400) {
                 showError(response.message);
             }
@@ -54,10 +54,10 @@ document.addEventListener('DOMContentLoaded',  function()  {
             e.preventDefault();
 
             // Get form data
-            const firstName = document.getElementById('firstName').value;
-            const lastName = document.getElementById('lastName').value;
-            const phone = document.getElementById('phone').value;
-            const email = document.getElementById('email').value;
+            const firstName = DOMPurify.sanitize(document.getElementById('firstName').value);
+            const lastName = DOMPurify.sanitize(document.getElementById('lastName').value);
+            const phone = DOMPurify.sanitize(document.getElementById('phone').value);
+            const email = DOMPurify.sanitize(document.getElementById('email').value);
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
             const termsAgree = document.getElementById('termsAgree').checked;
@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded',  function()  {
             });
             
             if (response.status === 200) {
-                await getInfoUser(response);
+                window.location.href = "/";
             } else if (response.status === 400) {
                 showError(response.message);
             }
@@ -120,25 +120,6 @@ document.addEventListener('DOMContentLoaded',  function()  {
 
     function validateEmail(email) {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    }
-
-    async function getInfoUser(response){
-        const data = await response.json();
-        const accessToken = data?.accessToken;
-        localStorage.setItem("accessToken", accessToken);
-        const responseUser = await fetch("/api/user", {
-            method: "GET",
-            headers: {
-                "Authorization": `Bearer ${accessToken}`
-            }
-        });
-        if (responseUser.status === 200) {
-            const user = await responseUser.json();
-            if (user) {
-                localStorage.setItem("userData", JSON.stringify(user,null,4));
-            }
-        }
-        window.location.href = "/";
     }
 
     function showError(message) {

@@ -13,7 +13,6 @@ public class DatabaseConnection {
     private static final String DB_PASSWORD;
 
     static {
-        //ar trebui sa iau dintr un fisier de configurare datele de mai sus
         Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
         DB_URL = dotenv.get("DB_URL");
         DB_USER = dotenv.get("DB_USER");

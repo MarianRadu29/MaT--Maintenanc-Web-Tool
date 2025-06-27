@@ -2,43 +2,17 @@
 let userData = null;
 let appointments = [];
 
-
-async function getUserData() {
-    try {
-        const accessToken = localStorage.getItem('accessToken');
-        if (!accessToken) {
-            throw new Error('No access token found');
-        }
-
-        const response = await fetch('/api/user', {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${accessToken}`,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP status ${response.status}`);
-        }
-
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error('Error fetching user data:', error);
-        window.location.href = 'login.html';
-        return null;
-    }
-}
-
 function populateUserData() {
-    if (!userData) return;
-    console.log(userData);
-    document.getElementById('userData-fullname-display').textContent = (userData.firstName || '') + ' ' + (userData.lastName || '');
-    document.getElementById('userData-email-display').textContent = userData.email || '-';
-    document.getElementById('userData-phone-display').textContent = userData.phoneNumber || '-';
-    document.getElementById('userData-role-display').textContent = userData.roleID === 2 ? 'Administrator' : 'Client';
-}
+    checkLogin().then(user => {
+        userData = user;
+        if (!userData) return;
+        document.getElementById('userData-fullname-display').textContent = (DOMPurify.sanitize(userData.firstName) || '') + ' ' + (DOMPurify.sanitize(userData.lastName) || '');
+        document.getElementById('userData-email-display').textContent = DOMPurify.sanitize(userData.email) || '-';
+        document.getElementById('userData-phone-display').textContent = DOMPurify.sanitize(userData.phoneNumber) || '-';
+        document.getElementById('userData-role-display').textContent = userData.roleID === 3 ? 'Administrator' : userData.roleID===2?'Mecanic': 'Client';
+
+    });
+   }
 
 function initializeEditFunctionality() {
     //sistem de editare
@@ -121,9 +95,9 @@ async function saveEdit(field) {
                 const response = await fetch("/api/user/update", {
                     method: "PATCH",
                     headers: {
-                        "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
                         "Content-Type": "application/json"
                     },
+                    credentials:'include',
                     body: JSON.stringify({
                         firstName: newData.firstName,
                         lastName: newData.lastName
@@ -149,9 +123,9 @@ async function saveEdit(field) {
                 const response = await fetch("/api/user/update", {
                     method: "PATCH",
                     headers: {
-                        "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
                         "Content-Type": "application/json"
                     },
+                    credentials:'include',
                     body: JSON.stringify({
                         email: newData.email,
                     })
@@ -175,9 +149,9 @@ async function saveEdit(field) {
                 const response = await fetch("/api/user/update", {
                     method: "PATCH",
                     headers: {
-                        "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
                         "Content-Type": "application/json"
                     },
+                    credentials:'include',
                     body: JSON.stringify({
                         phoneNumber: newData.phoneNumber,
                     })
@@ -191,11 +165,6 @@ async function saveEdit(field) {
 
         if (hasChanges) {
             userData = newData;
-            localStorage.setItem('userData', JSON.stringify(userData));
-            if (sessionStorage.getItem('userData')) {
-                sessionStorage.setItem('userData', JSON.stringify(userData));
-            }
-
             populateUserData();
             showCustomAlert('Datele au fost actualizate cu succes!', 3000);
         }

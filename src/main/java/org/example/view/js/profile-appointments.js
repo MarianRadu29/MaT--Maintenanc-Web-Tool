@@ -10,9 +10,7 @@ async function loadAppointments() {
     try {
         const response = await fetch("/api/appointments/self", {
             method: "GET",
-            headers: {
-                "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
-            }
+            credentials:'include'
         });
 
         if (!response.ok) throw new Error(`HTTP status ${response.status}`);
@@ -116,7 +114,7 @@ function renderAppointments(filter = {}) {
             tr.innerHTML = `
                 <td>${dateTimeDisplay}</td>
                 <td>${translateVehicleType(a.vehicleType)}</td>
-                <td>${a.problem}</td>
+                <td>${DOMPurify.sanitize(a.problem)}</td>
                 <td>${translateStatus(a.status)}</td>
                 <td>
                     <div class="action-buttons">
@@ -245,12 +243,12 @@ function showAppointmentModal(appointment) {
                         <span>${translateVehicleType(appointment.vehicleType)}</span>
                     </div>
                 </div>
-                ${appointment.vehicleBrand ? `
+                ${DOMPurify.sanitize(appointment.vehicleBrand) ? `
                 <div class="detail-item">
                     <i class="ri-star-line"></i>
                     <div>
                         <strong>Marcă vehicul:</strong>
-                        <span>${appointment.vehicleBrand}</span>
+                        <span>${DOMPurify.sanitize(appointment.vehicleBrand)}</span>
                     </div>
                 </div>
                 ` : ''}
@@ -258,7 +256,7 @@ function showAppointmentModal(appointment) {
                     <i class="ri-tools-line"></i>
                     <div>
                         <strong>Problemă:</strong>
-                        <span class="problem-text">${appointment.problem}</span>
+                        <span class="problem-text">${DOMPurify.sanitize(appointment.problem)}</span>
                     </div>
                 </div>
                 <div class="detail-item">
@@ -268,12 +266,12 @@ function showAppointmentModal(appointment) {
                         <span>${translateStatus(appointment.status)}</span>
                     </div>
                 </div>
-                ${appointment.adminMessage ? `
+                ${DOMPurify.sanitize(appointment.adminMessage) ? `
                 <div class="detail-item">
                     <i class="ri-sticky-note-line"></i>
                     <div>
                         <strong>${isApproved || isCompleted || appointment.status === 'canceled' ? 'Mesaj administrator:' : 'Motiv respingere:'}</strong>
-                        <span class="notes-text">${appointment.adminMessage}</span>
+                        <span class="notes-text">${DOMPurify.sanitize(appointment.adminMessage)}</span>
                     </div>
                 </div>
                 ` : ''}
@@ -393,9 +391,9 @@ function showAppointmentModal(appointment) {
                     await fetch("api/appointment/update", {
                         method: "PUT",
                         headers: {
-                            "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
                             "Content-Type": "application/json"
                         },
+                        credentials:'include',
                         body: JSON.stringify({
                             appointmentId: appointment.id,
                             adminMessage: appointment.adminMessage,
@@ -417,9 +415,9 @@ function showAppointmentModal(appointment) {
                     await fetch("api/appointment/update", {
                         method: "PUT",
                         headers: {
-                            "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
                             "Content-Type": "application/json"
                         },
+                        credentials:'include',
                         body: JSON.stringify({
                             appointmentId: appointment.id,
                             adminMessage: appointment.adminMessage,
@@ -445,9 +443,9 @@ function showAppointmentModal(appointment) {
                         await fetch("api/appointment/update", {
                             method: "PUT",
                             headers: {
-                                "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
                                 "Content-Type": "application/json"
                             },
+                            credentials:'include',
                             body: JSON.stringify({
                                 appointmentId: appointment.id,
                                 adminMessage: appointment.adminMessage,

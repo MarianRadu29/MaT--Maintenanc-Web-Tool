@@ -262,7 +262,7 @@ public class AppointmentModel {
             FROM appointments AS a
             JOIN users        AS u ON u.id = a.client_id
             WHERE a.client_id = ?
-            ORDER BY a.date, a.start_time, a.end_time;
+            ORDER BY a.date desc, a.start_time , a.end_time ;
         """;
 
         String sqlMedia = "SELECT file_name FROM media WHERE appointment_id = ?";

@@ -1,5 +1,5 @@
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', async function () {
     const timeSlots = document.getElementById("timeSlots");
     const appointmentDateInput = document.getElementById("appointmentDate");
 
@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // form submission
     const appointmentForm = document.getElementById("appointmentForm");
     if (appointmentForm) {
-        appointmentForm.addEventListener("submit", function (e) {
+        appointmentForm.addEventListener("submit", async function (e) {
             e.preventDefault();
             const data = new FormData(this);
 
@@ -153,7 +153,9 @@ document.addEventListener('DOMContentLoaded', function () {
             data.append("vehicleType", selectedVehicleType);
             data.append("appointmentStartTime", hour);
             data.append("appointmentEndTime", String(Number(hour)+1));
-            data.append("idClient", JSON.parse(localStorage.getItem("userData")).id);
+            let idUser;
+            await checkLogin().then(user=> idUser = user.id);
+            data.append("idClient",String(idUser));
 
             const submitButton = this.querySelector('button[type="submit"]');
             submitButton.disabled = true;
@@ -163,9 +165,7 @@ document.addEventListener('DOMContentLoaded', function () {
             //puteam trimite si application/json si faceam in json o cheie array care sa contina obiecte de forma {name,content,mediaType etc)
             fetch("/api/appointment", {
                 method: "POST",
-                headers: {
-                    "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
-                },
+                credentials:'include',
                 body: data,
             })
                 .then(async res => {
@@ -266,5 +266,3 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     }
 });
-
-

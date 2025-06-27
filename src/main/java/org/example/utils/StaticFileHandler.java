@@ -22,8 +22,7 @@ public class StaticFileHandler implements HttpHandler {
         String path = exchange.getRequestURI().getPath();
         if (path.equals("/")) path = "/index.html";
 
-
-//        la celalalte fisiere css/js le adaug prin html
+        // la celalalte fisiere css/js le adaug calea din html
         String nameFile = root + ( path.endsWith(".html") ? "/html" : "" ) + path;
 
         File file = new File(nameFile).getCanonicalFile();

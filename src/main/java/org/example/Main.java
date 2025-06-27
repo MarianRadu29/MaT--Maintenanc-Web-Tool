@@ -1,27 +1,39 @@
 package org.example;
 
 import com.sun.net.httpserver.HttpServer;
+import io.github.cdimascio.dotenv.Dotenv;
 import org.example.controller.*;
 import org.example.utils.StaticFileHandler;
 
 import java.net.InetSocketAddress;
+import java.util.Optional;
 
 public class Main {
+    private final static int PORT;
+    static {
+        Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
+        PORT = Integer.parseInt(dotenv.get("PORT","8081"));
+    }
     public static void main(String[] args) throws Exception {
-        HttpServer server = HttpServer.create(new InetSocketAddress(8001), 0);
+        HttpServer server = HttpServer.create(new InetSocketAddress(PORT), 0);
 
         setupRoutes(server);
 
         server.start();
-        System.out.println("Server running on http://localhost:8001");
+        System.out.println("Server running on http://localhost:"+ PORT);
     }
 
     public static void setupRoutes(HttpServer server) {
 
         server.createContext("/api/register", new AuthController.Register());
         server.createContext("/api/login", new AuthController.Login());
+        server.createContext("/api/logout",new AuthController.Logout());
+        server.createContext("/api/session", new AuthController.Session());
         server.createContext("/api/user", new UserController.GetUserInfo());
+        server.createContext("/api/user/",new UserController.UpdateUserRole());
+        server.createContext("/api/users", new UserController.GetUsers());
         server.createContext("/api/user/update", new UserController.UpdateUserInfo());
+        server.createContext("/api/user/delete/",new UserController.DeleteUser());
         server.createContext("/api/forgot-password",new AuthController.ForgotPassword());
         server.createContext("/api/validate-reset-token",new AuthController.ValidateTokenResetPassword());
         server.createContext("/api/reset-password",new AuthController.ResetPassword());

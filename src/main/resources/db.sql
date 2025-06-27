@@ -18,7 +18,8 @@ CREATE TABLE IF NOT EXISTS users (
                                      role_id       INTEGER NOT NULL,
                                      password      TEXT   NOT NULL,
                                      phone_number  TEXT   NOT NULL,
-                                     email         TEXT   NOT NULL
+                                     email         TEXT   NOT NULL,
+                                     status        TEXT   NOT NULL -- enabled/
 );
 
 -- Creare tabela forgot_password

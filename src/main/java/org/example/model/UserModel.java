@@ -7,6 +7,8 @@ import org.example.utils.DatabaseConnection;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class UserModel {
@@ -88,7 +90,7 @@ public class UserModel {
     }
 
     public static UserData getUserByEmail(String email) {
-        String sql = "SELECT * FROM users WHERE email = ?";
+        String sql = "SELECT * FROM users WHERE email = ? and status='enabled'";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
@@ -172,7 +174,7 @@ public class UserModel {
     }
 
     public static int validateResetPasswordToken(String token)
-            throws SQLException,Exception{
+            throws Exception{
         String sql = "SELECT user_id, expiration_date FROM forgot_password WHERE token = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -196,6 +198,51 @@ public class UserModel {
             }
         }
     }
+
+    public static List<UserData> getAllUsers() throws SQLException {
+        List<UserData> users = new ArrayList<>();
+        String sql = "SELECT * FROM users where status <> 'disabled' ";
+        try (Connection conn = DatabaseConnection.getConnection();
+        PreparedStatement stmt = conn.prepareStatement(sql)) {
+           var rs = stmt.executeQuery();
+           while (rs.next()) {
+               int id = rs.getInt("id");
+               int roleId = rs.getInt("role_id");
+               String phoneNumber = rs.getString("phone_number");
+               String firstName = rs.getString("first_name");
+               String lastName = rs.getString("last_name");
+               String password = rs.getString("password");
+               String email = rs.getString("email");
+               users.add(new UserData(firstName, lastName, password, email, id, phoneNumber, roleId));
+           }
+        }
+        return users;
+    }
+
+    public static int updateUserRole(int userId, int roleId) throws SQLException {
+        String sql = "UPDATE users SET role_id = ? WHERE id = ?";
+        int result ;
+        try (Connection conn = DatabaseConnection.getConnection();
+        PreparedStatement stmt = conn.prepareStatement(sql)) {
+            conn.setAutoCommit(false);
+            stmt.setInt(1, roleId);
+            stmt.setInt(2, userId);
+            result = stmt.executeUpdate();
+            conn.commit();
+        }
+        return result;
+    }
+
+    public static void deleteUser(int userId) throws SQLException {
+        String sql = "update users set status='disabled' where id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)
+        ){
+            pstmt.setInt(1, userId);
+            pstmt.executeUpdate();
+        }
+    }
+
     public static void updateUserPassword(int userId, String hashedPassword) throws SQLException {
         String sql = "UPDATE users SET password = ? WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();

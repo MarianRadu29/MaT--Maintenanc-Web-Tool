@@ -14,4 +14,16 @@ public class UserData extends RegisterData {
         this.id = id;
         this.roleId = roleId;
     }
+    @Override
+    public String toString() {
+        return "UserData{" +
+                        "id=" + id +
+                        ", roleId=" + roleId +
+                        ", firstName='" + getFirstName() + '\'' +
+                        ", lastName='" + getLastName() + '\'' +
+                        ", password='" + getPassword() + '\'' +
+                        ", email='" + getEmail() + '\'' +
+                        ", phoneNumber='" + getPhoneNumber() + '\'' +
+                        '}';
+    }
 }

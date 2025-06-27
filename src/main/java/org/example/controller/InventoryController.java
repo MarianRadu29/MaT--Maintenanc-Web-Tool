@@ -7,8 +7,10 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.example.model.InventoryModel;
 import org.example.model.UserModel;
+import org.example.utils.Cookie;
 import org.example.utils.JwtUtil;
-import org.example.utils.JsonView;
+import org.example.utils.JsonSender;
+import org.example.utils.Sanitizer;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -30,30 +32,28 @@ public class InventoryController {
                 return;
             }
 
-            String authHeader = exchange.getRequestHeaders().getFirst("Authorization");
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                JsonView.send(exchange, 401, "{\"message\":\"Missing or invalid token\"}");
+            String token = Cookie.getValue(exchange, "token");
+            if(token == null) {
+                JsonSender.send(exchange, 401, "{\"message\":\"Missing or invalid token\"}");
                 return;
             }
-
-            String token = authHeader.substring(7); // Remove "Bearer "
             Map<String, Object> claims = JwtUtil.validateAndExtractClaims(token);
 
             if (claims == null) {
-                JsonView.send(exchange, 401, "{\"message\":\"Invalid or expired token\"}");
+                JsonSender.send(exchange, 401, "{\"message\":\"Invalid or expired token\"}");
                 return;
             }
 
             int userId = (int) claims.get("id");
             int user = UserModel.getUserRoleId(userId);
-            if(user==1){
-                JsonView.send(exchange, 403, "{\"message\":\"Forbidden\"}");
+            if(user!=3){
+                JsonSender.send(exchange, 403, "{\"message\":\"Forbidden\"}");
                 return;
             }
 
             try {
                 JSONArray categories = InventoryModel.getAllCategories();
-                JsonView.send(exchange, 200, categories.toString());
+                JsonSender.send(exchange, 200, categories.toString());
             } catch (SQLException e) {
                 e.printStackTrace();
                 exchange.sendResponseHeaders(500, -1);
@@ -69,30 +69,28 @@ public class InventoryController {
                 return;
             }
 
-            String authHeader = exchange.getRequestHeaders().getFirst("Authorization");
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                JsonView.send(exchange, 401, "{\"message\":\"Missing or invalid token\"}");
+            String token = Cookie.getValue(exchange, "token");
+            if(token == null) {
+                JsonSender.send(exchange, 401, "{\"message\":\"Missing or invalid token\"}");
                 return;
             }
-
-            String token = authHeader.substring(7); // Remove "Bearer "
             Map<String, Object> claims = JwtUtil.validateAndExtractClaims(token);
 
             if (claims == null) {
-                JsonView.send(exchange, 401, "{\"message\":\"Invalid or expired token\"}");
+                JsonSender.send(exchange, 401, "{\"message\":\"Invalid or expired token\"}");
                 return;
             }
 
             int userId = (int) claims.get("id");
             int user = UserModel.getUserRoleId(userId);
-            if(user==1){
-                JsonView.send(exchange, 403, "{\"message\":\"Forbidden\"}");
+            if(user!=3){
+                JsonSender.send(exchange, 403, "{\"message\":\"Forbidden\"}");
                 return;
             }
 
             try {
                 JSONArray inventory = InventoryModel.getAllInventory();
-               JsonView.send(exchange, 200, inventory.toString());
+               JsonSender.send(exchange, 200, inventory.toString());
             } catch (SQLException e) {
                 e.printStackTrace();
                 exchange.sendResponseHeaders(500, -1);
@@ -108,24 +106,22 @@ public class InventoryController {
                 return;
             }
 
-            String authHeader = exchange.getRequestHeaders().getFirst("Authorization");
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                JsonView.send(exchange, 401, "{\"message\":\"Missing or invalid token\"}");
+            String token = Cookie.getValue(exchange, "token");
+            if(token == null) {
+                JsonSender.send(exchange, 401, "{\"message\":\"Missing or invalid token\"}");
                 return;
             }
-
-            String token = authHeader.substring(7); // Remove "Bearer "
             Map<String, Object> claims = JwtUtil.validateAndExtractClaims(token);
 
             if (claims == null) {
-                JsonView.send(exchange, 401, "{\"message\":\"Invalid or expired token\"}");
+                JsonSender.send(exchange, 401, "{\"message\":\"Invalid or expired token\"}");
                 return;
             }
 
             int userId = (int) claims.get("id");
             int user = UserModel.getUserRoleId(userId);
-            if(user==1){
-                JsonView.send(exchange, 403, "{\"message\":\"Forbidden\"}");
+            if(user!=3){
+                JsonSender.send(exchange, 403, "{\"message\":\"Forbidden\"}");
                 return;
             }
 
@@ -134,20 +130,19 @@ public class InventoryController {
             ).lines().collect(Collectors.joining());
 
             JSONObject json = new JSONObject(requestBody);
-            String name       = json.optString("name");
+            String name       = Sanitizer.sanitizeJavaScript(Sanitizer.sanitizeHtml(json.optString("name")));
             int categoryID    = json.optInt("category");
             int quantity      = json.optInt("quantity", 0);
             double price      = json.optDouble("price", 0.0);
-            String supplier   = json.optString("supplier");
-            String status     = json.optString("status", "in-stock");
+            String supplier   = Sanitizer.sanitizeJavaScript(Sanitizer.sanitizeHtml(json.optString("supplier")));
+            String status     = Sanitizer.sanitizeJavaScript(Sanitizer.sanitizeHtml(json.optString("status", "in-stock")));
 
             try {
                 InventoryModel.addItem(name, categoryID, quantity, price, supplier, status);
                     JSONObject res = new JSONObject();
-                    res.put("status", "success");
                     res.put("message", "Item added successfully.");
 
-                   JsonView.send(exchange, 200, res.toString());
+                   JsonSender.send(exchange, 200, res.toString());
 
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -164,24 +159,22 @@ public class InventoryController {
                 return;
             }
 
-            String authHeader = exchange.getRequestHeaders().getFirst("Authorization");
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                JsonView.send(exchange, 401, "{\"message\":\"Missing or invalid token\"}");
+            String token = Cookie.getValue(exchange, "token");
+            if(token == null) {
+                JsonSender.send(exchange, 401, "{\"message\":\"Missing or invalid token\"}");
                 return;
             }
-
-            String token = authHeader.substring(7); // Remove "Bearer "
             Map<String, Object> claims = JwtUtil.validateAndExtractClaims(token);
 
             if (claims == null) {
-                JsonView.send(exchange, 401, "{\"message\":\"Invalid or expired token\"}");
+                JsonSender.send(exchange, 401, "{\"message\":\"Invalid or expired token\"}");
                 return;
             }
 
             int userId = (int) claims.get("id");
             int user = UserModel.getUserRoleId(userId);
-            if(user==1){
-                JsonView.send(exchange, 403, "{\"message\":\"Forbidden\"}");
+            if(user!=3){
+                JsonSender.send(exchange, 403, "{\"message\":\"Forbidden\"}");
                 return;
             }
 
@@ -191,21 +184,20 @@ public class InventoryController {
 
             JSONObject json = new JSONObject(requestBody);
             int itemId       = json.optInt("id");
-            String name      = json.optString("name");
+            String name      = Sanitizer.sanitizeJavaScript(Sanitizer.sanitizeHtml(json.optString("name")));
             int categoryID   = json.optInt("category");
             int quantity     = json.optInt("quantity", 0);
             double price     = json.optDouble("price", 0.0);
-            String supplier  = json.optString("supplier");
-            String status    = json.optString("status", "in-stock");
+            String supplier  = Sanitizer.sanitizeJavaScript(Sanitizer.sanitizeHtml(json.optString("supplier")));
+            String status    = Sanitizer.sanitizeJavaScript(Sanitizer.sanitizeHtml(json.optString("status", "in-stock")));
 
             try {
                 boolean success = InventoryModel.updateItem(itemId, name, categoryID, quantity, price, supplier, status);
                 if (success) {
                     JSONObject res = new JSONObject();
-                    res.put("status", "success");
                     res.put("message", "Item updated successfully.");
 
-                    JsonView.send(exchange, 200, res.toString());
+                    JsonSender.send(exchange, 200, res.toString());
                 } else {
                     exchange.sendResponseHeaders(500, -1);
                 }
@@ -224,24 +216,22 @@ public class InventoryController {
                 return;
             }
 
-            String authHeader = exchange.getRequestHeaders().getFirst("Authorization");
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                JsonView.send(exchange, 401, "{\"message\":\"Missing or invalid token\"}");
+            String token = Cookie.getValue(exchange, "token");
+            if(token == null) {
+                JsonSender.send(exchange, 401, "{\"message\":\"Missing or invalid token\"}");
                 return;
             }
-
-            String token = authHeader.substring(7); // Remove "Bearer "
             Map<String, Object> claims = JwtUtil.validateAndExtractClaims(token);
 
             if (claims == null) {
-                JsonView.send(exchange, 401, "{\"message\":\"Invalid or expired token\"}");
+                JsonSender.send(exchange, 401, "{\"message\":\"Invalid or expired token\"}");
                 return;
             }
 
             int userId = (int) claims.get("id");
             int user = UserModel.getUserRoleId(userId);
-            if(user==1){
-                JsonView.send(exchange, 403, "{\"message\":\"Forbidden\"}");
+            if(user!=3){
+                JsonSender.send(exchange, 403, "{\"message\":\"Forbidden\"}");
                 return;
             }
 
@@ -260,7 +250,7 @@ public class InventoryController {
                     JSONObject res = new JSONObject();
                     res.put("message", "Item deleted successfully.");
 
-                   JsonView.send(exchange, 200, res.toString());
+                   JsonSender.send(exchange, 200, res.toString());
                 } else {
                     exchange.sendResponseHeaders(500, -1);
                 }
@@ -287,34 +277,24 @@ public class InventoryController {
                 return;
             }
 
-            String authHeader = exchange.getRequestHeaders().getFirst("Authorization");
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                JsonView.send(exchange, 401, "{\"message\":\"Missing or invalid token\"}");
+            String token = Cookie.getValue(exchange, "token");
+            if(token == null) {
+                JsonSender.send(exchange, 401, "{\"message\":\"Missing or invalid token\"}");
                 return;
             }
-            String token = authHeader.substring(7);
             Map<String, Object> claims = JwtUtil.validateAndExtractClaims(token);
             if (claims == null) {
-                JsonView.send(exchange, 401, "{\"message\":\"Invalid or expired token\"}");
+                JsonSender.send(exchange, 401, "{\"message\":\"Invalid or expired token\"}");
                 return;
             }
             int userId = (int) claims.get("id");
             int roleId = UserModel.getUserRoleId(userId);
-            if (roleId == 1) {
-                JsonView.send(exchange, 403, "{\"message\":\"Forbidden\"}");
+            if (roleId !=3) {
+                JsonSender.send(exchange, 403, "{\"message\":\"Forbidden\"}");
                 return;
             }
 
-            // 3) Citim corpul request-ului ca text in UTF-8
-            StringBuilder sbBody = new StringBuilder();
-            try (BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(exchange.getRequestBody(), StandardCharsets.UTF_8))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    sbBody.append(line).append("\n");
-                }
-            }
-            String body = sbBody.toString();
+            String body = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
 
             // parsare CSV
             List<Map<String, String>> rows = new ArrayList<>();
@@ -344,12 +324,12 @@ public class InventoryController {
                 for (CSVRecord record : csvParser) {
                     Map<String, String> row = new HashMap<>();
                     for (String header : expectedHeaders) {
-                        row.put(header, record.get(header));
+                        row.put(header, Sanitizer.sanitizeJavaScript(Sanitizer.sanitizeHtml(record.get(header))));
                     }
                     rows.add(row);
                 }
             } catch (Exception e) {
-                JsonView.send(exchange, 400,
+                JsonSender.send(exchange, 400,
                         new JSONObject().put("message", "Invalid CSV format " + e.getMessage()).toString());
                 return;
             }
@@ -359,14 +339,14 @@ public class InventoryController {
                 importedCount = InventoryModel.importCsvRows(rows);
             } catch (SQLException | NumberFormatException e) {
                 e.printStackTrace();
-                JsonView.send(exchange, 500,
+                JsonSender.send(exchange, 500,
                         new JSONObject().put("message", "Internal server error").toString());
                 return;
             }
 
             JSONObject respJson = new JSONObject();
             respJson.put("importedCount", importedCount);
-            JsonView.send(exchange, 200, respJson.toString());
+            JsonSender.send(exchange, 200, respJson.toString());
         }
     }
 
@@ -378,23 +358,21 @@ public class InventoryController {
                 return;
             }
 
-            String authHeader = exchange.getRequestHeaders().getFirst("Authorization");
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                JsonView.send(exchange, 401, "{\"message\":\"Missing or invalid token\"}");
+            String token = Cookie.getValue(exchange, "token");
+            if(token == null) {
+                JsonSender.send(exchange, 401, "{\"message\":\"Missing or invalid token\"}");
                 return;
             }
-
-            String token = authHeader.substring(7);
             Map<String, Object> claims = JwtUtil.validateAndExtractClaims(token);
             if (claims == null) {
-                JsonView.send(exchange, 401, "{\"message\":\"Invalid or expired token\"}");
+                JsonSender.send(exchange, 401, "{\"message\":\"Invalid or expired token\"}");
                 return;
             }
 
             int userId = (int) claims.get("id");
             int roleId = UserModel.getUserRoleId(userId);
-            if (roleId == 1) {
-                JsonView.send(exchange, 403, "{\"message\":\"Forbidden\"}");
+            if (roleId !=3) {
+                JsonSender.send(exchange, 403, "{\"message\":\"Forbidden\"}");
                 return;
             }
 
@@ -406,10 +384,7 @@ public class InventoryController {
                 exchange.sendResponseHeaders(500, -1);
                 return;
             }
-            if (list.isEmpty()) {
-                JsonView.send(exchange, 404, "{\"message\":\"No orders found\"}");
-                return;
-            }
+
 
             StringBuilder sb = new StringBuilder();
             // Header
@@ -445,7 +420,7 @@ public class InventoryController {
             respJson.put("contentType", "text/csv");
             respJson.put("content", base64Content);
 
-            JsonView.send(exchange, 200, respJson.toString());
+            JsonSender.send(exchange, 200, respJson.toString());
         }
     }
 

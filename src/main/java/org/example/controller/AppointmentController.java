@@ -13,11 +13,7 @@ import org.apache.commons.fileupload.util.Streams;
 
 import org.example.model.AppointmentModel;
 import org.example.model.UserModel;
-import org.example.utils.EmailSender;
-import org.example.utils.EmailTemplate;
-import org.example.utils.HttpExchangeRequestContext;
-import org.example.utils.JwtUtil;
-import org.example.utils.JsonView;
+import org.example.utils.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -40,7 +36,7 @@ public class AppointmentController {
             String path       = exchange.getRequestURI().getPath();
             String dateString = path.substring("/api/appointments/day/".length());
             String response   = AppointmentModel.getAppointmentsForDate(dateString);
-            JsonView.send(exchange, 200, response);
+            JsonSender.send(exchange, 200, response);
         }
     }
 
@@ -54,21 +50,17 @@ public class AppointmentController {
                 return;
             }
 
-            String authHeader = exchange.getRequestHeaders().getFirst("Authorization");
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                JsonView.send(exchange, 401, "{\"message\":\"Missing or invalid token\"}");
+            String token = Cookie.getValue(exchange, "token");
+            if(token == null) {
+                JsonSender.send(exchange, 401, "{\"message\":\"Missing or invalid token\"}");
                 return;
             }
-
-            String token = authHeader.substring(7); // Remove "Bearer "
             Map<String, Object> claims = JwtUtil.validateAndExtractClaims(token);
 
             if (claims == null) {
-                JsonView.send(exchange, 401, "{\"message\":\"Invalid or expired token\"}");
+                JsonSender.send(exchange, 401, "{\"message\":\"Invalid or expired token\"}");
                 return;
             }
-
-
 
             try {
                 // 1) Pregatim parser-ul multipart
@@ -115,9 +107,9 @@ public class AppointmentController {
                 }
 
                 int    clientId           = Integer.parseInt(fields.get("idClient"));
-                String brand              = fields.get("vehicleBrand");
-                String model              = fields.get("vehicleModel");
-                String problemDescription = fields.get("problemDescription");
+                String brand              = Sanitizer.sanitizeJavaScript(Sanitizer.sanitizeHtml(fields.get("vehicleBrand")));
+                String model              = Sanitizer.sanitizeJavaScript(Sanitizer.sanitizeHtml(fields.get("vehicleModel")));
+                String problemDescription = Sanitizer.sanitizeJavaScript(Sanitizer.sanitizeHtml(fields.get("problemDescription")));
                 String date               = fields.get("appointmentDate");
                 String startTime          = fields.get("appointmentStartTime");
                 String endTime            = fields.get("appointmentEndTime");
@@ -125,14 +117,16 @@ public class AppointmentController {
 
                 int userId = (int) claims.get("id");
                 if(userId!=clientId){
-                    JsonView.send(exchange, 403, "{\"message\":\"Forbidden: You cannot create an appointment for another user\"}");
+                    JsonSender.send(exchange, 403, "{\"message\":\"Forbidden: You cannot create an appointment for another user\"}");
                     return;
                 }
+
                 int appointmentId = AppointmentModel.insertAppointment(
                         clientId, brand, model,
                         problemDescription,
                         date, startTime, endTime, vehicleType
                 );
+
 
                 AppointmentModel.insertMediaFiles(appointmentId, uploadedFiles);
 
@@ -149,6 +143,7 @@ public class AppointmentController {
                         problemDescription,
                         uploadedFiles.stream().map(FileUploadData::fileName).toList()
                 );
+
                 EmailSender.sendEmail(
                         "radumariansebastian29@gmail.com",
                         "Programare primită #" + appointmentId,
@@ -156,17 +151,17 @@ public class AppointmentController {
                 );
 
                 String res = new JSONObject().put("appointmentId", appointmentId).toString();
-                JsonView.send(exchange, 200, res);
+                JsonSender.send(exchange, 200, res);
 
             } catch (FileUploadException fe) {
                 fe.printStackTrace();
-                JsonView.send(exchange, 500, new JSONObject()
+                JsonSender.send(exchange, 500, new JSONObject()
                         .put("error", "Invalid multipart request")
                         .toString()
                 );
             } catch (SQLException se) {
                 se.printStackTrace();
-                JsonView.send(exchange, 500, new JSONObject()
+                JsonSender.send(exchange, 500, new JSONObject()
                         .put("error", "DB error")
                         .toString()
                 );
@@ -181,33 +176,31 @@ public class AppointmentController {
                 exchange.sendResponseHeaders(405, -1);
                 return;
             }
-            String authHeader = exchange.getRequestHeaders().getFirst("Authorization");
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                JsonView.send(exchange, 401, "{\"message\":\"Missing or invalid token\"}");
+            String token = Cookie.getValue(exchange, "token");
+            if(token == null) {
+                JsonSender.send(exchange, 401, "{\"message\":\"Missing or invalid token\"}");
                 return;
             }
-
-            String token = authHeader.substring(7); // Remove "Bearer "
             Map<String, Object> claims = JwtUtil.validateAndExtractClaims(token);
 
             if (claims == null) {
-                JsonView.send(exchange, 401, "{\"message\":\"Invalid or expired token\"}");
+                JsonSender.send(exchange, 401, "{\"message\":\"Invalid or expired token\"}");
                 return;
             }
 
             int userId = (int) claims.get("id");
             int userRoleId = UserModel.getUserRoleId(userId);
             if(userRoleId==1){
-                JsonView.send(exchange, 403, "{\"message\":\"Forbidden: You do not have permission to access this resource\"}");
+                JsonSender.send(exchange, 403, "{\"message\":\"Forbidden: You do not have permission to access this resource\"}");
                 return;
             }
             try {
                 JSONArray resultArray = AppointmentModel.getAppointments();
-               JsonView.send(exchange, 200, resultArray.toString());
+               JsonSender.send(exchange, 200, resultArray.toString());
             } catch (SQLException e) {
                 e.printStackTrace();
                 JSONObject err = new JSONObject().put("error", "Database error");
-                JsonView.send(exchange, 500, err.toString());
+                JsonSender.send(exchange, 500, err.toString());
             }
         }
     }
@@ -220,27 +213,25 @@ public class AppointmentController {
                 return;
             }
 
-            String authHeader = exchange.getRequestHeaders().getFirst("Authorization");
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                JsonView.send(exchange, 401, "{\"message\":\"Missing or invalid token\"}");
+            String token = Cookie.getValue(exchange, "token");
+            if(token == null) {
+                JsonSender.send(exchange, 401, "{\"message\":\"Missing or invalid token\"}");
                 return;
             }
-
-            String token = authHeader.substring(7); // Remove "Bearer "
             Map<String, Object> claims = JwtUtil.validateAndExtractClaims(token);
             if (claims == null) {
-                JsonView.send(exchange, 401, "{\"message\":\"Invalid or expired token\"}");
+                JsonSender.send(exchange, 401, "{\"message\":\"Invalid or expired token\"}");
                 return;
             }
 
             int clientId = (int) claims.get("id");
             try {
                 JSONArray resultArray = AppointmentModel.getAppointmentsByClientId(clientId);
-               JsonView.send(exchange, 200, resultArray.toString());
+               JsonSender.send(exchange, 200, resultArray.toString());
 
             } catch (SQLException e) {
                 e.printStackTrace();
-               JsonView.send(exchange, 500, new JSONObject().put("error", "Database error").toString());
+               JsonSender.send(exchange, 500, new JSONObject().put("error", "Database error").toString());
             }
         }
     }
@@ -253,17 +244,15 @@ public class AppointmentController {
                 return;
             }
 
-            String authHeader = exchange.getRequestHeaders().getFirst("Authorization");
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                JsonView.send(exchange, 401, "{\"message\":\"Missing or invalid token\"}");
+            String token = Cookie.getValue(exchange, "token");
+            if(token == null) {
+                JsonSender.send(exchange, 401, "{\"message\":\"Missing or invalid token\"}");
                 return;
             }
-
-            String token = authHeader.substring(7); // Remove "Bearer "
             Map<String, Object> claims = JwtUtil.validateAndExtractClaims(token);
 
             if (claims == null) {
-                JsonView.send(exchange, 401, "{\"message\":\"Invalid or expired token\"}");
+                JsonSender.send(exchange, 401, "{\"message\":\"Invalid or expired token\"}");
                 return;
             }
 
@@ -276,7 +265,7 @@ public class AppointmentController {
             try {
                 appointmentId = Integer.parseInt(idStr);
             } catch (NumberFormatException e) {
-                JsonView.send(exchange, 400, new JSONObject()
+                JsonSender.send(exchange, 400, new JSONObject()
                         .put("error", "Invalid appointment ID")
                         .toString()
                 );
@@ -289,7 +278,7 @@ public class AppointmentController {
                         .mapToObj(list::getJSONObject)
                         .anyMatch(obj -> appointmentId== obj.getInt("id"));
                 if(!ok){
-                    JsonView.send(exchange, 403, new JSONObject()
+                    JsonSender.send(exchange, 403, new JSONObject()
                             .put("error", "Forbidden: You do not have permission to access this appointment")
                             .toString()
                     );
@@ -308,11 +297,11 @@ public class AppointmentController {
                     arr.put(obj);
                 }
 
-                JsonView.send(exchange, 200, arr.toString());
+                JsonSender.send(exchange, 200, arr.toString());
 
             } catch (SQLException e) {
                 e.printStackTrace();
-                JsonView.send(exchange, 500, new JSONObject()
+                JsonSender.send(exchange, 500, new JSONObject()
                         .put("error", "Database error: " + e.getMessage())
                         .toString()
                 );
@@ -329,18 +318,15 @@ public class AppointmentController {
                 return;
             }
 
-            String authHeader = exchange.getRequestHeaders().getFirst("Authorization");
-
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                JsonView.send(exchange, 401, "{\"message\":\"Missing or invalid token\"}");
+            String token = Cookie.getValue(exchange, "token");
+            if(token == null) {
+                JsonSender.send(exchange, 401, "{\"message\":\"Missing or invalid token\"}");
                 return;
             }
-
-            String token = authHeader.substring(7); // Remove "Bearer "
             Map<String, Object> claims = JwtUtil.validateAndExtractClaims(token);
 
             if (claims == null || !claims.containsKey("id") || !claims.containsKey("email")) {
-                JsonView.send(exchange, 401, "{\"message\":\"Invalid or expired token\"}");
+                JsonSender.send(exchange, 401, "{\"message\":\"Invalid or expired token\"}");
                 return;
             }
 
@@ -350,11 +336,16 @@ public class AppointmentController {
             int appointmentId = jsonBody.getInt("appointmentId");
             int userId = (int) claims.get("id");
             if(UserModel.getUserIdByAppointmentId(appointmentId) != userId){
-                JsonView.send(exchange, 403, "{\"message\":\"Forbidden: You do not have permission to update this appointment\"}");
+                JsonSender.send(exchange, 401, "{\"message\":\"Forbidden: You do not have permission to update this appointment\"}");
+                return;
+            }
+
+            if(UserModel.getUserRoleId(userId) < 2){
+                JsonSender.send(exchange, 403, "{\"message\":\"Forbidden: You do not have permission to update this appointment\"}");
                 return;
             }
             String status = jsonBody.getString("status");
-            String adminMessage = jsonBody.optString("adminMessage", null);
+            String adminMessage = Sanitizer.sanitizeJavaScript(Sanitizer.sanitizeHtml(jsonBody.optString("adminMessage", null)));
 
 
             try {
@@ -365,7 +356,7 @@ public class AppointmentController {
                     }
                     case "rejected" -> {
                         if(UserModel.getUserRoleId(UserModel.getUserIdByAppointmentId(appointmentId))==1){
-                            JsonView.send(exchange, 403, new JSONObject().put("message", "Forbidden: You do not have permission to reject this appointment").toString());
+                            JsonSender.send(exchange, 403, new JSONObject().put("message", "Forbidden: You do not have permission to reject this appointment").toString());
                             return;
                         }
                         AppointmentModel.updateAppointmentStatusAndMessage(appointmentId, status, adminMessage);
@@ -377,7 +368,7 @@ public class AppointmentController {
                     }
                     case "approved" -> {
                         if(UserModel.getUserRoleId(UserModel.getUserIdByAppointmentId(appointmentId))==1){
-                            JsonView.send(exchange, 403, new JSONObject().put("message", "Forbidden: You do not have permission to reject this appointment").toString());
+                            JsonSender.send(exchange, 403, new JSONObject().put("message", "Forbidden: You do not have permission to reject this appointment").toString());
                             return;
                         }
                         double estimatedPrice = jsonBody.optDouble("estimatedPrice", 0.0);
@@ -389,7 +380,7 @@ public class AppointmentController {
                     }
                     case "modified" -> {
                         if(UserModel.getUserRoleId(UserModel.getUserIdByAppointmentId(appointmentId))==1){
-                            JsonView.send(exchange, 403, new JSONObject().put("message", "Forbidden: You do not have permission to reject this appointment").toString());
+                            JsonSender.send(exchange, 403, new JSONObject().put("message", "Forbidden: You do not have permission to reject this appointment").toString());
                             return;
                         }
                         String newStartTime = jsonBody.optString("startTime");
@@ -402,27 +393,27 @@ public class AppointmentController {
                     }
                     case "completed" -> {
                         if(UserModel.getUserRoleId(UserModel.getUserIdByAppointmentId(appointmentId))==1){
-                            JsonView.send(exchange, 403, new JSONObject().put("message", "Forbidden: You do not have permission to reject this appointment").toString());
+                            JsonSender.send(exchange, 403, new JSONObject().put("message", "Forbidden: You do not have permission to reject this appointment").toString());
                             return;
                         }
                         AppointmentModel.completeAppointmentAndOrder(appointmentId, status);
                     }
                     default -> {
-                        JsonView.send(exchange, 400, new JSONObject().put("message", "Invalid status").toString());
+                        JsonSender.send(exchange, 400, new JSONObject().put("message", "Invalid status").toString());
                         return;
                     }
                 }
-                JsonView.send(exchange, 200, "{\"message\":\"Appointment updated successfully\"}");
+                JsonSender.send(exchange, 200, "{\"message\":\"Appointment updated successfully\"}");
             } catch (SQLException e) {
                 if ("P0001".equals(e.getSQLState())) {
-                    JsonView.send(exchange,409, new JSONObject()
+                    JsonSender.send(exchange,409, new JSONObject()
                             .put("message", e.getMessage())
                             .toString()
                     );
                     return;
                 }
                 e.printStackTrace();
-                JsonView.send(exchange, 500, new JSONObject().put("message", "Internal server error").toString());
+                JsonSender.send(exchange, 500, new JSONObject().put("message", "Internal server error").toString());
             }
 
         }

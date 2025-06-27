@@ -6,10 +6,13 @@ let currentAppointment = null;
 
 async function loadInventoryAPI() {
     try {
-        let res = await fetch("/api/inventory", { method: "GET", headers: {
-            "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
-            "Content-Type": "application/json"
-        }, });
+        let res = await fetch("/api/inventory", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            credentials:'include'
+        });
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         return await res.json();
     } catch (error) {
@@ -39,7 +42,6 @@ function translateCategory(categoryEn) {
 async function initInventoryLoad() {
     try {
         inventoryItems = await loadInventoryAPI();
-        console.log("Inventar încărcat:", inventoryItems);
     } catch (error) {
         showInventoryLoadError();
         inventoryItems = [];

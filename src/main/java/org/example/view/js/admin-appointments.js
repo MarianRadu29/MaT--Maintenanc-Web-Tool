@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const appointmentModal = document.getElementById('appointmentModal');
     const closeBtns = document.querySelectorAll('.close, .close-btn');
+    let appointments = [];
 
     closeBtns.forEach(btn => {
         btn.addEventListener('click', function () {
@@ -9,15 +10,14 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    let appointments = [];
 
     // load appointments
     fetch("/api/appointments",
     {
         headers: {
-            "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
             "Content-Type": "application/json"
-        }
+        },
+        credentials:'include'
     })
         .then(response => {
             if (!response.ok) {
@@ -119,9 +119,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 fetch("/api/appointment/update", {
                     method: "PUT",
                     headers: {
-                        "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
                         "Content-Type": "application/json"
                     },
+                    credentials:'include',
                     body: JSON.stringify(bodySend)
                 })
                     .then(res => {
@@ -192,9 +192,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 fetch("/api/appointment/update", {
                     method: "PUT",
                     headers: {
-                        "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
                         "Content-Type": "application/json"
                     },
+                    credentials:'include',
                     body: JSON.stringify(bodySend)
                 })
                     .then(res => {
@@ -315,21 +315,21 @@ document.addEventListener('DOMContentLoaded', function () {
                 default:
                     vehicleTypeText = appointment.vehicleType || 'Necunoscut';
             }
-
-            const problemText = appointment.problem && appointment.problem.length > 50
-                ? appointment.problem.slice(0, 50) + '...'
-                : appointment.problem || 'N/A';
+            const clearProblem = DOMPurify.sanitize(appointment.problem);
+            const problemText = clearProblem && clearProblem > 50
+                ? clearProblem.slice(0, 50) + '...'
+                : clearProblem || 'N/A';
 
             row.innerHTML = `
-            <td>${appointment.clientName || 'N/A'}</td>
+            <td>${DOMPurify.sanitize(appointment.problem) || 'N/A'}</td>
             <td>${formattedDate} / ${appointment.startTime + ":00-" + appointment.endTime + ":00" || 'N/A'}</td>
-            <td>${appointment.vehicleBrand || ''} ${appointment.vehicleModel || ''} (${vehicleTypeText})</td>
+            <td>${DOMPurify.sanitize(appointment.vehicleBrand)|| ''} ${DOMPurify.sanitize(appointment.vehicleModel) || ''} (${vehicleTypeText})</td>
             <td>${problemText}</td>
             <td><span class="status ${statusClass}">${statusText}</span></td>
             <td>${appointment.hasAttachments ? '✅' : '❌'}</td>
             <td class="table-actions">
                 <button class="action-btn action-btn-view" data-id="${appointment.id}">Vezi</button>
-                <button class="action-btn action-btn-edit" data-id="${appointment.id}" ${appointment.status === 'approved' ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''}>Modifică</button>
+                <button class="action-btn action-btn-edit" data-id="${appointment.id}" ${ ['approved','completed'].includes(appointment.status) ? `disabled style="${appointment.status=='completed'?'display:none;':''}opacity: 0.5; cursor: not-allowed;"` : ''}>Modifică</button>
             </td>
         `;
 
@@ -337,7 +337,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             row.querySelector('.action-btn-view').addEventListener('click', function () {
                 const appId = this.getAttribute('data-id');
-                const app = futureAppointments.find(a => a.id === appId);
+                const app = futureAppointments.find(a => a.id == appId);
 
                 let selectedInventoryItems;
                 if (app) {
@@ -349,7 +349,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         <div class="detail-row">
                             <i class="ri-user-line modal-icons"></i>
                             <span class="detail-label">Client:</span>
-                            <span class="info">${app.clientName}</span>
+                            <span class="info">${DOMPurify.sanitize(app.clientName)}</span>
                         </div>  
                     </div>
                     <div class="appointment-detail-section">
@@ -363,7 +363,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         <div class="detail-row">
                             <i class="ri-motorbike-line modal-icons"></i>
                             <span class="detail-label">Vehicul:</span>
-                            <span class="info">${app.vehicleBrand || ''} ${app.vehicleModel || ''} 
+                            <span class="info">${DOMPurify.sanitize(app.vehicleBrand) || ''} ${DOMPurify.sanitize(app.vehicleModel) || ''} 
                                 (${vehicleTypeText})
                             </span>
                         </div>
@@ -372,7 +372,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         <div class="detail-row">
                             <i class="ri-tools-line"></i>
                             <span class="detail-label">Problemă:</span>
-                            <span class="info">${app.problem || 'N/A'}</span>
+                            <span class="info">${DOMPurify.sanitize(app.problem) || 'N/A'}</span>
                         </div>
                     </div>
                     <div class="appointment-detail-section"> 
@@ -432,9 +432,9 @@ document.addEventListener('DOMContentLoaded', function () {
                         const container = detailsContainer.querySelector('#attachmentsContainer');
                         fetch(`/api/appointment/media/${app.id}`, {
                             headers: {
-                                "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
                                 "Content-Type": "application/json"
-                            }
+                            },
+                            credentials:'include'
                         })
                             .then(res => res.ok ? res.json() : Promise.reject(res.statusText))
                             .then(files => {
@@ -459,10 +459,14 @@ document.addEventListener('DOMContentLoaded', function () {
                                     const dlLink = document.createElement('a');
                                     dlLink.href = `data:${contentType};base64,${content}`;
                                     dlLink.download = fileName;
-                                    dlLink.textContent = `⬇️ Descarcă ${fileName}`;
-
-                                    container.appendChild(previewEl);
-                                    container.appendChild(dlLink);
+                                    dlLink.textContent = `⬇️ Descarcă ${DOMPurify.sanitize(fileName)}`;
+                                    const divEl = document.createElement('div');
+                                    divEl.style.display = 'flex';
+                                    divEl.style.flexDirection = 'column';
+                                    divEl.style.gap = '8px';
+                                    divEl.appendChild(previewEl);
+                                    divEl.appendChild(dlLink);
+                                    container.appendChild(divEl);
                                 });
                             })
                             .catch(err => {
@@ -471,7 +475,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             });
                     }
 
-                    document.getElementById('responseMessage').value = app.adminMessage || app.responseMessage || '';
+                    document.getElementById('responseMessage').value = DOMPurify.sanitize(app.adminMessage) || DOMPurify.sanitize(app.responseMessage) || '';
                     document.getElementById('estimatedPrice').value = app.estimatedPrice || '';
                     document.getElementById('warranty').value = app.warrantyMonths || app.warranty || '';
 
@@ -484,23 +488,24 @@ document.addEventListener('DOMContentLoaded', function () {
                     const rejectButton = document.getElementById('rejectAppointment');
                     const finalizeButton = document.getElementById('finalizeAppointment');
 
-                    approveButton.style.display = (app.status === 'approved' || app.status === 'rejected') ? 'none' : 'block';
-                    rejectButton.style.display = (app.status === 'approved' || app.status === 'rejected') ? 'none' : 'block';
+                    approveButton.style.display = (['approved','rejected','completed'].includes(app.status)) ? 'none' : 'block';
+                    rejectButton.style.display = (['approved','rejected','completed'].includes(app.status)) ? 'none' : 'block';
                     finalizeButton.style.display = (app.status === 'approved') ? 'block' : 'none';
 
                     finalizeButton.onclick = () => {
                         fetch("api/appointment/update", {
                             method: "PUT",
                             headers: {
-                                "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
                                 "Content-Type": "application/json"
                             },
+                            credentials:'include',
                             body: JSON.stringify({appointmentId: app.id, status: "completed"})
                         })
                             .then(res => res.json())
                             .then(() => {
                                 showCustomAlert('Programarea a fost finalizată!', 3000);
-                                editModal.style.display = 'none';
+                                document.getElementById('appointmentModal').style.display = 'none';
+                                window.location.reload();
                             });
                     };
 
@@ -510,7 +515,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             row.querySelector('.action-btn-edit').addEventListener('click', function () {
                 const appId = this.getAttribute('data-id');
-                const app = futureAppointments.find(a => a.id === appId);
+                const app = futureAppointments.find(a => a.id == appId);
                 if (app && app.status !== 'approved') {
                     openEditTimeModal(app);
                 }
@@ -538,7 +543,6 @@ function openEditTimeModal(appointment) {
                             <div class="form-group">
                                 <label for="editStartTime">Ora de început:</label>
                                 <select id="editStartTime" class="time-select" required>
-                                    <option value="08">08:00</option>
                                     <option value="09">09:00</option>
                                     <option value="10">10:00</option>
                                     <option value="11">11:00</option>
@@ -612,9 +616,9 @@ function openEditTimeModal(appointment) {
             fetch("api/appointment/update", {
                 method: "PUT",
                 headers: {
-                  "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
                   "Content-Type": "application/json"
                 },
+                credentials:'include',
                 body: JSON.stringify(data)
               })
               .then(response => {
@@ -647,8 +651,6 @@ function openEditTimeModal(appointment) {
               
         });
     }
-
-
 
     editModal.style.display = 'block';
 }

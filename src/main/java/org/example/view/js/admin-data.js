@@ -24,8 +24,8 @@
                 method: 'POST',
                 headers: {
                   "Content-Type": "application/json",
-                  "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
                 },
+                credentials:'include',
                 body: JSON.stringify({ content: csvText })
               });
       
@@ -41,7 +41,6 @@
                   fileInput.value = '';
                   break;
                 case 400:
-                console.log(res)
                   showCustomAlert(`CSV invalid`, 4000);
                   break;
                 case 401:
@@ -51,10 +50,10 @@
                   showCustomAlert('403 Forbidden: Nu ai permisiunea necesară.', 4000);
                   break;
                 case 415:
-                  showCustomAlert(`415 Unsupported Media Type: ${res}`, 4000);
+                  showCustomAlert(`415 Unsupported Media Type: ${JSON.stringify(res,null,4)}`, 4000);
                   break;
                 default:
-                  showCustomAlert(`Eroare ${status}: ${res}`, 4000);
+                  showCustomAlert(`Eroare ${status}: ${JSON.stringify(res,null,4)}`, 4000);
               }
             } catch (err) {
               console.error('Eroare la upload:', err);
@@ -73,9 +72,7 @@
         button.addEventListener('click', function () {
             fetch('/api/export', {
               method: 'GET',
-              headers: {
-                "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
-              }
+              credentials:'include'
             })
               .then(async response => {
                 const status = response.status;
@@ -118,7 +115,7 @@
                     showCustomAlert('403 Forbidden: Nu ai permisiunea necesara.', 4000);
                     return;
                   default:
-                    showCustomAlert(`Eroare ${status}: ${res}`, 4000);
+                    showCustomAlert(`Eroare ${status}: ${JSON.stringify(res,null,4)}`, 4000);
                     return;
                 }
               })

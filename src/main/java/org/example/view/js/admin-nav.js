@@ -1,6 +1,25 @@
 document.addEventListener("DOMContentLoaded", function () {
-// tabs functionality
+    let userData;
     const tabs = document.querySelectorAll('.tab');
+    checkLogin().then(user => {
+        userData = user;
+        if(userData.roleID===1){
+            window.location.href = "/notFound";
+        }
+
+        if(userData.roleID===2){
+            // appointments
+            tabs.forEach(tab => {
+                if(tab.getAttribute('data-tab').search('appointments')===-1){
+                    tab.style.display = "none";
+                }
+            })
+
+        }
+    });
+
+
+// tabs functionality
     const tabPanes = document.querySelectorAll('.tab-pane');
 
     tabs.forEach(tab => {

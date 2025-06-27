@@ -3,7 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta http-equiv="Content-Security-Policy"
+          content="
+        default-src 'self';
+        script-src 'self';
+        style-src  'self' https://fonts.googleapis.com https://cdn.jsdelivr.net 'unsafe-inline';
+        font-src   'self' https://fonts.gstatic.com https://cdn.jsdelivr.net;
+        object-src 'none';
+      ">
     <title>Programări Service - ServicePro</title>
+
     <link href="../css/programari.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
@@ -166,10 +175,10 @@
     </div>
 </footer>
 
+<script src="../js/logged-in-check.js"></script>
 <script src="../js/programari.js"></script>
 <script src="../js/alerts.js"></script>
 <script src="../js/scripts.js"></script>
-<script src="../js/logged-in-check.js"></script>
 
 </body>
 </html>

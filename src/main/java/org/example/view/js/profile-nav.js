@@ -1,16 +1,13 @@
 document.addEventListener("DOMContentLoaded", async function () {
     try {
-        userData = await getUserData();
-
-        if (!userData) {
-            window.location.href = 'login.html';
-            return;
-        }
-
-        localStorage.setItem('userData', JSON.stringify(userData));
-        if (sessionStorage.getItem('userData')) {
-            sessionStorage.setItem('userData', JSON.stringify(userData));
-        }
+        // userData
+        checkLogin().then(user => {
+            if(!user){
+                window.location.href = 'login.html';
+                return;
+            }
+            userData = user;
+        });
 
         initializeTabs();
         populateUserData();

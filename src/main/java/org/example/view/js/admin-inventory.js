@@ -18,9 +18,9 @@ document.addEventListener('DOMContentLoaded',  () => {
         fetch("/api/inventory", {
             method: "GET",
             headers: {
-                "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
                 "Content-Type": "application/json"
-            }
+            },
+            credentials:'include'
         }).then(res=> res.json()).then(list => {
             inventoryItems = list;
             loadInventoryItems(inventoryItems);
@@ -58,11 +58,11 @@ document.addEventListener('DOMContentLoaded',  () => {
             }
 
             row.innerHTML = `
-                <td>${item.name}</td>
+                <td>${DOMPurify.sanitize(item.name)}</td>
                 <td>${translateCategory(item.category)}</td>
                 <td>${item.quantity}</td>
                 <td>${item.price.toFixed(2)} RON</td>
-                <td>${item.supplier}</td>
+                <td>${DOMPurify.sanitize(item.supplier)}</td>
                 <td><span class="status ${statusClass}">${statusText}</span></td>
                 <td class="table-actions">
                     <button class="action-btn action-btn-edit" data-id="${item.id}">Editează</button>
@@ -84,9 +84,9 @@ document.addEventListener('DOMContentLoaded',  () => {
                     fetch("api/inventory/categories", {
                         method: "GET",
                         headers: {
-                            "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
                             "Content-Type": "application/json"
-                        }
+                        },
+                        credentials:'include'
                     })
                         .then(res => res.json())
                         .then(list => {
@@ -142,9 +142,9 @@ document.addEventListener('DOMContentLoaded',  () => {
                             fetch(`api/inventory/delete/${itemId}`, {
                                 method: "DELETE",
                                 headers: {
-                                    "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
                                     "Content-Type": "application/json"
-                                }
+                                },
+                                credentials:'include'
                             }).then(res => res.json()).then(obj => {
                                 showCustomAlert("Produsul a fost șters cu succes!");
                                 loadInventoryItems(inventoryItems);
@@ -188,9 +188,9 @@ document.addEventListener('DOMContentLoaded',  () => {
             fetch("api/inventory/categories", {
                 method: "GET",
                 headers: {
-                    "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
                     "Content-Type": "application/json"
-                }
+                },
+                credentials:'include'
             }).then(res => res.json())
                 .then(list => {
                     list.forEach(category => {
@@ -225,9 +225,9 @@ document.addEventListener('DOMContentLoaded',  () => {
             fetch("/api/inventory/add", {
                 method: "POST",
                 headers: {
-                    "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
                     "Content-Type": "application/json"
                 },
+                credentials:'include',
                 body: JSON.stringify(newItem)
             }).then(res => res.json())
                 .then(result => {
@@ -262,9 +262,9 @@ document.addEventListener('DOMContentLoaded',  () => {
             fetch(`/api/inventory/update/${updatedItem.id}`, {
                 method: "PUT",
                 headers: {
-                    "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
                     "Content-Type": "application/json"
                 },
+                credentials:'include',
                 body: JSON.stringify(updatedItem)
             }).then(res => res.json())
                 .then(result => {
@@ -286,9 +286,9 @@ document.addEventListener('DOMContentLoaded',  () => {
         fetch("api/inventory/categories", {
             method: "GET",
             headers: {
-                "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
                 "Content-Type": "application/json"
-            }
+            },
+            credentials:'include'
         }).then(res => res.json())
             .then(list => {
                 list.forEach(category => {

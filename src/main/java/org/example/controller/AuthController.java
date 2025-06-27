@@ -5,7 +5,7 @@ import com.sun.net.httpserver.HttpHandler;
 import org.example.model.UserModel;
 import org.example.objects.UserData;
 import org.example.utils.*;
-import org.example.utils.JsonView;
+import org.example.utils.JsonSender;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -19,13 +19,11 @@ import java.util.Map;
 public class AuthController {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-
-
     public static class Register implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             if (!"POST".equalsIgnoreCase(exchange.getRequestMethod())) {
-                JsonView.send(exchange, 405, "{\"message\":\"Method Not Allowed\"}");
+                JsonSender.send(exchange, 405, "{\"message\":\"Method Not Allowed\"}");
                 return;
             }
 
@@ -35,14 +33,14 @@ public class AuthController {
             );
             JSONObject obj = new JSONObject(requestBody);
 
-            String firstName = obj.getString("first_name");
-            String lastName = obj.getString("last_name");
-            String password = obj.getString("password");
-            String email = obj.getString("email");
-            String phoneNumber = obj.getString("phone_number");
+            String firstName = Sanitizer.sanitizeJavaScript(Sanitizer.sanitizeHtml(obj.getString("first_name")));
+            String lastName = Sanitizer.sanitizeJavaScript(Sanitizer.sanitizeHtml(obj.getString("last_name")));
+            String password = Sanitizer.sanitizeJavaScript(Sanitizer.sanitizeHtml(obj.getString("password")));
+            String email = Sanitizer.sanitizeJavaScript(Sanitizer.sanitizeHtml(obj.getString("email")));
+            String phoneNumber = Sanitizer.sanitizeJavaScript(Sanitizer.sanitizeHtml(obj.getString("phone_number")));
 
             if (firstName == null || lastName == null || password == null || email == null || phoneNumber == null) {
-                JsonView.send(exchange, 400, "{\"message\":\"Missing fields\"}");
+                JsonSender.send(exchange, 400, "{\"message\":\"Missing fields\"}");
                 return;
             }
 
@@ -52,12 +50,13 @@ public class AuthController {
                 UserModel.createUser(newUserData);
 
                 user = UserModel.getUserByEmail(email);
-                String accessToken = JwtUtil.generateToken(user.getId(), email, 60 * 24); // 15 minute
-
-                String json = String.format("{\"message\":\"User registered successfully\", \"accessToken\":\"%s\"}", accessToken);
-                JsonView.send(exchange, 200, json);
+                String accessToken = JwtUtil.generateToken(user.getId(), email, 15); // 15 minute
+                var cookie = new Cookie.Builder("token", accessToken).maxAge(15*60).httpOnly().secure().build();
+                exchange.getResponseHeaders().add("Set-Cookie", cookie.toString());
+                String json = new JSONObject().put("message","Successfully registered").toString();
+                JsonSender.send(exchange, 200, json);
             } else {
-                JsonView.send(exchange, 409, "{\"message\":\"User already exists\"}");
+                JsonSender.send(exchange, 409, "{\"message\":\"User already exists\"}");
             }
         }
     }
@@ -66,7 +65,7 @@ public class AuthController {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             if (!"POST".equalsIgnoreCase(exchange.getRequestMethod())) {
-                JsonView.send(exchange, 405, "{\"message\":\"Method Not Allowed\"}");
+                JsonSender.send(exchange, 405, "{\"message\":\"Method Not Allowed\"}");
                 return;
             }
 
@@ -75,20 +74,23 @@ public class AuthController {
                     StandardCharsets.UTF_8
             );
             JSONObject obj = new JSONObject(requestBody);
-            String email = obj.getString("email");
-            String password = obj.getString("password");
+            String email = Sanitizer.sanitizeJavaScript(Sanitizer.sanitizeHtml(obj.getString("email")));
+            String password = Sanitizer.sanitizeJavaScript(Sanitizer.sanitizeHtml(obj.getString("password")));
             boolean remember = obj.getBoolean("rememberMe");
             if (email == null || password == null) {
-                JsonView.send(exchange, 400, "{\"message\":\"Missing fields\"}");
+                JsonSender.send(exchange, 400, "{\"message\":\"Missing fields\"}");
                 return;
             }
             UserData userData = UserModel.getUserByEmail(email);
             if (userData != null && BCrypt.checkPassword(password, userData.getPassword())) {
                 String accessToken = JwtUtil.generateToken(userData.getId(), email, remember? 7*60 * 24 : 60*24);
-                String json = String.format("{\"message\":\"Login successful\", \"accessToken\":\"%s\"}", accessToken);
-                JsonView.send(exchange, 200, json);
+                var cookie = new Cookie.Builder("token", accessToken).maxAge(remember? 7*60*60 * 24 : 60*60*24).httpOnly().secure().build();
+                exchange.getResponseHeaders().add("Set-Cookie", cookie.toString());
+
+                String json = new JSONObject().put("message","Successfully logged in").toString();
+                JsonSender.send(exchange, 200, json);
             } else {
-                JsonView.send(exchange, 404, "{\"message\":\"email or password is wrong\"}");
+                JsonSender.send(exchange, 404, "{\"message\":\"email or password is wrong\"}");
             }
         }
     }
@@ -108,16 +110,16 @@ public class AuthController {
 
             try {
                 JSONObject json = new JSONObject(requestBody);
-                String email = json.optString("email", null);
+                String email = Sanitizer.sanitizeJavaScript(Sanitizer.sanitizeHtml(json.optString("email", null)));
 
                 if (email == null || email.isEmpty()) {
-                    JsonView.send(exchange, 400, "{\"message\":\"Email is required\"}");
+                    JsonSender.send(exchange, 400, "{\"message\":\"Email is required\"}");
                     return;
                 }
                 UserData userData = UserModel.getUserByEmail(email);
                 if (userData == null) {
                     // Nu spun daca emailul nu exista exact ca sa nu revelam informatii
-                    JsonView.send(exchange, 200,
+                    JsonSender.send(exchange, 200,
                             "{\"message\":\"Dacă emailul există, vei primi un link de resetare.\"}");
                     return;
                 }
@@ -131,7 +133,7 @@ public class AuthController {
                     UserModel.insertNewToken(userData.getId(), token, expirationDateStr);
                 } catch (SQLException ex) {
                     ex.printStackTrace();
-                    JsonView.send(exchange, 500,
+                    JsonSender.send(exchange, 500,
                             "{\"message\":\"Eroare la salvarea tokenului\"}");
                     return;
                 }
@@ -146,12 +148,12 @@ public class AuthController {
 
                 EmailSender.sendEmail(email, "Resetare parola", bodyEmail);
 
-                JsonView.send(exchange, 200,
+                JsonSender.send(exchange, 200,
                         "{\"message\":\"Dacă emailul există, vei primi un link de resetare.\"}");
 
             } catch (Exception e) {
                 e.printStackTrace();
-                JsonView.send(exchange, 500,
+                JsonSender.send(exchange, 500,
                         "{\"message\":\"Invalid JSON format\"}");
             }
         }
@@ -171,7 +173,7 @@ public class AuthController {
                 String token = map.get("token");
 
                 if (token == null || token.isEmpty()) {
-                    JsonView.send(exchange, 400, "{\"message\":\"Token is required\"}");
+                    JsonSender.send(exchange, 400, "{\"message\":\"Token is required\"}");
                     return;
                 }
 
@@ -180,26 +182,26 @@ public class AuthController {
                     expirationDate = UserModel.getForgotPasswordExpiration(token);
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    JsonView.send(exchange, 500, "{\"message\":\"Eroare la validarea tokenului\"}");
+                    JsonSender.send(exchange, 500, "{\"message\":\"Eroare la validarea tokenului\"}");
                     return;
                 }
 
                 if (expirationDate == null) {
-                    JsonView.send(exchange, 401, "{\"message\":\"Invalid token\"}");
+                    JsonSender.send(exchange, 401, "{\"message\":\"Invalid token\"}");
                     return;
                 }
 
                 if (LocalDateTime.now().isAfter(expirationDate)) {
-                    JsonView.send(exchange, 401, "{\"message\":\"Token expired\"}");
+                    JsonSender.send(exchange, 401, "{\"message\":\"Token expired\"}");
                     return;
                 }
 
-                JsonView.send(exchange, 200, "{\"message\":\"Token valid\"}");
+                JsonSender.send(exchange, 200, "{\"message\":\"Token valid\"}");
 
 
             } catch (Exception e) {
                 e.printStackTrace();
-                JsonView.send(exchange, 500, "{\"message\":\"Invalid request format\"}");
+                JsonSender.send(exchange, 500, "{\"message\":\"Invalid request format\"}");
             }
         }
     }
@@ -219,15 +221,15 @@ public class AuthController {
             try {
                 JSONObject json = new JSONObject(body);
                 String token = json.optString("token", null);
-                String newPassword = json.optString("newPassword", null);
+                String newPassword = Sanitizer.sanitizeJavaScript(Sanitizer.sanitizeHtml(json.optString("newPassword", null)));
 
                 // Validari parametri
                 if (token == null || token.isEmpty()) {
-                    JsonView.send(exchange, 400, "{\"message\":\"Token is required\"}");
+                    JsonSender.send(exchange, 400, "{\"message\":\"Token is required\"}");
                     return;
                 }
                 if (newPassword == null || newPassword.isEmpty()) {
-                    JsonView.send(exchange, 400, "{\"message\":\"New password is required\"}");
+                    JsonSender.send(exchange, 400, "{\"message\":\"New password is required\"}");
                     return;
                 }
 
@@ -236,14 +238,14 @@ public class AuthController {
                 try {
                     userId = UserModel.validateResetPasswordToken(token);
                 } catch (TokenInvalidException ex) {
-                    JsonView.send(exchange, 400, "{\"message\":\"Invalid token\"}");
+                    JsonSender.send(exchange, 400, "{\"message\":\"Invalid token\"}");
                     return;
                 } catch (TokenExpiredException ex) {
-                    JsonView.send(exchange, 400, "{\"message\":\"Token expired\"}");
+                    JsonSender.send(exchange, 400, "{\"message\":\"Token expired\"}");
                     return;
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    JsonView.send(exchange, 500, "{\"message\":\"Eroare la implementare\"}");
+                    JsonSender.send(exchange, 500, "{\"message\":\"Eroare la implementare\"}");
                     return;
                 }
 
@@ -252,7 +254,7 @@ public class AuthController {
                     UserModel.updateUserPassword(userId, BCrypt.hashPassword(newPassword));
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    JsonView.send(exchange, 500, "{\"message\":\"Eroare la resetarea parolei\"}");
+                    JsonSender.send(exchange, 500, "{\"message\":\"Eroare la resetarea parolei\"}");
                     return;
                 }
 
@@ -277,17 +279,63 @@ public class AuthController {
                 }
 
                 // Raspuns final de succes
-                JsonView.send(exchange, 200, "{\"message\":\"Parola a fost resetata cu succes!\"}");
+                JsonSender.send(exchange, 200, "{\"message\":\"Parola a fost resetata cu succes!\"}");
 
             } catch (JSONException ex) {
                 ex.printStackTrace();
-                JsonView.send(exchange, 400, "{\"message\":\"Invalid JSON format\"}");
+                JsonSender.send(exchange, 400, "{\"message\":\"Invalid JSON format\"}");
             } catch (Exception ex) {
                 ex.printStackTrace();
-                JsonView.send(exchange, 500, "{\"message\":\"Eroare internă\"}");
+                JsonSender.send(exchange, 500, "{\"message\":\"Eroare internă\"}");
             }
         }
     }
 
+    public static class Logout implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            if (!"DELETE".equalsIgnoreCase(exchange.getRequestMethod())) {
+                exchange.sendResponseHeaders(405, -1); // Method Not Allowed
+                exchange.close();
+                return;
+            }
+            Cookie deleteCookie = new Cookie.Builder("token", "")
+                    .path("/")
+                    .maxAge(0)
+                    .httpOnly()
+                    .secure()
+                    .sameSite("Strict")
+                    .build();
+            exchange.getResponseHeaders().add("Set-Cookie", deleteCookie.toString());
+            exchange.sendResponseHeaders(204, -1);
+            exchange.close();
+        }
+    }
 
+    public static class Session implements HttpHandler {
+         @Override
+        public void handle(HttpExchange exchange) throws IOException {
+             if (!"GET".equalsIgnoreCase(exchange.getRequestMethod())) {
+                 exchange.sendResponseHeaders(405, -1); // Method Not Allowed
+                 exchange.close();
+                 return;
+             }
+             String token = Cookie.getValue(exchange, "token");
+             if(token == null) {
+                 JsonSender.send(exchange, 201, "");
+                 exchange.close();
+                 return;
+             }
+             Map<String, Object> claims = JwtUtil.validateAndExtractClaims(token);
+             if (claims == null) {
+                 exchange.getRequestHeaders().set("Set-Cookie", new Cookie.Builder("token", "").httpOnly().secure().maxAge(0).build().toString());
+                 JsonSender.send(exchange, 201, "");
+                 exchange.close();
+                 return;
+             }
+
+             JsonSender.send(exchange, 200, "");
+             exchange.close();
+         }
+    }
 }

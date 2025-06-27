@@ -4,10 +4,20 @@ const pages = ["login.html", "register.html", "reset-password.html", "forgotten-
 const path = window.location.pathname;
 const pageName = path.substring(path.lastIndexOf("/") + 1);
 
-const userData = localStorage.getItem('userData') || sessionStorage.getItem('userData');
-const isAuth   = Boolean(userData);
+let userData;
+fetch('/api/session', {
+    method: 'GET',
+    credentials: 'include'
+}).then(res => {
+    if (res.status == 200) {
+        return Promise.reject(new Error('Logged'));
+    }
+    if (res.ok) {
+        return res.json();
+    }
+    return Promise.reject(new Error(`Error ${res.status}`));
+})
+    .catch(_=>{});
 
-// daca sunt autentificat si sunt pe una dintre paginile de auth/register
-if (isAuth && pages.includes(pageName)) {
-    window.location.href = "/notFound";
-}
+
+

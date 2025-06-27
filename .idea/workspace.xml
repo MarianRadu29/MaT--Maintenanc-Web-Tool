@@ -5,54 +5,45 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a1a27d4e-17cb-4261-b221-8c0b2f038ddc" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/AppointmentController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/AppointmentController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/AuthController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/InventoryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/InventoryController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/model/AppointmentModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/model/AppointmentModel.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/model/UserModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/model/UserModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/objects/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/objects/UserData.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/utils/EmailSender.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/utils/EmailSender.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/objects/UserData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/objects/UserData.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/utils/DatabaseConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/utils/DatabaseConnection.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/utils/JsonView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/utils/JsonSender.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/utils/StaticFileHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/utils/StaticFileHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/utils/Utils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/utils/Utils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/JsonView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/utils/JsonView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/admin-appointment-items.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/js/admin-appointment-items.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/admin-appointments.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/js/admin-appointments.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/admin-data.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/js/admin-data.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/admin-inventory.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/js/admin-inventory.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/admin-nav.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/js/admin-nav.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/admin.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/admin.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/html/admin.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/alerts.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/js/alerts.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/auth.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/css/auth.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/auth.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/js/auth.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/calendar.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/css/calendar.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/calendar.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/html/calendar.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/calendar.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/js/calendar.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/favicon.ico" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/favicon.ico" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/forgotten-password.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/html/forgotten-password.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/forgotten-password.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/js/forgotten-password.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/css/index.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/html/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/logged-in-check.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/js/logged-in-check.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/html/login.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/motor.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/motor.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/profile-appointments.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/js/profile-appointments.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/profile-info.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/js/profile-info.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/profile-nav.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/js/profile-nav.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/profile.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/css/profile.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/profile.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/html/profile.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/programari.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/css/programari.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/programari.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/html/programari.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/programari.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/js/programari.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/html/register.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/reset-password.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/html/reset-password.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/reset-password.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/js/reset-password.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/scripts.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/js/scripts.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/public/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/css/styles.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/.idea/jsLibraryMappings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/.idea/jsLibraryMappings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/css/admin.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/css/admin.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/css/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/css/styles.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/html/admin.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/html/admin.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/html/calendar.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/html/calendar.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/html/forgotten-password.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/html/forgotten-password.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/html/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/html/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/html/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/html/login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/html/profile.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/html/profile.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/html/programari.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/html/programari.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/html/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/html/register.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/html/reset-password.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/html/reset-password.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/js/admin-appointment-items.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/js/admin-appointment-items.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/js/admin-appointments.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/js/admin-appointments.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/js/admin-data.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/js/admin-data.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/js/admin-inventory.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/js/admin-inventory.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/js/admin-nav.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/js/admin-nav.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/js/auth.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/js/auth.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/js/logged-in-check.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/js/logged-in-check.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/js/page-access-control.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/js/page-access-control.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/js/profile-appointments.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/js/profile-appointments.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/js/profile-info.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/js/profile-info.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/js/profile-nav.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/js/profile-nav.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/js/programari.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/js/programari.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/js/scripts.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/js/scripts.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/db.sql" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/db.sql" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -68,8 +59,8 @@
         <option value="HTML File" />
         <option value="CSS File" />
         <option value="Exception" />
-        <option value="Class" />
         <option value="JavaScript File" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -100,6 +91,7 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;Application.Main.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Sanitizer.executor&quot;: &quot;Run&quot;,
     &quot;Application.WebApp.executor&quot;: &quot;Run&quot;,
     &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
     &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
@@ -141,14 +133,46 @@
       <recent name="C:\FACULTATE\ANUL 2\SEMESTRUL2\WEB\MaT--Maintenanc-Web-Tool\src\main\resources\public" />
     </key>
   </component>
-  <component name="RunManager">
-    <configuration name="WebApp" type="Application" factoryName="Application">
-      <option name="MAIN_CLASS_NAME" value="org.example.Main" />
+  <component name="RunManager" selected="Application.WebApp">
+    <configuration name="Sanitizer" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="org.example.utils.Sanitizer" />
       <module name="Web-Project" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.example.utils.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="WebApp" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="org.example.Main" />
+      <module name="Web-Project" />
+      <extension name="net.ashald.envfile">
+        <option name="IS_ENABLED" value="false" />
+        <option name="IS_SUBST" value="false" />
+        <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
+        <option name="IS_IGNORE_MISSING_FILES" value="false" />
+        <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
+        <ENTRIES>
+          <ENTRY IS_ENABLED="true" PARSER="runconfig" IS_EXECUTABLE="false" />
+        </ENTRIES>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Application.WebApp" />
+      <item itemvalue="Application.Sanitizer" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.Sanitizer" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -226,7 +250,8 @@
       <workItem from="1750011298487" duration="715000" />
       <workItem from="1750167297281" duration="10759000" />
       <workItem from="1750222595579" duration="2734000" />
-      <workItem from="1750497035635" duration="12739000" />
+      <workItem from="1750497035635" duration="62355000" />
+      <workItem from="1751027238994" duration="7592000" />
     </task>
     <servers />
   </component>

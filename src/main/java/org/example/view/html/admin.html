@@ -6,9 +6,19 @@
     <title>Admin - Service Auto</title>
     <link href="../css/styles.css" rel="stylesheet">
     <link href="../css/admin.css" rel="stylesheet">
+<!--    script unsafe-inline apare pentru ca am script inline cu <script>-->
+    <meta http-equiv="Content-Security-Policy"
+          content="
+        default-src 'self';
+        script-src 'self' 'unsafe-inline';
+         img-src     'self' data:;
+        style-src 'self' https://fonts.googleapis.com https://cdn.jsdelivr.net 'unsafe-inline';
+        font-src  'self' https://fonts.gstatic.com https://cdn.jsdelivr.net 'unsafe-inline';
+        object-src 'none';
+      ">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-</head>
+    </head>
 <body>
 <header class="header">
     <div class="container">
@@ -162,7 +172,353 @@
             </div>
 
 <!--            momentan doar am adaugat ,treb impl-->
-            <div class="tab-pane" id="users"></div>
+            <div class="tab-pane" id="users">
+                <div class="container">
+                    <div class="users-section">
+                        <!-- User Statistics -->
+                        <div class="user-stats">
+                            <div class="stat-card">
+                                <div class="stat-number" id="totalUsers">0</div>
+                                <div class="stat-label">Total Utilizatori</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="totalClients">0</div>
+                                <div class="stat-label">Clienți</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="totalMechanics">0</div>
+                                <div class="stat-label">Mecanici</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="totalAdmins">0</div>
+                                <div class="stat-label">Administratori</div>
+                            </div>
+                        </div>
+
+                        <!-- All Users Section -->
+                        <div class="card">
+                            <h2 class="section-title">Toți Utilizatorii</h2>
+                            <div class="table-responsive">
+                                <table class="data-table">
+                                    <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nume</th>
+                                        <th>Email</th>
+                                        <th>Telefon</th>
+                                        <th>Rol</th>
+                                        <th>Acțiuni</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="allUsersTable">
+                                    <!-- Users will be populated here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <!-- Client Management Section -->
+                        <div class="card">
+                            <h2 class="section-title">Gestionare Clienți/Mecanici</h2>
+
+                            <div class="table-responsive">
+                                <table class="data-table">
+                                    <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nume</th>
+                                        <th>Email</th>
+                                        <th>Telefon</th>
+                                        <th>Rol</th>
+                                        <th>Promovare</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="clientsTable">
+                                    <!-- Clients will be populated here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Delete Confirmation Modal -->
+                <div id="deleteModal" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 class="modal-title">Confirmare Ștergere</h3>
+                            <button class="close" onclick="closeModal('deleteModal')">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Ești sigur că vrei să ștergi utilizatorul <strong id="userToDelete"></strong>?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" onclick="closeModal('deleteModal')">Anulează</button>
+                            <button class="btn btn-danger" onclick="confirmDelete()">Șterge</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Role changer Modal -->
+                <div id="promoteModal" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 class="modal-title">Promovare Utilizator</h3>
+                            <button class="close" onclick="closeModal('promoteModal')">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Selectează noul rol pentru <strong id="userToPromote"></strong>:</p>
+                            <div style="margin-top: 1rem;">
+                                <div class="form-group">
+                                    <label for="newRole">Rol nou:</label>
+                                    <select id="newRole">
+                                        <option value="1">Client</option>
+                                        <option value="2">Mecanic</option>
+                                        <option value="3">Administrator</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" onclick="closeModal('promoteModal')">Anulează</button>
+                            <button class="btn btn-success" onclick="confirmPromotion()">Promovează</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <script>
+                let users;
+
+                async function fetchAndUseUsers() {
+                    await fetch('/api/users', {
+                        method: 'GET',
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
+                        },
+                    }).then(res => {
+                        if (res.status === 200) {
+                                return res.json();
+                        } else {
+                            throw new Error("Nu pot accesa lista de utilizatori")
+                        }
+                    }).then(list => {
+                        users = list;
+
+                        renderAllUsers();
+                        renderClients();
+                        updateStats();
+                    }).catch(err => showCustomAlert(err.toString()))
+                }
+                fetchAndUseUsers();
+                let userToDeleteId = null;
+                let userToPromoteId = null;
+
+                // Role mapping
+                const roleNames = {
+                    1: { name: 'Client', class: 'role-client' },
+                    2: { name: 'Mecanic', class: 'role-mechanic' },
+                    3: { name: 'Administrator', class: 'role-admin' }
+                };
+
+                function updateStats() {
+                    const totalUsers = users.length;
+                    const totalClients = users.filter(u => u.roleID === 1).length;
+                    const totalMechanics = users.filter(u => u.roleID === 2).length;
+                    const totalAdmins = users.filter(u => u.roleID === 3).length;
+
+                    document.getElementById('totalUsers').textContent = totalUsers;
+                    document.getElementById('totalClients').textContent = totalClients;
+                    document.getElementById('totalMechanics').textContent = totalMechanics;
+                    document.getElementById('totalAdmins').textContent = totalAdmins;
+                }
+
+                function renderAllUsers() {
+                    const tbody = document.getElementById('allUsersTable');
+                    tbody.innerHTML = '';
+
+                    users.forEach(user => {
+                        const role = roleNames[user.roleID];
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                    <td>${user.id}</td>
+                    <td>${user.firstName} ${user.lastName}</td>
+                    <td>${user.email}</td>
+                    <td>${user.phoneNumber}</td>
+                    <td><span class="role-badge ${role.class}">${role.name}</span></td>
+                    <td>
+                        <div class="action-buttons">
+                             ${
+                            [1,2].includes(user.roleID)
+                            ?`<button class="btn-icon btn-delete" onclick="showDeleteModal(${user.id}, '${user.firstName} ${user.lastName}')">
+                                Sterge
+                            </button>`
+                            :``}
+                        </div>
+                    </td>
+                `;
+                        tbody.appendChild(row);
+                    });
+                }
+
+                function renderClients() {
+                    const tbody = document.getElementById('clientsTable');
+                    tbody.innerHTML = '';
+
+                    const clients = users.filter(user => user.roleID !== 3);
+
+                    if (clients.length === 0) {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                    <td colspan="5" style="text-align: center; color: var(--medium-text); padding: 2rem;">
+                        Nu există clienți în sistem
+                    </td>
+                `;
+                        tbody.appendChild(row);
+                        return;
+                    }
+
+                    clients.forEach(user => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                    <td>${user.id}</td>
+                    <td>${user.firstName} ${user.lastName}</td>
+                    <td>${user.email}</td>
+                    <td>${user.phoneNumber}</td>
+                    <td>${roleNames[user.roleID].name}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-icon btn-promote" onclick="showPromoteModal(${user.id}, '${user.firstName} ${user.lastName}')">
+                                Schimbă rol
+                            </button>
+                        </div>
+                    </td>
+                `;
+                        tbody.appendChild(row);
+                    });
+                }
+
+                function showDeleteModal(userId, userName) {
+                    userToDeleteId = userId;
+                    document.getElementById('userToDelete').textContent = userName;
+                    document.getElementById('deleteModal').style.display = 'block';
+                }
+
+                function showPromoteModal(userId, userName) {
+                    userToPromoteId = userId;
+                    document.getElementById('userToPromote').textContent = userName;
+                    document.getElementById('promoteModal').style.display = 'block';
+                }
+
+                function closeModal(modalId) {
+                    document.getElementById(modalId).style.display = 'none';
+                    userToDeleteId = null;
+                    userToPromoteId = null;
+                }
+
+                function confirmDelete() {
+                    if (userToDeleteId) {
+                        users = users.filter(user => user.id !== userToDeleteId);
+                        fetch(`/api/user/delete/${userToDeleteId}`,{
+                            method: 'DELETE',
+                            headers: {
+                                "Content-Type": "application/json",
+                                "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
+                            },
+                        }).then(res=>{
+                            console.log(res.status);
+                            switch (res.status){
+                                case 200:{
+                                    closeModal('deleteModal');
+                                    // Show success message
+                                    showCustomAlert('Utilizatorul a fost șters cu succes!');
+                                    fetchAndUseUsers();
+                                    renderAllUsers();
+                                    renderClients();
+                                    updateStats();
+                                }
+                                    break;
+                                //401 403 500 etc
+                                default:
+                                    throw new Error(`${JSON.stringify(res,null,4)}`);
+                            }
+                        }).catch(err => {
+                            closeModal('deleteModal');
+                            showCustomAlert(err.toString())
+                        })
+
+                    }
+                }
+
+                function confirmPromotion() {
+                    if (userToPromoteId) {
+                        const newRoleId = parseInt(document.getElementById('newRole').value);
+                        const userIndex = users.findIndex(user => user.id === userToPromoteId);
+
+                        if (userIndex !== -1) {
+                            const oldRole = roleNames[users[userIndex].roleID].name;
+                            const newRole = roleNames[newRoleId].name;
+
+                            users[userIndex].roleID = newRoleId;
+                            fetch(`/api/user/${userToPromoteId}`,{
+                                method: 'PATCH',
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
+                                },
+                                body:JSON.stringify({
+                                    roleID:newRoleId
+                                },null,4)
+                            }).then(res=>{
+                                console.log(res.status);
+                                switch (res.status){
+                                    case 200:{
+                                        closeModal('promoteModal');
+                                        // Show success message
+                                        showCustomAlert(`Utilizatorul a fost promovat de la ${oldRole} la ${newRole}!`);
+                                        fetchAndUseUsers();
+                                        renderAllUsers();
+                                        renderClients();
+                                        updateStats();
+                                    }
+                                    break;
+                                    //401 403 500 etc
+                                    default:
+                                        throw new Error(`${JSON.stringify(res,null,4)}`);
+                                }
+                            }).catch(err => {
+                                closeModal('promoteModal');
+                                showCustomAlert(err.toString())
+                            })
+                        }
+                    }
+                }
+
+                // Close modal when clicking outside
+                window.onclick = function(event) {
+                    const deleteModal = document.getElementById('deleteModal');
+                    const promoteModal = document.getElementById('promoteModal');
+
+                    if (event.target === deleteModal) {
+                        closeModal('deleteModal');
+                    }
+                    if (event.target === promoteModal) {
+                        closeModal('promoteModal');
+                    }
+                }
+
+                // Close modal with Escape key
+                document.addEventListener('keydown', function(event) {
+                    if (event.key === 'Escape') {
+                        closeModal('deleteModal');
+                        closeModal('promoteModal');
+                    }
+                });
+            </script>
+
         </div>
     </div>
 </div>
@@ -344,8 +700,8 @@
 </footer>
 
 
-<script src="../js/admin-appointment-items.js"></script>
 <script src="../js/logged-in-check.js"></script>
+<script src="../js/admin-appointment-items.js"></script>
 <script src="../js/admin-inventory.js"></script>
 <script src="../js/admin-nav.js"></script>
 <script src="../js/admin-data.js"></script>
