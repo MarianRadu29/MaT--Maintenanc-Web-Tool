@@ -6,44 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="a1a27d4e-17cb-4261-b221-8c0b2f038ddc" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/AppointmentController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/AppointmentController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/AuthController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/InventoryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/InventoryController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/UserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/model/AppointmentModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/model/AppointmentModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/model/UserModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/model/UserModel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/objects/UserData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/objects/UserData.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/utils/DatabaseConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/utils/DatabaseConnection.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/utils/JsonView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/utils/JsonSender.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/utils/StaticFileHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/utils/StaticFileHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/.idea/jsLibraryMappings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/.idea/jsLibraryMappings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/css/admin.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/css/admin.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/css/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/css/styles.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/html/admin.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/html/admin.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/html/calendar.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/html/calendar.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/html/forgotten-password.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/html/forgotten-password.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/html/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/html/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/html/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/html/login.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/html/profile.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/html/profile.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/html/programari.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/html/programari.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/html/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/html/register.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/html/reset-password.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/html/reset-password.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/js/admin-appointment-items.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/js/admin-appointment-items.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/js/admin-appointments.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/js/admin-appointments.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/js/admin-data.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/js/admin-data.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/js/admin-inventory.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/js/admin-inventory.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/js/admin-nav.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/js/admin-nav.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/js/auth.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/js/auth.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/js/logged-in-check.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/js/logged-in-check.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/js/page-access-control.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/js/page-access-control.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/js/profile-appointments.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/js/profile-appointments.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/js/profile-info.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/js/profile-info.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/js/profile-nav.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/js/profile-nav.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/js/programari.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/js/programari.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/js/scripts.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/js/scripts.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/db.sql" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/db.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mvnw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mvnw.cmd" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -251,7 +215,7 @@
       <workItem from="1750167297281" duration="10759000" />
       <workItem from="1750222595579" duration="2734000" />
       <workItem from="1750497035635" duration="62355000" />
-      <workItem from="1751027238994" duration="7592000" />
+      <workItem from="1751027238994" duration="9203000" />
     </task>
     <servers />
   </component>
