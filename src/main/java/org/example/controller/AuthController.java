@@ -80,15 +80,22 @@ public class AuthController {
                 return;
             }
             UserData userData = UserModel.getUserByEmail(email);
-            if (userData != null && BCrypt.checkPassword(password, userData.getPassword())) {
-                String accessToken = JwtUtil.generateToken(userData.getId(), email, remember? 7*60 * 24 : 60*24);
-                var cookie = new Cookie.Builder("token", accessToken).maxAge(remember? 7*60*60 * 24 : 60*60*24).httpOnly().secure().build();
-                exchange.getResponseHeaders().add("Set-Cookie", cookie.toString());
+            System.out.println(userData.getEmail());
+            if (userData != null) {
+                if(!BCrypt.checkPassword(password, userData.getPassword())) {
+                    JsonSender.send(exchange, 406, "{\"message\":\"Password is wrong\"}");
 
-                String json = new JSONObject().put("message","Successfully logged in").toString();
-                JsonSender.send(exchange, 200, json);
+                }
+                else{
+                    String accessToken = JwtUtil.generateToken(userData.getId(), email, remember? 7*60 * 24 : 60*24);
+                    var cookie = new Cookie.Builder("token", accessToken).maxAge(remember? 7*60*60 * 24 : 60*60*24).httpOnly().secure().build();
+                    exchange.getResponseHeaders().add("Set-Cookie", cookie.toString());
+
+                    String json = new JSONObject().put("message","Successfully logged in").toString();
+                    JsonSender.send(exchange, 200, json);
+                }
             } else {
-                JsonSender.send(exchange, 404, "{\"message\":\"email or password is wrong\"}");
+                JsonSender.send(exchange, 404, "{\"message\":\"Not found this email\"}");
             }
         }
     }

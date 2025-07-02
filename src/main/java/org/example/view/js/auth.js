@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded',  function()  {
             } else if (response.status === 400) {
                 showError(response.message);
             }
-            else if(response.status === 404) {
+            else if(response.status === 404 || response.status==406) {
                 showError("Email-ul sau parola sunt gresite");
             }
         });
