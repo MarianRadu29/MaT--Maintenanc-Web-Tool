@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 
 public class UserController {
-
     public static class GetUserInfo implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
@@ -27,7 +26,7 @@ public class UserController {
                 return;
             }
             String token = Cookie.getValue(exchange, "token");
-            System.out.println(token!=null);
+
             if(token == null) {
                 JsonSender.send(exchange, 401, "{\"message\":\"Missing or invalid token\"}");
                 return;
@@ -98,7 +97,7 @@ public class UserController {
                 users.sort(Comparator.comparingInt(UserData::getId));
             }
             catch (SQLException e){
-                JsonSender.send(exchange,500,new  JSONObject().put("message","Internal error").toString());
+                JsonSender.send(exchange,500,new  JSONObject().put("message","Internal server error").toString());
                 return;
             }
             JSONArray resultJSON = new JSONArray();
@@ -115,8 +114,6 @@ public class UserController {
             );
             String json = resultJSON.toString();
             JsonSender.send(exchange, 200, json);
-
-
         }
     }
 
@@ -153,7 +150,8 @@ public class UserController {
                 return;
             }
 
-            String userIDString = Arrays.stream(exchange.getRequestURI().getPath().split("/")).toList().getLast();
+            var list =  Arrays.stream(exchange.getRequestURI().getPath().split("/")).toList();
+            String userIDString = list.get(list.size()-1);
             int userIdReceive;
             try{
                 userIdReceive = Integer.parseInt(userIDString);
@@ -298,7 +296,8 @@ public class UserController {
                 return;
             }
 
-            String userIDString = Arrays.stream(exchange.getRequestURI().getPath().split("/")).toList().getLast();
+            var list = Arrays.stream(exchange.getRequestURI().getPath().split("/")).toList();
+            String userIDString = list.get(list.size()-1);
             int userIdReceive;
             try{
                 userIdReceive = Integer.parseInt(userIDString);

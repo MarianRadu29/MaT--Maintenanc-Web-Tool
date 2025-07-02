@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS users (
                                      password      TEXT   NOT NULL,
                                      phone_number  TEXT   NOT NULL,
                                      email         TEXT   NOT NULL,
-                                     status        TEXT   NOT NULL -- enabled/
+                                     status        TEXT   NOT NULL -- enabled/disabled
 );
 
 -- Creare tabela forgot_password

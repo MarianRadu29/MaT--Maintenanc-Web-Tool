@@ -12,11 +12,7 @@ import java.util.List;
 
 
 public class UserModel {
-    private static final String DB_URL      = "jdbc:postgresql://localhost:5432/postgres";
-    private static final String DB_USER     = "postgres";
-    private static final String DB_PASSWORD = "student";
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
 
     public static boolean createUser(UserData data) {
         String sql = "INSERT INTO users(first_name, last_name, password, email, role_id, phone_number) VALUES (?, ?, ?, ?, ?, ?)";
@@ -173,8 +169,7 @@ public class UserModel {
         }
     }
 
-    public static int validateResetPasswordToken(String token)
-            throws Exception{
+    public static int validateResetPasswordToken(String token) throws Exception{
         String sql = "SELECT user_id, expiration_date FROM forgot_password WHERE token = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -182,8 +177,8 @@ public class UserModel {
             stmt.setString(1, token);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (!rs.next()) {
-                    // nu există rand cu acest token
-                    throw new Exception();
+                    //nu exista rand cu acest tokenul
+                    throw new Exception("No such token in DB");
                 }
 
                 String expirationDateStr = rs.getString("expiration_date");

@@ -6,7 +6,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -32,17 +31,17 @@ public class InventoryModel {
 
     public static JSONArray getAllInventory() throws SQLException {
         String sql = """
-    SELECT i.id,
-           i.name,
-           i.category,
-           i.quantity,
-           i.price,
-           i.supplier,
-           i.status,
-           c.name AS category_name
-    FROM inventory i
-    JOIN category c ON i.category = c.id
-    WHERE i.status <> 'deleted'
+                SELECT i.id,
+                       i.name,
+                       i.category,
+                       i.quantity,
+                       i.price,
+                       i.supplier,
+                       i.status,
+                       c.name AS category_name
+                FROM inventory i
+                JOIN category c ON i.category = c.id
+                WHERE i.status <> 'deleted'
     """;
 
         JSONArray jsonArray = new JSONArray();
@@ -68,16 +67,11 @@ public class InventoryModel {
         return jsonArray;
     }
 
-
-    public static boolean addItem(String name,
-                                  int categoryID,
-                                  int quantity,
-                                  double price,
-                                  String supplier,
-                                  String status) throws SQLException {
-        String sql =
-                "INSERT INTO inventory (name, category, quantity, price, supplier, status) " +
-                        "VALUES (?, ?, ?, ?, ?, ?)";
+    public static boolean addItem(String name,int categoryID,int quantity,double price,String supplier,String status) throws SQLException {
+        String sql = """
+                        INSERT INTO inventory (name, category, quantity, price, supplier, status)
+                        VALUES (?, ?, ?, ?, ?, ?)
+                        """;
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -170,9 +164,9 @@ public class InventoryModel {
                              o.appointment_id,
                              u.first_name || ' ' || u.last_name AS client_name,
                              a.date AS appointment_date,
-                             COALESCE(SUM(oi.quantity * oi.unit_price), 0) AS equipment_total,
-                             o.estimated_total + COALESCE(SUM(oi.quantity * oi.unit_price), 0) AS grand_total,
-                             o.estimated_total AS service_total
+                             TRUNC(COALESCE(SUM(oi.quantity * oi.unit_price), 0),2) AS equipment_total,
+                             TRUNC(o.estimated_total + COALESCE(SUM(oi.quantity * oi.unit_price), 0),2) AS grand_total,
+                             TRUNC(o.estimated_total,2) AS service_total
                          FROM orders o
                          JOIN appointments a ON o.appointment_id = a.id
                          JOIN users u        ON a.client_id = u.id
@@ -209,9 +203,4 @@ public class InventoryModel {
         return result;
     }
 
-
-
-
 }
-
-

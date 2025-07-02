@@ -42,16 +42,7 @@ public class AppointmentModel {
         return hoursJson.toString();
     }
 
-    public static int insertAppointment(
-            int clientId,
-            String vehicleBrand,
-            String vehicleModel,
-            String problemDescription,
-            String date,
-            String startTime,
-            String endTime,
-            String vehicleType
-    ) throws SQLException {
+    public static int insertAppointment(int clientId,String vehicleBrand,String vehicleModel,String problemDescription,String date, String startTime,String endTime,String vehicleType) throws SQLException {
         String sql = """
             INSERT INTO appointments
               (client_id, vehicle_brand, vehicle_model,
@@ -82,7 +73,6 @@ public class AppointmentModel {
         }
     }
 
-
     public static void insertMediaFiles(int appointmentId, List<FileUploadData> files) throws SQLException {
         String sql = """
             INSERT INTO media (appointment_id, file_name, type, file_data)
@@ -108,7 +98,6 @@ public class AppointmentModel {
         }
     }
 
-
     public static String getUserFullName(int userId) throws SQLException {
         String sql = "SELECT first_name, last_name FROM users WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -126,8 +115,6 @@ public class AppointmentModel {
             }
         }
     }
-
-
 
     public static JSONArray getAppointments() throws SQLException {
         JSONArray resultArray = new JSONArray();
@@ -237,9 +224,6 @@ public class AppointmentModel {
 
         return resultArray;
     }
-
-
-
 
     public static JSONArray getAppointmentsByClientId(int clientId) throws SQLException {
         JSONArray resultArray = new JSONArray();
@@ -362,7 +346,7 @@ public class AppointmentModel {
                     String contentType = rs.getString("type");
                     byte[] content     = rs.getBytes("file_data");
 
-                    // Pentru câmpul fieldName punem "fileUpload" ca placeholder
+                    // Pentru campul fieldName punem "fileUpload" ca placeholder
                     files.add(new FileUploadData(
                             "fileUpload",
                             fileName,
@@ -386,7 +370,6 @@ public class AppointmentModel {
         }
     }
 
-    // In AppointmentModel.java
     public static void updateAppointmentStatusAndMessage(int appointmentId, String status, String adminMessage) throws SQLException {
         String sql = "UPDATE appointments SET status = ?, admin_message = ? WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -407,8 +390,6 @@ public class AppointmentModel {
             ps.executeUpdate();
         }
     }
-
-
 
     public static void updateAppointmentApproved(int appointmentId, String status, String adminMessage, double estimatedPrice, int warrantyMonths) throws SQLException {
         String sql = "UPDATE appointments SET status = ?, admin_message = ?, estimated_price = ?, warranty_months = ? WHERE id = ?";
@@ -497,6 +478,5 @@ public class AppointmentModel {
             conn.commit();
         }
     }
-
 
 }

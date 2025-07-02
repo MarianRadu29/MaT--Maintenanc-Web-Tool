@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en" prefix="schema: http://schema.org/">
+<head>
+  <meta charset="UTF-8" />
+  <title property="schema:headline">
+    Maintenance Web Tool - Software Requirements Specification (SRS)
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta property="schema:creator" content="Radu Marian-Sebastian" />
+  <meta property="schema:dateCreated" content="2025-06-23" />
+  <meta
+          property="schema:about"
+          content="Software Requirements Specification document for Project Maintenance Web Tool"
+  />
+  <style>
+    /* Base styles for scholarly document */
+    :root {
+      --primary-color: #2c3e50;
+      --secondary-color: #3498db;
+      --accent-color: #e74c3c;
+      --text-color: black;
+      --light-bg: #f8f9fa;
+      --border-color: #ddd;
+    }
+
+    body {
+      font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+      line-height: 1.6;
+      color: var(--text-color);
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: gray;
+    }
+
+    header, footer {
+      padding: 20px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+
+    h1, h2, h3 {
+      color: var(--primary-color);
+      line-height: 1.2;
+    }
+
+    h1 {
+      font-size: 2.2em;
+      text-align: center;
+      margin-bottom: 0.5em;
+      border-bottom: 2px solid var(--secondary-color);
+      padding-bottom: 0.3em;
+    }
+
+    h2 {
+      font-size: 1.8em;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.2em;
+      margin-top: 1.5em;
+    }
+
+    h3 {
+      font-size: 1.4em;
+      margin-top: 1.2em;
+    }
+
+    p, ul, ol {
+      margin-bottom: 1em;
+    }
+
+    a {
+      color: blue;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+      color: var(--accent-color);
+    }
+
+    /* Figure and image styles */
+    figure {
+      margin: 2em auto;
+      text-align: center;
+    }
+
+    figure img {
+      max-width: 100%;
+      height: auto;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    figcaption {
+      font-style: normal;
+      color: lightgray;
+      margin-top: 0.5em;
+      font-size: 0.9em;
+    }
+
+    /* Section and article formatting */
+    section {
+      margin-bottom: 2em;
+    }
+
+    article {
+      margin-bottom: 1.5em;
+      padding-left: 1em;
+    }
+
+    /* List styling */
+    ul, ol {
+      padding-left: 2em;
+    }
+
+    li {
+      margin-bottom: 0.5em;
+    }
+
+    /* Footer styling */
+    footer {
+      margin-top: 3em;
+      text-align: center;
+      font-size: 0.9em;
+      color: #666;
+      border-top: 1px solid var(--border-color);
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+
+      h1 {
+        font-size: 1.8em;
+      }
+
+      h2 {
+        font-size: 1.5em;
+      }
+
+      h3 {
+        font-size: 1.2em;
+      }
+
+      figure {
+        margin: 1em auto;
+      }
+
+      figure img {
+        display: block;
+        max-width: 100% !important;
+        margin: 0 auto 1em auto;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.6em;
+      }
+
+      body {
+        font-size: 0.95em;
+      }
+
+      article {
+        padding-left: 0.5em;
+      }
+
+      ul, ol {
+        padding-left: 1.5em;
+      }
+    }
+
+    /* Print styles */
+    @media print {
+      body {
+        font-size: 11pt;
+        color: black;
+        background-color: white;
+      }
+
+      a {
+        color: black;
+        text-decoration: underline;
+      }
+
+      figure {
+        break-inside: avoid;
+      }
+
+      h1, h2, h3 {
+        page-break-after: avoid;
+      }
+    }
+  </style>
+</head>
+<body typeof="schema:TechArticle">
+<header>
+  <h1 property="schema:name">Maintenance Web Tool - Software Requirements Specification </h1>
+  <p style="display: flex; justify-content: flex-end; align-items: center;">
+    Author
+    <span property="schema:author" typeof="schema:Person">
+    <span property="schema:name">: Radu Marian-Sebastian</span>
+  </span>
+  </p>
+
+</header>
+
+<main property="schema:articleBody">
+  <section id="video-presentation" typeof="schema:Section">
+    <h2 property="schema:headline">Video Presentation</h2>
+    <p>
+      Watch a demonstration video about the site's features:
+      <a
+              href="https://www.youtube.com/watch?v=t5dqCMFIo1M"
+              target="_blank"
+              rel="noopener"
+      >
+        Video presentation
+      </a>
+    </p>
+  </section>
+  <section id="introduction" typeof="schema:Section">
+    <h2 property="schema:headline">1. Introduction</h2>
+
+    <article id="purpose" typeof="schema:TechArticle">
+      <h3 property="schema:headline">1.1 Purpose</h3>
+      <p property="schema:description">
+        This project provides an online scheduling and inventory management system for motorcycle, bicycle and scooter (electric or traditional) services. The purpose of the application is to:
+        <ul>
+          <li>Allow them to consult the available calendar and quickly book a time slot, filling out a form with dates, times and details about the technical problem, including attaching photos or videos.</li>
+          <li>Provide administrators with a control panel where they can approve or reject appointments, with personalized messages (e.g. "We don't have the necessary items in stock, come back in Z days") and add useful information such as estimated price or warranty.</li>
+          <li>Keep track of items stocks.</li>
+          <li>Import and export data in CSV formats about items and orders.</li>
+        </ul>
+      </p>
+    </article>
+
+    <article id="document-conventions" typeof="schema:TechArticle">
+      <h3 property="schema:headline">1.2 Document Conventions</h3>
+      <p>
+        This document follows the template for software requirements
+        documentation according to the <strong>IEEE Software Requirements
+        Specification</strong>.
+      </p>
+    </article>
+
+    <article id="intended-audience" typeof="schema:TechArticle">
+      <h3 property="schema:headline">
+        1.3 Intended Audience and Reading Suggestions
+      </h3>
+      <p>
+      </p>
+      <ul>
+        <li>
+          Owners and administrators of two-wheeler service stations PFA/SRL contractors who manage repair shops for motorcycles, bicycles or scooters (electric or traditional). They need a centralized tool for scheduling orders, monitoring items stocks, as well as for quickly generating reports in CSV format.
+        </li>
+        <li>
+          Mechanics and service technicians Specialists who want immediate access to the details of each appointment (date, time, problem description, attached photos/video) and who want to update the status of interventions and the history of work directly from the web interface.
+        </li>
+        <li>
+          End customers (two wheels) Bicyclists, scooters and motorcyclists who want an intuitive, self-service appointment, with the possibility of attaching photos/video to describe the malfunctions and the first notifications by email of approval, rejection or price offer and warranty.
+        </li>
+        <li>
+          For software developers, it is recommended to read the sections on
+          functional requirements, system features, and external interfaces
+          to grasp the technical specifications and implementation details.
+        </li>
+      </ul>
+    </article>
+
+    <article id="product-scope" typeof="schema:TechArticle">
+      <h3 property="schema:headline">1.4 Product Scope</h3>
+      <p>
+        The Maintenance Web Tool (MaT) aims to streamline and automate the entire lifecycle of service appointments and inventory management for motorcycle, bicycle, and scooter repair shops.
+        Its primary objectives are to provide customers with a real-time view of workshop availability, enable quick, multimedia-rich booking of time slots, and facilitate seamless communication between clients and administrators.
+        For business owners, MaT offers an intuitive dashboard to approve or reject requests with tailored messages, estimate costs, manage warranty terms, and track parts stock levels and supplier orders.
+        The system also supports flexible data import/export (CSV).By centralizing scheduling, communication, and inventory tracking, MaT enhances customer satisfaction, optimizes resource planning, and delivers actionable insights for continuous service-quality improvements.
+      </p>
+    </article>
+
+
+
+    <article id="references" typeof="schema:TechArticle">
+      <h3 property="schema:headline">1.5 References</h3>
+      <ol>
+        <li property="schema:citation">
+          Dr. Buraga Sabin-Corneliu, Dr. Andrei Panu,
+          <a
+                  href="https://edu.info.uaic.ro/web-technologies/"
+                  target="_blank"
+          >Web Technologies</a
+          >, FII UAIC.
+        </li>
+        <li property="schema:citation">
+          Dr. Captarencu Oana,
+          <a
+                  href="https://profs.info.uaic.ro/oana.captarencu/tw/"
+                  target="_blank"
+          >Web Technologies Laboratory</a
+          >, FII UAIC.
+        </li>
+        <li property="schema:citation">
+          <a
+                  href="https://github.com/rick4470/IEEE-SRS-Tempate#readme"
+                  target="_blank"
+          >IEEE Software Requirements Specification</a
+          >, IEEE Xplore.
+        </li>
+        <li property="schema:citation">
+          <a
+                  href="https://www.restapitutorial.com/"
+                  target="_blank"
+          >REST API Tutorial</a
+          >.
+        </li>
+        <li property="schema:citation">
+          <a
+                  href="https://www.w3schools.com/"
+                  target="_blank"
+          >W3Schools</a>.
+        </li>
+        <li property="schema:citation">
+          <a
+                  href="https://docs.oracle.com/en/java/javase/23/docs/api/jdk.httpserver/com/sun/net/httpserver/HttpServer.html"
+                  target="_blank"
+          >HttpServer Java Class</a>.
+        </li>
+      </ol>
+    </article>
+  </section>
+
+  <section id="overall-description" typeof="schema:Section">
+    <h2 property="schema:headline">2. Overall Description</h2>
+
+    <article id="product-perspective" typeof="schema:TechArticle">
+      <h3 property="schema:headline">2.1 Product Perspective</h3>
+      <p>
+        Maintenance Web Tool is an independent web system that can be installed on the service's own server and offers standardized data import and export (CSV). The application has a responsive frontend and a REST API backend. The system communicates with external SMTP email services for notifications. Through these mechanisms, the tool works both autonomously and as an integrated module in an existing software suite, ensuring a transparent and secure data exchange.
+      </p>
+      <figure>
+        <img
+                src="../../../../../../../images/db.png"
+                alt="Database structure of the Maintenance Web Tool system"
+                style="max-width: 80%; height: auto"
+        />
+        <figcaption>
+          Figure 1: Database structure of the Maintenance Web Tool system
+        </figcaption>
+      </figure>
+      <figure>
+        <img
+                src="../../../../../../../images/C4-nivel1.png"
+                alt="Level 1 C4 diagram of the Maintenance Web Tool system"
+                style="max-width: 80%; height: auto"
+        />
+        <figcaption>
+          Figure 2: Level 1 C4 diagram of the Maintenance Web Tool system
+        </figcaption>
+      </figure>
+    </article>
+
+    <article id="product-functions" typeof="schema:TechArticle">
+      <h3 property="schema:headline">2.2 Product Functions</h3>
+      <ul>
+        <li>Allow users to register, log in, and manage their profiles.</li>
+        <li>Calendar view with real-time service availability.</li>
+        <li>
+          Create, modify and cancel appointments with attached descriptions, photos and videos.
+        </li>
+        <li>
+          Automatic email notifications for confirmation, approval or rejection.
+        </li>
+        <li>Administrator/Mechanic approval/rejection flow, with personalized messages and details (estimated price, warranty).</li>
+        <li>
+          Parts inventory management.
+        </li>
+        <li>Data import (inventory) in CSV formats</li>
+        <li>Data export related to customer orders CSV</li>
+        <li>Allow administrators to manage items and users.</li>
+      </ul>
+      <figure>
+        <img
+                src="../../../../../../../images/C4-nivel2.png"
+                alt="Level 2 C4 diagram of the Maintenance Web Tool system"
+                style="max-width: 80%; height: auto"
+        />
+        <figcaption>
+          Figure 3: Level 2 C4 diagram of the Maintenance Web Tool system
+        </figcaption>
+      </figure>
+    </article>
+
+    <article id="user-classes" typeof="schema:TechArticle">
+      <h3 property="schema:headline">
+        2.3 User Classes and Characteristics
+      </h3>
+      <ul>
+        <li>
+          <strong>Client: </strong>
+          <ul>
+            <li>Variable technical level, from beginner to enthusiast.</li>
+            <li>
+              Can register, log in, search for items, submit ratings and
+              reviews, and participate in Q&A sections.
+            </li>
+            <li>Intuitive interface, compatible with desktop and mobile.</li>
+            <li>Can attach multimedia files (photos, videos) to the scheduling form</li>
+            <li>Receive automatic email notifications regarding scheduling status</li>
+          </ul>
+        </li>
+        <li>
+          <strong>Mechanic: </strong>
+          <ul>
+            <li>Full rights: approve or reject appointments with personalized messages</li>
+          </ul>
+        </li>
+        <li>
+          <strong>Administrators:</strong>
+          <ul>
+            <li>Responsible for managing users and items.</li>
+            <li>
+              Advanced knowledge of the operational and financial flow of the service.
+            </li>
+            <li>Full rights: approve or reject appointments with personalized messages.</li>
+            <li>
+              Manage parts stocks and place orders with suppliers.
+            </li>
+            <li>Needs report exports in CSV, JSON and PDF formats for accounting and analysis</li>
+          </ul>
+        </li>
+        <li>
+          <strong>Guest Users:</strong>
+          <ul>
+            <li>
+              Unregistered visitors who can browse the list of available time slots
+              but they can't be programmed.
+            </li>
+            <li>Potential to login/register in the app.</li>
+          </ul>
+        </li>
+      </ul>
+    </article>
+
+    <article id="operating-environment" typeof="schema:TechArticle">
+      <h3 property="schema:headline">2.4 Operating Environment</h3>
+      <p>
+        The software will operate in a local environment (localhost) without
+        a dedicated server. It is intended to run on standard personal
+        computers with the following characteristics:
+      </p>
+      <ul>
+        <li>
+          <strong>Hardware:</strong> Any modern PC
+          capable of running a web browser and basic local server software.
+        </li>
+        <li>
+          <strong>OS:</strong> Compatible with Windows 10/11 (and maybe macOS and Linux distributions).
+        </li>
+        <li>
+          <strong>Software Components:</strong> Requires a local web server
+          stack(Java - JDK, PostgresQL ) for running and testing
+          the application.
+        </li>
+      </ul>
+    </article>
+
+    <article id="constraints" typeof="schema:TechArticle">
+      <h3 property="schema:headline">
+        2.5 Design and Implementation Constraints
+      </h3>
+      <ul>
+        <li>No specific regulatory or corporate policies apply.</li>
+        <li>
+          Security and performance requirements are minimal due to the
+          local, non-production environment.
+        </li>
+      </ul>
+    </article>
+
+    <article id="user-documentation" typeof="schema:TechArticle">
+      <h3 property="schema:headline">2.6 User Documentation</h3>
+      <p>
+        Users can consult this document to understand the functionalities and operating mode of the <strong>Maintenance Web Tool</strong> application.
+      </p>
+    </article>
+  </section>
+
+  <section id="external-interface-requirements" typeof="schema:Section">
+    <h2 property="schema:headline">3. Application Interface</h2>
+
+    <article id="user-interfaces" typeof="schema:TechArticle">
+      <p>
+        The Maintenance Web Tool’s interface has been crafted for maximum intuitiveness, clarity, and inclusivity—ensuring that every user can effortlessly browse the system, quickly locate what they need, and engage with its features without hesitation.
+      </p>
+      <h3 property="schema:headline">3.1 User Interfaces</h3>
+      <ul>
+        <li>
+          <strong>Home Page:</strong> The home page welcomes users with a clear hero section and quick links to key functions (book appointment,calendar section).
+          <figure>
+            <img
+                    src="../../../../../../../images/homepage1.png"
+                    alt="HomePage"
+                    style="max-width: 80%; height: auto"
+            />
+            <figcaption>Figure 5: HomePage(1)</figcaption>
+          </figure>
+          <figure>
+            <img
+                    src="../../../../../../../images/homepage2.png"
+                    alt="HomePage"
+                    style="max-width: 80%; height: auto"
+            />
+            <figcaption>Figure 6: HomePage(2)</figcaption>
+          </figure>
+        </li>
+        <li>
+          <strong>Login Page:</strong> This page provides a simple, secure form for users to sign in with email and password. It includes client-side validation and a “Forgot Password?” link for account recovery.
+          <figure>
+            <img
+                    src="../../../../../../../images/login.png"
+                    alt="Login Page"
+                    style="max-width: 80%; height: auto"
+            />
+            <figcaption>Figure 7: Login Page</figcaption>
+          </figure>
+        </li>
+        <li>
+          <strong>Registration Page:</strong> Users can create a new account by entering their name, email, phone number, and choosing a password. Real-time checks ensure valid email format and strong password criteria.
+          <figure>
+            <img
+                    src="../../../../../../../images/registration.png"
+                    alt="Registration Page"
+                    style="max-width: 80%; height: auto"
+            />
+            <figcaption>Figure 8: Registration Page</figcaption>
+          </figure>
+        </li>
+        <li>
+          <strong>Forget-Password Page:</strong> Clients enter their registered email to request a password reset link. The page confirms when the reset email has been dispatched.
+          <figure>
+            <img
+                    src="../../../../../../../images/forget-password.png"
+                    alt="Forget-Password Page"
+                    style="max-width: 80%; height: auto"
+            />
+            <figcaption>Figure 9: Forget-Password Page</figcaption>
+          </figure>
+        </li>
+        <li>
+          <strong>Reset-Password Page:</strong> The reset form requires users to enter and confirm their new password. Password strength feedback guides them to choose a secure credential.
+          <figure>
+            <img
+                    src="../../../../../../../images/reset-password.png"
+                    alt="ResetPassword Page"
+                    style="max-width: 80%; height: auto"
+            />
+            <figcaption>Figure 10: Reset-Password Page</figcaption>
+          </figure>
+        </li>
+        <li>
+          <strong>Calendar Page:</strong> An interactive calendar displays available time slots by day. Users click a slot to initiate appointment and see real-time availability updates.
+          <figure>
+            <img
+                    src="../../../../../../../images/calendar1.png"
+                    alt="Calendar Page(1)"
+                    style="max-width: 40%; height: auto"
+            />
+            <img
+                    src="../../../../../../../images/calendar2.png"
+                    alt="Q&A Section"
+                    style="max-width: 40%; height: auto"
+            />
+            <figcaption>Figure 11: Calendar Page</figcaption>
+          </figure>
+        </li>
+        <li>
+          <strong>Appointment page:</strong> This form collects vehicle details (type, model), a problem description, and allows drag-and-drop uploads of images or video. Inline help tips guide users through each field.
+          <figure>
+            <img
+                    src="../../../../../../../images/appointment1.png"
+                    alt="Appointment Page(1)"
+                    style="max-width: 40%; height: auto"
+            />
+            <img
+                    src="../../../../../../../images/appointment2.png"
+                    alt="Appointment Page(1)"
+                    style="max-width: 40%; height: auto"
+            />
+            <figcaption>Figure 12: Appointment Page</figcaption>
+          </figure>
+        </li>
+        <li>
+          <strong>Profile page(info):</strong> The profile info section shows user details and account settings. Edit buttons let users update their info.
+          <figure>
+            <img
+                    src="../../../../../../../images/profile-info.png"
+                    alt="Profile Info Page"
+                    style="max-width: 80%; height: auto"
+            />
+            <figcaption>Figure 13: Profile info Page</figcaption>
+          </figure>
+
+        </li>
+        <li>
+          <strong>Profile page(appointment section):</strong> Lists all upcoming and past appointments with status badges. Users can cancel open appointments or confirm modifications requested by the admin.
+          <figure>
+            <img
+                    src="../../../../../../../images/profile-appointment.png"
+                    alt="Profile appointment Page"
+                    style="max-width: 80%; height: auto"
+            />
+            <figcaption>Figure 13: Profile appointment Page</figcaption>
+          </figure>
+
+        </li>
+        <li>
+          <strong>Management Appointment page(admin):</strong> Admins see a sortable table of all service requests with filters for status. Action buttons open modals to approve with notes or send a custom rejection message.
+          <figure>
+            <img
+                    src="../../../../../../../images/admin-appointment.png"
+                    alt="Admin appointment Page"
+                    style="max-width: 80%; height: auto"
+            />
+            <figcaption>Figure 14: Admin appointment Page</figcaption>
+          </figure>
+
+        </li>
+        <li>
+          <strong>Management inventory page(admin):</strong> Displays current stock levels and items catalog. Inline editing and low-stock alerts help admins reorder before supplies run out.
+          <figure>
+            <img
+                    src="../../../../../../../images/admin-inventory.png"
+                    alt="Admin inventory Page"
+                    style="max-width: 80%; height: auto"
+            />
+            <figcaption>Figure 15: Admin inventory Page</figcaption>
+          </figure>
+
+        </li>
+        <li>
+          <strong>Data import/export page(admin):</strong> Provides tools to upload CSV files for batch imports and to download filtered reports as CSV. A field-mapping preview ensures data aligns correctly.
+          <figure>
+            <img
+                    src="../../../../../../../images/admin-data.png"
+                    alt="Admin data Page"
+                    style="max-width: 80%; height: auto"
+            />
+            <figcaption>Figure 16: Admin data Page</figcaption>
+          </figure>
+
+        </li>
+        <li>
+          <strong>Users page(admin):</strong> Provides tools to upload CSV files for batch imports and to download filtered reports as CSV. A field-mapping preview ensures data aligns correctly.
+          <figure>
+            <img
+                    src="../../../../../../../images/admin-users.png"
+                    alt="Admin users Page"
+                    style="max-width: 80%; height: auto"
+            />
+            <figcaption>Figure 17:Admin users Page</figcaption>
+          </figure>
+
+        </li>
+      </ul>
+    </article>
+
+    <article id="hardware-interfaces" typeof="schema:TechArticle">
+      <h3 property="schema:headline">3.2 Hardware Interfaces</h3>
+      <ul>
+        <li>The application will run on a server.</li>
+        <li>The application will require an internet connection to send emails.</li>
+        <li>The application will require a computer or mobile device to access the user interface.</li>
+      </ul>
+    </article>
+
+    <article id="software-interfaces" typeof="schema:TechArticle">
+      <h3 property="schema:headline">3.3 Software Interfaces</h3>
+      <ul>
+        <li>The application will use a REST API to communicate with the server.</li>
+        <li>The application will use HTML CSS for awesome design.</li>
+        <li>The application will use JavaScript to interact with the user interface.</li>
+      </ul>
+    </article>
+
+    <article id="communications-interfaces" typeof="schema:TechArticle">
+      <h3 property="schema:headline">3.4 Communications Interfaces</h3>
+      <ul>
+        <li>The application will use HTTP to communicate with the server.</li>
+        <li>The application will use JSON to send and receive data.</li>
+        <li>The application will use multiform-data for send image/video data to server.</li>
+      </ul>
+    </article>
+  </section>
+
+  <section id="system-features" typeof="schema:Section">
+    <h2 property="schema:headline">4. Characteristics of the application</h2>
+
+    <article id="feature1" typeof="schema:TechArticle">
+      <h3 property="schema:headline">
+        4.1 Account Management
+      </h3>
+      <ul>
+        <li>
+          A user can register by choosing an email,a phone number, a password, first name, and last name. They can authenticate themselves by only needing the email and password.
+        </li>
+        <li>
+          A user can see all available time slots by day and can make an appoitment.
+        </li>
+        <li>When a new user is created, their credentials are entered into the database. Similarly, when the user decides to modify their credentials, the new values are also updated in the database.</li>
+        <li>
+          Authentication is required to access personalized features (e.g.,
+          submitting appointment form, managing profiles).
+        </li>
+        <li>
+          Session management ensures users remain logged in during their
+          visit.
+        </li>
+        <li>Users can log out securely at any time.</li>
+        <li>
+          Administrators have separate authentication with elevated
+          privileges.
+        </li>
+      </ul>
+
+    </article>
+
+    <article id="feature2" typeof="schema:TechArticle">
+      <h3 property="schema:headline">
+        4.2 Admin Section
+      </h3>
+      <ul>
+        <li>
+          The Admin Section is intended for users with administrator rights, offering comprehensive control over service operations including appointment approval or rejection with custom messages. From the dashboard, admins can manage inventory levels, and import or export data in CSV format.
+        </li>
+        <li>When the admin change the status about all appointments,the updates are inserted into DB.Same about inventory items(price,level/stock,suppliers).</li>
+      </ul>
+
+    </article>
+  </section>
+
+  <section id="nonfunctional-requirements" typeof="schema:Section">
+    <h2 property="schema:headline">5. Other Nonfunctional Requirements</h2>
+
+    <article id="security-requirements" typeof="schema:TechArticle">
+      <h3 property="schema:headline">5.3 Security Requirements</h3>
+      <ul>
+        <li>
+          <strong>Password Security:</strong> All user passwords are
+          securely encrypted (</strong>Bcrypt</strong>) before being stored in the database to
+          prevent unauthorized access.
+        </li>
+        <li>
+          <strong>Input Sanitization:</strong> All user input is thoroughly
+          sanitized and validated before being stored in the database or
+          displayed to users, protecting against malicious data.
+        </li>
+        <li>
+          <strong>SQL Injection Prevention:</strong> All database queries
+          use prepared statements or parameterized queries to prevent SQL
+          injection attacks.
+        </li>
+        <li>
+          <strong>Protection Against XSS:</strong> Output is properly
+          escaped to prevent Cross-Site Scripting (XSS) attacks, ensuring
+          that user-supplied content cannot execute scripts in the browser.
+        </li>
+
+      </ul>
+    </article>
+
+    <article id="quality-attributes" typeof="schema:TechArticle">
+      <h3 property="schema:headline">5.4 Software Quality Attributes</h3>
+      <ul>
+        <li>
+          <strong>Usability:</strong> The system is designed to be easy to
+          use, with a simple and intuitive interface suitable for all user
+          types.
+        </li>
+        <li>
+          <strong>Simplicity:</strong> The project maintains a
+          straightforward structure, making it easy to understand, maintain,
+          and extend.
+        </li>
+        <li>
+          <strong>Reliability:</strong> Basic validation and error handling
+          ensure the system performs consistently in a local environment.
+        </li>
+        <li>
+          <strong>Maintainability:</strong> The codebase is organized and
+          documented to facilitate future updates or modifications.
+        </li>
+      </ul>
+    </article>
+  </section>
+</main>
+
+<footer>
+  <h2>References</h2>
+  <p>©2025 Radu Marian-Sebastian</p>
+  <p>
+    Contact:
+    <a href="mailto:radumariansebastian29@gmail.com">radumariansebastian29@gmail.com</a>
+  </p>
+</footer>
+</body>
+</html>

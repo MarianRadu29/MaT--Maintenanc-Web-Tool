@@ -6,8 +6,85 @@
   <component name="ChangeListManager">
     <list default="true" id="a1a27d4e-17cb-4261-b221-8c0b2f038ddc" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mvnw" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/mvnw.cmd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/AuthController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/InventoryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/InventoryController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/controller/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/model/AppointmentModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/model/AppointmentModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/model/InventoryModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/model/InventoryModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/model/UserModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/model/UserModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/utils/Cookie.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/utils/Cookie.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/utils/StaticFileHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/utils/StaticFileHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/.idea/jsLibraryMappings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/html/admin.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/html/admin.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/html/calendar.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/html/calendar.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/html/forgotten-password.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/html/forgotten-password.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/html/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/html/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/html/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/html/login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/html/profile.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/html/profile.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/html/programari.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/html/programari.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/html/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/html/register.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/js/admin-appointment-items.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/js/admin-appointment-items.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/js/admin-appointments.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/js/admin-appointments.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/db.sql" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/db.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/db.sql" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/db.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/inventory1.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/Main.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/controller/AppointmentController$FileUploadData.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/controller/AppointmentController$FileUploadData.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/controller/AppointmentController$GetAppointments.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/controller/AppointmentController$GetAppointments.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/controller/AppointmentController$GetAppointmentsSelf.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/controller/AppointmentController$GetAppointmentsSelf.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/controller/AppointmentController$GetDayAppointments.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/controller/AppointmentController$GetDayAppointments.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/controller/AppointmentController$GetMedia.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/controller/AppointmentController$GetMedia.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/controller/AppointmentController$SetAppointment.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/controller/AppointmentController$SetAppointment.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/controller/AppointmentController$UpdateAppointment.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/controller/AppointmentController$UpdateAppointment.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/controller/AppointmentController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/controller/AppointmentController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/controller/AuthController$ForgotPassword.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/controller/AuthController$ForgotPassword.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/controller/AuthController$Login.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/controller/AuthController$Login.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/controller/AuthController$Logout.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/controller/AuthController$Logout.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/controller/AuthController$Register.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/controller/AuthController$Register.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/controller/AuthController$ResetPassword.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/controller/AuthController$ResetPassword.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/controller/AuthController$Session.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/controller/AuthController$Session.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/controller/AuthController$ValidateTokenResetPassword.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/controller/AuthController$ValidateTokenResetPassword.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/controller/AuthController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/controller/AuthController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/controller/InventoryController$AddItem.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/controller/InventoryController$AddItem.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/controller/InventoryController$DeleteItem.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/controller/InventoryController$DeleteItem.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/controller/InventoryController$ExportInventory.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/controller/InventoryController$ExportInventory.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/controller/InventoryController$GetCategory.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/controller/InventoryController$GetCategory.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/controller/InventoryController$GetInventory.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/controller/InventoryController$GetInventory.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/controller/InventoryController$ImportInventory.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/controller/InventoryController$ImportInventory.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/controller/InventoryController$UpdateItem.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/controller/InventoryController$UpdateItem.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/controller/InventoryController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/controller/InventoryController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/controller/UserController$DeleteUser.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/controller/UserController$DeleteUser.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/controller/UserController$GetUserInfo.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/controller/UserController$GetUserInfo.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/controller/UserController$GetUsers.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/controller/UserController$GetUsers.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/controller/UserController$UpdateUserInfo.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/controller/UserController$UpdateUserInfo.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/controller/UserController$UpdateUserRole.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/controller/UserController$UpdateUserRole.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/controller/UserController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/controller/UserController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/model/AppointmentModel.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/model/AppointmentModel.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/model/InventoryModel.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/model/InventoryModel.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/model/UserModel.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/model/UserModel.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/objects/LoginData.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/objects/LoginData.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/objects/RegisterData.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/objects/RegisterData.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/objects/UserData.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/objects/UserData.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/utils/BCrypt.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/utils/BCrypt.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/utils/Cookie$Builder.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/utils/Cookie$Builder.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/utils/Cookie.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/utils/Cookie.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/utils/DatabaseConnection.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/utils/DatabaseConnection.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/utils/EmailSender$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/utils/EmailSender$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/utils/EmailSender.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/utils/EmailSender.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/utils/EmailTemplate.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/utils/EmailTemplate.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/utils/ForgetPasswordTokenGenerator.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/utils/ForgetPasswordTokenGenerator.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/utils/HttpExchangeRequestContext.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/utils/HttpExchangeRequestContext.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/utils/JsonSender.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/utils/JsonSender.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/utils/JwtUtil.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/utils/JwtUtil.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/utils/Sanitizer.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/utils/Sanitizer.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/utils/StaticFileHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/utils/StaticFileHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/utils/TokenExpiredException.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/utils/TokenExpiredException.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/utils/TokenInvalidException.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/utils/TokenInvalidException.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/org/example/utils/Utils.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/org/example/utils/Utils.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -215,7 +292,8 @@
       <workItem from="1750167297281" duration="10759000" />
       <workItem from="1750222595579" duration="2734000" />
       <workItem from="1750497035635" duration="62355000" />
-      <workItem from="1751027238994" duration="9203000" />
+      <workItem from="1751027238994" duration="10459000" />
+      <workItem from="1751288002338" duration="9080000" />
     </task>
     <servers />
   </component>

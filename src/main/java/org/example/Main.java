@@ -6,21 +6,22 @@ import org.example.controller.*;
 import org.example.utils.StaticFileHandler;
 
 import java.net.InetSocketAddress;
-import java.util.Optional;
 
 public class Main {
     private final static int PORT;
+
     static {
         Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
         PORT = Integer.parseInt(dotenv.get("PORT","8081"));
     }
+
     public static void main(String[] args) throws Exception {
         HttpServer server = HttpServer.create(new InetSocketAddress(PORT), 0);
 
         setupRoutes(server);
 
         server.start();
-        System.out.println("Server running on http://localhost:"+ PORT);
+        System.out.println("Server running on http://localhost:" + PORT);
     }
 
     public static void setupRoutes(HttpServer server) {
@@ -51,15 +52,5 @@ public class Main {
         server.createContext("/api/import", new InventoryController.ImportInventory());
         server.createContext("/api/export", new InventoryController.ExportInventory());
         server.createContext("/", new StaticFileHandler("src/main/java/org/example/view"));
-
-
-        // Adaugă alte rute aici
     }
 }
-
-
-
-// www.autocenteriasi.ro/ MODEL de front pt proiect
-// `dotenv` pentru a nu mai avea hardcodate datele de conectare la baza de date sau alte date sensibile
-// securizare pentru XSS, CSRF, CORS
-

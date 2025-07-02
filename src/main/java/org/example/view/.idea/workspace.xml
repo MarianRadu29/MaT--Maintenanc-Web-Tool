@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="43eb7835-5502-4785-90ac-6eefd5a1c153" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../../../../../../.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../../../.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../controller/AuthController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../controller/InventoryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../controller/InventoryController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../controller/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../model/AppointmentModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/../model/AppointmentModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../model/InventoryModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/../model/InventoryModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../model/UserModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/../model/UserModel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../utils/StaticFileHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/../utils/StaticFileHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/html/admin.html" beforeDir="false" afterPath="$PROJECT_DIR$/html/admin.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/html/calendar.html" beforeDir="false" afterPath="$PROJECT_DIR$/html/calendar.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/html/forgotten-password.html" beforeDir="false" afterPath="$PROJECT_DIR$/html/forgotten-password.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/html/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/html/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/html/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/html/login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/html/profile.html" beforeDir="false" afterPath="$PROJECT_DIR$/html/profile.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/html/programari.html" beforeDir="false" afterPath="$PROJECT_DIR$/html/programari.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/html/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/html/register.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/admin-appointment-items.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/admin-appointment-items.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/admin-appointments.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/admin-appointments.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../resources/db.sql" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../resources/db.sql" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JavaScript File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../../../../.." />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 3
+}</component>
+  <component name="ProjectId" id="2zEK6qA9uQk1LSEvK6W4Mken93k" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;JavaScript Debug.docs.html.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/radum/OneDrive/Desktop/ReactProject&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RunManager">
+    <configuration name="docs.html" type="JavascriptDebugType" temporary="true" nameIsGenerated="true" uri="http://localhost:63343/view/src/main/java/org/example/view/html/docs.html" useBuiltInWebServerPort="true">
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JavaScript Debug.docs.html" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-1d06a55b98c1-0b3e54e931b4-JavaScript-WS-241.18034.50" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="43eb7835-5502-4785-90ac-6eefd5a1c153" name="Changes" comment="" />
+      <created>1751290621695</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1751290621695</updated>
+      <workItem from="1751290623468" duration="10804000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

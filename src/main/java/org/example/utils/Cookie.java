@@ -118,7 +118,15 @@ public final class Cookie {
         }
 
         public Builder sameSite(String policy) {
-            this.sameSite = policy;
+            switch (policy){
+                case "None":
+                case "Strict":
+                case"Lax":
+                    this.sameSite = policy;
+                    break;
+                default:
+                    throw new IllegalArgumentException("Invalid policy: " + policy);
+            }
             return this;
         }
 

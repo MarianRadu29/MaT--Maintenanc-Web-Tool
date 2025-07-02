@@ -17,8 +17,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 public class AuthController {
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
     public static class Register implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
@@ -126,7 +124,7 @@ public class AuthController {
 
                 String token = ForgetPasswordTokenGenerator.generateToken();
                 LocalDateTime expirationDate = LocalDateTime.now().plusHours(1);
-                String expirationDateStr = expirationDate.format(FORMATTER);
+                String expirationDateStr = expirationDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
                 try {
                     UserModel.deleteExistingToken(userData.getId());

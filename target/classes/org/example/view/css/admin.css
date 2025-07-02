@@ -1,0 +1,867 @@
+.admin-dashboard {
+    padding-top: 2rem;
+    padding-bottom: 3rem;
+}
+
+.page-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+}
+
+/*tabs*/
+.tab-container {
+    background-color: white;
+    border-radius: var(--radius);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--light-bg);
+}
+
+.tab {
+    flex: 1;
+    padding: 1rem;
+    text-align: center;
+    cursor: pointer;
+    font-weight: 500;
+    background: none;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+.tab.active {
+    background-color: white;
+    border-bottom: 3px solid var(--primary-color);
+    color: var(--primary-color);
+}
+
+.tab:not(.active):hover {
+    background-color: rgba(0, 0, 0, 0.03);
+}
+
+.tab .icon {
+    margin-right: 0.5rem;
+}
+
+.tab-content {
+    padding: 1.5rem;
+}
+
+.tab-pane {
+    display: none;
+}
+
+.tab-pane.active {
+    display: block;
+}
+
+/* appointments */
+.appointments-tools,
+.inventory-tools {
+    margin-bottom: 1.5rem;
+}
+
+.toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    align-items: center;
+}
+
+.search-box {
+    flex-grow: 1;
+}
+
+/* filters */
+.toolbar select,
+.modal select {
+    cursor: pointer;
+    padding-right: 2rem;
+    background-position: calc(100% - 0.75rem) center;
+    background-repeat: no-repeat;
+    background-size: 16px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+}
+
+/* Common table styles */
+.appointments-table,
+.inventory-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 1rem;
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.appointments-table th:first-child,
+.inventory-table th:first-child {
+    border-top-left-radius: var(--radius);
+}
+
+.appointments-table th:last-child,
+.inventory-table th:last-child {
+    border-top-right-radius: var(--radius);
+}
+
+.appointments-table tbody tr:last-child td:first-child,
+.inventory-table tbody tr:last-child td:first-child {
+    border-bottom-left-radius: var(--radius);
+}
+
+.appointments-table tbody tr:last-child td:last-child,
+.inventory-table tbody tr:last-child td:last-child {
+    border-bottom-right-radius: var(--radius);
+}
+
+.appointments-table th,
+.appointments-table td,
+.inventory-table th,
+.inventory-table td {
+    padding: 0.75rem;
+    text-align: center;
+    border-bottom: 1px solid var(--border-color);
+    border-right: 1px solid var(--border-color);
+}
+
+.appointments-table th:last-child,
+.appointments-table td:last-child,
+.inventory-table th:last-child,
+.inventory-table td:last-child {
+    border-right: none;
+}
+
+.appointments-table tbody tr:last-child td,
+.inventory-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.appointments-table th,
+.inventory-table th {
+    background-color: var(--light-bg);
+    font-weight: 600;
+}
+
+.appointments-table th {
+    color: var(--dark-text);
+}
+
+.appointments-table tr:nth-child(even),
+.inventory-table tr:nth-child(even) {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.appointments-table tr:hover,
+.inventory-table tr:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+}
+
+/* Appointments specific */
+.appointments-table .client-name {
+    font-weight: 500;
+    color: var(--dark-text);
+}
+
+.appointments-table .date-time {
+    font-size: 0.875rem;
+    color: var(--medium-text);
+    white-space: nowrap;
+}
+
+.appointments-table .vehicle-info {
+    font-size: 0.875rem;
+}
+
+.appointments-table .vehicle-type {
+    display: inline-block;
+    margin-bottom: 0.25rem;
+}
+
+.appointments-table .vehicle-details {
+    color: var(--medium-text);
+}
+
+.appointments-table .problem-text {
+    font-size: 0.875rem;
+    max-width: 200px;
+    word-wrap: break-word;
+}
+
+.appointments-table .attachments-cell {
+    text-align: center;
+}
+
+.appointments-table .has-attachments {
+    color: var(--primary-color);
+    font-size: 1.2rem;
+}
+
+.appointments-table .no-attachments {
+    color: var(--light-text);
+    font-size: 1rem;
+}
+
+/* Badge styles */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 9999px;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.badge-outline {
+    border: 1px solid;
+}
+
+.badge-pending {
+    background-color: rgba(245, 158, 11, 0.1);
+    color: var(--warning-color);
+    border-color: rgba(245, 158, 11, 0.3);
+}
+
+.badge-approved {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: var(--success-color);
+    border-color: rgba(16, 185, 129, 0.3);
+}
+
+.badge-rejected {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--danger-color);
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+.badge-motorcycle {
+    background-color: rgba(59, 130, 246, 0.1);
+    color: var(--motorcycle-color);
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+.badge-bicycle {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: var(--bicycle-color);
+    border-color: rgba(16, 185, 129, 0.3);
+}
+
+.badge-scooter {
+    background-color: rgba(139, 92, 246, 0.1);
+    color: var(--scooter-color);
+    border-color: rgba(139, 92, 246, 0.3);
+}
+
+.badge-attachments {
+    background-color: rgba(59, 130, 246, 0.1);
+    color: var(--primary-color);
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+/* Inventory specific */
+.inventory-table .status {
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.status-in-stock {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: var(--success-color);
+}
+
+.status-low-stock {
+    background-color: rgba(245, 158, 11, 0.1);
+    color: var(--warning-color);
+}
+
+.status-out-of-stock {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--danger-color);
+}
+
+.status-ordered {
+    background-color: rgba(139, 92, 246, 0.1);
+    color: var(--accent-color);
+}
+
+/* Action buttons */
+.action-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.875rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.action-btn-view,
+.action-btn-edit {
+    color: var(--primary-color);
+}
+
+.action-btn-view:hover,
+.action-btn-edit:hover {
+    background-color: rgba(59, 130, 246, 0.1);
+}
+
+.action-btn-delete {
+    color: var(--danger-color);
+}
+
+.action-btn-delete:hover {
+    background-color: rgba(239, 68, 68, 0.1);
+}
+
+/* Data tools */
+.data-tools {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+@media (min-width: 768px) {
+    .data-tools {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.import-section, .export-section {
+    background-color: var(--light-bg);
+    padding: 1.5rem;
+    border-radius: var(--radius);
+}
+
+.import-options, .export-options {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.import-option {
+    background-color: white;
+    padding: 1rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border-color);
+}
+
+.import-option h4 {
+    margin-bottom: 0.5rem;
+}
+
+.export-options {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+/* Modals */
+#confirmModal,
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+#confirmModal {
+    z-index: 99999;
+}
+
+.modal {
+    overflow: hidden;
+}
+
+body.modal-actions {
+    overflow: hidden;
+}
+
+.modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: var(--radius);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.close {
+    position: absolute;
+    right: 1.25rem;
+    top: 1rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: var(--medium-text);
+    padding: 0.25rem;
+    border-radius: 0.25rem;
+    transition: background-color 0.2s ease;
+}
+
+.close:hover {
+    background-color: var(--light-bg);
+}
+
+.modal h3 {
+    margin-bottom: 1rem;
+    padding-right: 2rem;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.modal-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--dark-text);
+}
+
+.modal-body {
+    margin-bottom: 2rem;
+}
+
+.modal-actions,
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+}
+
+.modal-footer {
+    gap: 1rem;
+}
+
+/* Appointment details */
+.appointment-detail-section {
+    margin-bottom: 0.5rem;
+    border: 1px solid #e2e8f0;
+    background-color: #f8fafc;
+    border-radius: 8px;
+    padding: 1rem;
+    transition: all 0.2s ease;
+    font-size: 1rem;
+}
+
+.appointment-detail-section:hover {
+    background-color: #f1f5f9;
+    border-color: #cbd5e1;
+}
+
+.appointment-detail-section i {
+    color: var(--primary-color);
+    font-size: 1.25rem;
+}
+
+.appointment-detail-section p {
+    color: #6b7280;
+}
+
+.appointment-detail-section .detail-label {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.appointment-detail-section .info {
+    color: #6b7280;
+}
+
+.detail-label {
+    font-weight: 500;
+    font-size: 0.875rem;
+}
+
+.attachments-box {
+    background-color: rgba(59, 130, 246, 0.1);
+    padding: 1rem;
+    border-radius: 0.25rem;
+    margin-top: 0.5rem;
+}
+
+.attachments-box p {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--medium-text);
+}
+
+/* Inventory selection */
+.inventory-selection-section {
+    margin-top: 1.5rem;
+}
+
+.inventory-selection-section h4,
+.inventory-selection-section h5 {
+    margin-bottom: 0.75rem;
+    color: var(--dark-text);
+}
+
+.inventory-search-box {
+    margin-bottom: 1rem;
+}
+
+.inventory-search-box input,
+.inventory-search-input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    transition: border-color 0.2s ease;
+}
+
+.inventory-search-box input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.inventory-results {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+.inventory-item-result {
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.inventory-item-result:last-child {
+    border-bottom: none;
+}
+
+.inventory-item-result:hover {
+    background-color: rgba(59, 130, 246, 0.05);
+}
+
+.inventory-item-info {
+    flex-grow: 1;
+}
+
+.inventory-item-name {
+    font-weight: 500;
+    color: var(--dark-text);
+    margin-bottom: 0.25rem;
+}
+
+.inventory-item-details {
+    font-size: 0.875rem;
+    color: var(--medium-text);
+}
+
+.inventory-item-price {
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-left: 1rem;
+}
+
+.selected-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    background-color: var(--light-bg);
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+    border: 1px solid var(--border-color);
+}
+
+.selected-item-info {
+    flex-grow: 1;
+}
+
+.selected-item-name {
+    font-weight: 500;
+    color: var(--dark-text);
+}
+
+.selected-item-details {
+    font-size: 0.875rem;
+    color: var(--medium-text);
+}
+
+.selected-item-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.selected-item-controls button {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    color: #333;
+    padding: 4px 10px;
+    margin: 0 4px;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.selected-item-controls button:hover:not(:disabled) {
+    background-color: #e0e0e0;
+    transform: scale(1.05);
+}
+
+.selected-item-controls button:disabled {
+    background-color: #ddd;
+    color: #999;
+    cursor: not-allowed;
+}
+
+.selected-item-controls input[type="number"] {
+    width: 50px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+    margin: 0 4px;
+    padding: 4px;
+}
+
+.quantity-control {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.quantity-btn {
+    width: 24px;
+    height: 24px;
+    border: 1px solid var(--border-color);
+    background: white;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+}
+
+.quantity-btn:hover {
+    background-color: var(--light-bg);
+    border-color: var(--primary-color);
+}
+
+.quantity-input {
+    width: 50px;
+    text-align: center;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 0.25rem;
+    font-size: 0.875rem;
+}
+
+.remove-item-btn {
+    background: none;
+    border: none;
+    color: var(--danger-color);
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.remove-item-btn:hover {
+    background-color: rgba(239, 68, 68, 0.1);
+}
+
+.total-price {
+    text-align: right;
+    font-weight: bold;
+    font-size: 1.1rem !important;
+    padding: 0.5rem;
+    background-color: var(--light-bg);
+    border-radius: 4px;
+}
+
+.no-results {
+    padding: 1rem;
+    text-align: center;
+    color: var(--medium-text);
+    font-style: italic;
+}
+
+/* Users section */
+.users-section {
+    padding: 2rem 0;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.section-divider {
+    margin: 3rem 0;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.role-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.btn-icon {
+    padding: 0.5rem;
+    border: none;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.875rem;
+}
+
+.btn-delete {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--danger-color);
+}
+
+.btn-delete:hover {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+.btn-promote {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: var(--primary-color);
+}
+
+.btn-promote:hover {
+    background-color: var(--primary-hover);
+    color: white;
+}
+
+.user-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background-color: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: var(--radius);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.stat-label {
+    color: var(--medium-text);
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+}
+
+/* Responsive */
+@media (max-width: 1100px) {
+    .appointments-table {
+        font-size: 0.875rem;
+    }
+
+    .appointments-table th,
+    .appointments-table td {
+        padding: 0.5rem;
+    }
+
+    .problem-text {
+        max-width: 150px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .toolbar {
+        justify-content: space-between;
+    }
+
+    .search-box {
+        min-width: 200px;
+    }
+}
+
+@media (max-width: 842px) {
+    .appointments-table,
+    .inventory-table {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+@media (max-width: 768px) {
+    .selected-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .selected-item-controls {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .modal-content {
+        margin: 5% auto;
+        padding: 1.5rem;
+    }
+
+    .modal-footer {
+        flex-direction: column;
+    }
+
+    .modal-footer .btn {
+        width: 100%;
+    }
+}

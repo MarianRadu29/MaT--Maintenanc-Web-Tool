@@ -6,7 +6,6 @@ import com.sun.net.httpserver.HttpHandler;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Arrays;
 
 public class StaticFileHandler implements HttpHandler {
     private final String root;

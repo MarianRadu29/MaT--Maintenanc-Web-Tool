@@ -289,7 +289,7 @@ public class InventoryController {
             }
             int userId = (int) claims.get("id");
             int roleId = UserModel.getUserRoleId(userId);
-            if (roleId !=3) {
+            if (roleId != 3) {
                 JsonSender.send(exchange, 403, "{\"message\":\"Forbidden\"}");
                 return;
             }
@@ -309,7 +309,6 @@ public class InventoryController {
                         "name", "categoryId", "quantity", "price", "supplier", "status"
                 );
                 List<String> actualHeaders = csvParser.getHeaderNames();
-
 
                 List<String> missing = new ArrayList<>();
                 for (String h : expectedHeaders) {
@@ -423,6 +422,4 @@ public class InventoryController {
             JsonSender.send(exchange, 200, respJson.toString());
         }
     }
-
-
 }

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MaT (Maintenance Web Tool) – Software Requirements Specification</title>
+  <style>
+    body {
+      font-family: "Times New Roman", Times, serif;
+      margin: 2em;
+      line-height: 1.5;
+      color: #333;
+    }
+    h1, h2, h3, h4 {
+      font-family: Georgia, serif;
+      margin-top: 1.5em;
+      margin-bottom: 0.5em;
+    }
+    h1 { font-size: 2em; }
+    h2 { font-size: 1.6em; }
+    h3 { font-size: 1.3em; }
+    h4 { font-size: 1.1em; font-style: italic; }
+    nav {
+      margin-bottom: 2em;
+      border-bottom: 1px solid #666;
+    }
+    nav ol { list-style: none; padding-left: 0; }
+    nav ol > li { margin: 0.5em 0; }
+    nav a { text-decoration: none; color: #006; }
+    nav a:hover { text-decoration: underline; }
+    section { margin-bottom: 2em; }
+    figure { text-align: center; margin: 1em 0; }
+    figure img { max-width: 100%; height: auto; }
+    figcaption { font-size: 0.9em; font-style: italic; }
+    footer { border-top: 1px solid #666; padding-top: 1em; font-size: 0.9em; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>MaT (<em>Maintenance Web Tool</em>)</h1>
+    <p><strong>Software Requirements Specification</strong></p>
+    <p>Second year students, Faculty of Computer Science, UAIC, Group B1</p>
+  </header>
+
+  <nav>
+    <ol>
+      <li><a href="#authors">1. Authors</a></li>
+      <li><a href="#introduction">2. Introduction</a>
+        <ol>
+          <li><a href="#purpose">2.1 Purpose</a></li>
+          <li><a href="#document-convention">2.2 Document Convention</a></li>
+          <li><a href="#target-audience">2.3 Target Audience</a></li>
+          <li><a href="#bibliography">2.4 Bibliography and References</a></li>
+        </ol>
+      </li>
+      <li><a href="#general-description">3. General Description</a>
+        <ol>
+          <li><a href="#product-perspective">3.1 Product Perspective</a></li>
+          <li><a href="#product-features">3.2 Product Features</a></li>
+          <li><a href="#user-classes">3.3 User Classes and Characteristics</a></li>
+          <li><a href="#operating-environment">3.4 Operating Environment</a></li>
+          <li><a href="#user-documentation">3.5 User Documentation</a></li>
+        </ol>
+      </li>
+      <li><a href="#application-interface">4. Application Interface</a>
+        <ol>
+          <li><a href="#user-interface">4.1 User Interface</a></li>
+          <li><a href="#hardware-interface">4.2 Hardware Interface</a></li>
+          <li><a href="#software-interface">4.3 Software Interface</a></li>
+          <li><a href="#communication-interface">4.4 Communication Interface</a></li>
+        </ol>
+      </li>
+      <li><a href="#characteristics">5. Characteristics of the Application</a></li>
+      <li><a href="#security">6. Technologies for Protection and Security</a></li>
+    </ol>
+  </nav>
+
+  <section id="authors">
+    <h2>1. Authors</h2>
+    <p>Second year students at the Faculty of Computer Science, UAIC, Group B1:</p>
+    <ul>
+      <li>Radu Marian-Sebastian — <a href="mailto:radumariansebastian29@gmail.com">radumariansebastian29@gmail.com</a></li>
+      <li>Pintilie David-Mihail — <a href="mailto:pintiliedavid06@gmail.com">pintiliedavid06@gmail.com</a></li>
+    </ul>
+  </section>
+
+  <section id="introduction">
+    <h2>2. Introduction</h2>
+
+    <section id="purpose">
+      <h3>2.1 Purpose</h3>
+      <p>This project provides an <strong>online scheduling</strong> and <strong>inventory management</strong> system for motorcycle, bicycle, and scooter services. It enables:</p>
+      <ul>
+        <li>Quick booking of service appointments with date, time, and multimedia attachments;</li>
+        <li>Administrator approval/rejection of appointments with custom messages and additional details;</li>
+        <li>Inventory tracking and CSV import/export of items and orders.</li>
+      </ul>
+    </section>
+
+    <section id="document-convention">
+      <h3>2.2 Document Convention</h3>
+      <p>Written in Markdown, this document follows the <em>IEEE Software Requirements Specification</em> template.</p>
+    </section>
+
+    <section id="target-audience">
+      <h3>2.3 Target Audience</h3>
+      <p>The platform is aimed at:</p>
+      <ul>
+        <li><strong>Service owners and administrators</strong> managing repair shops;</li>
+        <li><strong>Mechanics and technicians</strong> needing appointment details;</li>
+        <li><strong>End customers</strong> booking service slots with multimedia descriptions.</li>
+      </ul>
+    </section>
+
+    <section id="bibliography">
+      <h3>2.4 Bibliography and References</h3>
+      <ul>
+        <li>Buraga S.-C., Panu A., <em>Web Technologies</em>, FII UAIC</li>
+        <li>Captarencu O., <em>Web Technologies Laboratory</em>, FII UAIC</li>
+        <li><em>IEEE Software Requirements Specification</em></li>
+        <li><em>REST API Tutorial</em></li>
+        <li><em>HttpServer Java Class</em></li>
+        <li>W3Schools, Markdown Guide</li>
+      </ul>
+    </section>
+  </section>
+
+  <section id="general-description">
+    <h2>3. General Description</h2>
+
+    <section id="product-perspective">
+      <h3>3.1 Product Perspective</h3>
+      <p>MaT is an independent web system with a responsive frontend, REST API backend, SMTP integration, and multimedia storage.</p>
+    </section>
+
+    <section id="product-features">
+      <h3>3.2 Product Features</h3>
+      <ul>
+        <li>Calendar view of real-time availability</li>
+        <li>CRUD operations for appointments with attachments</li>
+        <li>Automated email notifications</li>
+        <li>Administrator approval flow</li>
+        <li>Inventory management</li>
+        <li>CSV import/export</li>
+      </ul>
+    </section>
+
+    <section id="user-classes">
+      <h3>3.3 User Classes and Characteristics</h3>
+      <h4>Client</h4>
+      <ul>
+        <li>Intuitive interface; desktop & mobile</li>
+        <li>Multimedia attachments</li>
+        <li>Email notifications</li>
+      </ul>
+      <h4>Administrator / Mechanic</h4>
+      <ul>
+        <li>Full control over appointments & inventory</li>
+        <li>CSV, JSON, PDF report exports</li>
+      </ul>
+    </section>
+
+    <section id="operating-environment">
+      <h3>3.4 Operating Environment</h3>
+      <p>Accessible in any modern browser supporting HTML5, CSS3, and JavaScript.</p>
+    </section>
+
+    <section id="user-documentation">
+      <h3>3.5 User Documentation</h3>
+      <p>This SRS document and inline help tips guide end-users and administrators.</p>
+    </section>
+  </section>
+
+  <section id="application-interface">
+    <h2>4. Application Interface</h2>
+
+    <section id="user-interface">
+      <h3>4.1 User Interface</h3>
+      <h4>Home Page</h4>
+      <p>Hero section with quick links; responsive layout.</p>
+      <h4>Login / Registration / Password Recovery</h4>
+      <p>Secure forms with client-side validation.</p>
+      <h4>Calendar & Appointment Pages</h4>
+      <p>Interactive slots, drag-and-drop uploads.</p>
+      <h4>Profile & Admin Pages</h4>
+      <p>User info, appointment lists, admin tables, CSV tools.</p>
+    </section>
+
+    <section id="hardware-interface">
+      <h3>4.2 Hardware Interface</h3>
+      <p>Runs on any server; requires internet for SMTP.</p>
+    </section>
+
+    <section id="software-interface">
+      <h3>4.3 Software Interface</h3>
+      <p>Frontend (HTML/CSS/JS), RESTful HTTP API, JSON & multipart-form data.</p>
+    </section>
+
+    <section id="communication-interface">
+      <h3>4.4 Communication Interface</h3>
+      <p>HTTP(S) transport; JSON payloads; form-data for media.</p>
+    </section>
+  </section>
+
+  <section id="characteristics">
+    <h2>5. Characteristics of the Application</h2>
+    <h4>Account Management</h4>
+    <p>Registration, authentication (email/password), appointment booking.</p>
+    <h4>Admin Section</h4>
+    <p>Appointment approvals, inventory updates, CSV import/export.</p>
+    <h4>Session Management</h4>
+    <p>JWT-based sessions, 1-day expiration, role-based access.</p>
+  </section>
+
+  <section id="security">
+    <h2>6. Technologies for Protection and Security</h2>
+    <ul>
+      <li>Password hashing with Bcrypt</li>
+      <li>JWT authorization</li>
+      <li>Prepared statements to prevent SQL injection</li>
+      <li>HTTPS & CORS configuration</li>
+      <li>Content Security Policy (CSP)</li>
+    </ul>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 Maintenance Web Tool. All rights reserved.</p>
+  </footer>
+
+</body>
+</html>
